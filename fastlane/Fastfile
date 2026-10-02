@@ -1,0 +1,111 @@
+# 컬러로그 배포.
+#
+#   fastlane status     TestFlight 최신 빌드 번호 확인 (읽기 전용 · 키 연결 확인)
+#   fastlane beta       빌드 번호 +1 → 아카이브 → TestFlight 업로드 → 번호 변경 커밋
+#   fastlane metadata   스토어 문구·스크린샷만 업로드 (바이너리·제출 없음)
+#   fastlane submit     최신 빌드를 붙여 심사 제출
+#
+# 인증은 전부 App Store Connect API 키로 한다. 키 정보는 fastlane/.env 에 있고
+# git에는 올라가지 않는다(fastlane/.env.example 참고).
+
+default_platform(:ios)
+
+PROJECT = "colorlog.xcodeproj"
+SCHEME = "colorlog"
+APP_TARGET = "colorlog"
+
+platform :ios do
+
+  # 모든 레인이 먼저 부른다. 이후 액션들은 이 키를 자동으로 쓴다.
+  private_lane :asc_key do
+    app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_PATH")
+    )
+  end
+
+  # xcodebuild가 서명 프로필을 스스로 받거나 갱신할 때 쓸 인증.
+  # (자동 서명 + API 키. Xcode에 Apple ID 로그인이 없어도 된다)
+  def provisioning_xcargs
+    [
+      "-allowProvisioningUpdates",
+      "-authenticationKeyPath #{ENV.fetch('ASC_KEY_PATH').shellescape}",
+      "-authenticationKeyID #{ENV.fetch('ASC_KEY_ID')}",
+      "-authenticationKeyIssuerID #{ENV.fetch('ASC_ISSUER_ID')}"
+    ].join(" ")
+  end
+
+  def marketing_version
+    get_version_number(xcodeproj: PROJECT, target: APP_TARGET)
+  end
+
+  desc "TestFlight에 올라간 최신 빌드 번호를 보여 준다 (읽기 전용)"
+  lane :status do
+    asc_key
+    version = marketing_version
+    build = latest_testflight_build_number(version: version, initial_build_number: 0)
+    UI.success("컬러로그 #{version} — TestFlight 최신 빌드: #{build}")
+  end
+
+  desc "빌드 번호를 올리고 TestFlight에 업로드한다"
+  lane :beta do
+    # 업로드한 바이너리와 커밋이 어긋나지 않도록, 깨끗한 상태에서만 시작한다.
+    ensure_git_status_clean
+    asc_key
+
+    # 앱과 위젯은 같은 빌드 번호여야 한다 — agvtool이 두 타깃을 함께 올린다.
+    next_build = latest_testflight_build_number(version: marketing_version, initial_build_number: 0) + 1
+    increment_build_number(xcodeproj: PROJECT, build_number: next_build)
+
+    build_app(
+      project: PROJECT,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      xcargs: provisioning_xcargs,
+      export_xcargs: provisioning_xcargs
+    )
+
+    # 처리 완료(10~30분)까지 기다리지 않는다. 끝나면 Apple이 메일을 보낸다.
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+
+    commit_version_bump(xcodeproj: PROJECT, message: "빌드 #{next_build} TestFlight 업로드")
+    UI.success("빌드 #{next_build} 업로드 완료. 푸시는 직접: git push")
+  end
+
+  desc "스토어 문구와 스크린샷만 올린다"
+  lane :metadata do
+    asc_key
+    deliver(
+      app_version: marketing_version,
+      skip_binary_upload: true,
+      overwrite_screenshots: true,
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+      force: true   # HTML 미리보기 확인 단계 생략
+    )
+  end
+
+  desc "최신 빌드를 붙여 심사에 제출한다"
+  lane :submit do
+    asc_key
+    version = marketing_version
+    build = latest_testflight_build_number(version: version)
+    deliver(
+      app_version: version,
+      build_number: build.to_s,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      submit_for_review: true,
+      automatic_release: false,   # 승인 후 출시는 직접 누른다
+      run_precheck_before_submit: false,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false
+      },
+      force: true
+    )
+  end
+end

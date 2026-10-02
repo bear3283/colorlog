@@ -349,6 +349,7 @@
 				CODE_SIGN_ENTITLEMENTS = Config/colorlog.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				VERSIONING_SYSTEM = "apple-generic";
 				DEVELOPMENT_TEAM = 36CPZWS26C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -396,6 +397,7 @@
 				CODE_SIGN_ENTITLEMENTS = Config/colorlog.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				VERSIONING_SYSTEM = "apple-generic";
 				DEVELOPMENT_TEAM = 36CPZWS26C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -440,6 +442,7 @@
 				CODE_SIGN_ENTITLEMENTS = Config/ColorLogWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				VERSIONING_SYSTEM = "apple-generic";
 				DEVELOPMENT_TEAM = 36CPZWS26C;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Config/ColorLogWidgets-Info.plist";
@@ -472,6 +475,7 @@
 				CODE_SIGN_ENTITLEMENTS = Config/ColorLogWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				VERSIONING_SYSTEM = "apple-generic";
 				DEVELOPMENT_TEAM = 36CPZWS26C;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Config/ColorLogWidgets-Info.plist";

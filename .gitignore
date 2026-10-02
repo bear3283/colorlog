@@ -14,3 +14,9 @@ build/
 
 # App Store Connect API 키 — 절대 커밋하지 않는다
 *.p8
+
+# fastlane
+fastlane/.env
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
