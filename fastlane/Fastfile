@@ -75,11 +75,25 @@ platform :ios do
     UI.success("빌드 #{next_build} 업로드 완료. 푸시는 직접: git push")
   end
 
+  # 심사 연락처는 전화번호가 필수라, 번호 없이 올리면 App Store Connect가 거절한다.
+  # 번호가 아직 없으면 심사 정보만 뺀 사본으로 나머지를 올린다.
+  def metadata_path_for_upload
+    source = File.expand_path("metadata", __dir__)
+    return source if File.exist?(File.join(source, "review_information", "phone_number.txt"))
+
+    UI.important("review_information/phone_number.txt 가 없어 심사 정보는 건너뜁니다.")
+    copy = Dir.mktmpdir("colorlog-metadata")
+    FileUtils.cp_r(Dir.glob(File.join(source, "*")), copy)
+    FileUtils.rm_rf(File.join(copy, "review_information"))
+    copy
+  end
+
   desc "스토어 문구와 스크린샷만 올린다"
   lane :metadata do
     asc_key
     deliver(
       app_version: marketing_version,
+      metadata_path: metadata_path_for_upload,
       skip_binary_upload: true,
       overwrite_screenshots: true,
       submit_for_review: false,
