@@ -1,5 +1,18 @@
-로그인이나 계정이 필요 없습니다.
-- 첫 화면의 오늘 칸(가운데 테두리 칸)을 누르면 색 다섯이 펼쳐지고, 하나를 누르면 기록됩니다.
-- 위쪽의 해 뜨는 그림·해·달은 아침·점심·저녁 자리입니다. 같은 색을 다시 누르면 지워집니다.
-- 알림: 오른쪽 위 색 점을 눌러 설정을 열고, 종 버튼으로 알림을 허용합니다.
-- 위젯: 홈 화면 편집에서 "오늘의 색"을 추가하면, 설정한 알림 시각에 색 다섯이 나타납니다.
+NO LOGIN OR ACCOUNT. The app has no account registration, login, user-generated content, in-app purchases, or subscriptions. No demo account is needed.
+
+PURPOSE AND AUDIENCE
+ColorLog is a mood diary that records feelings as colors instead of words. Three times a day (morning, afternoon, evening) a local reminder asks how the user feels, and the user answers by picking one of five colors. Each day's colors fill one square on a grid centered on today, so mood patterns over days and weeks become visible at a glance. It is for people who want to reflect on their feelings but find writing a daily journal burdensome.
+
+HOW TO USE THE MAIN FEATURES
+1. Launch the app. Today is the square with a colored border in the center of the grid.
+2. Tap today's square. A row with three slots (sunrise = morning, sun = afternoon, moon = evening) appears above it, and five colors appear around it. Tap a color to record it in the selected slot; the square fills with that color.
+3. Tap a different slot (sunrise / sun / moon) to record or change that time of day. Tapping the color already in a slot clears it. Other slots never move.
+4. Tap the small colored dots at the top right to open Settings. There you can switch among nine color palettes, set the three reminder times, and allow notifications with the bell button.
+5. Home Screen widget: long-press the Home Screen, tap Edit > Add Widget, and add "오늘의 색" (ColorLog). At each reminder time the widget shows five colors; tapping one records it without opening the app.
+6. The background color changes gradually with the time of day.
+
+EXTERNAL SERVICES
+None. The app makes no network connections and uses no third-party SDKs, analytics, advertising, authentication, payment, or AI services. All data is stored only on the device (SwiftData in an App Group container shared with the widget). Reminders are local notifications scheduled on the device.
+
+REGIONAL DIFFERENCES
+None. The app works the same in all regions. The interface is almost entirely colors and symbols; the few text elements (notification text, widget name) are in Korean in every region.

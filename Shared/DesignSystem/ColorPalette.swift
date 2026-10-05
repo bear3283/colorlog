@@ -81,7 +81,7 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     /// 설정 화면에서만 쓰인다. 캔버스에는 어떤 글자도 올리지 않는다.
     var displayName: String {
         switch self {
-        case .pantone:       "팬톤"
+        case .pantone:       "클래식"
         case .complementary: "보색"
         case .analogous:     "유사색"
         case .spring:        "봄"
@@ -211,18 +211,22 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     var swatches: [ColorSwatch] {
         switch self {
         case .pantone:
-            // 팬톤 올해의 색. 해마다 따로 고른 색이라 서로 조화를 전제하지 않는다.
+            // 해마다 따로 고른 '올해의 색' 계열에서 출발했다. 서로 조화를 전제하지 않는다.
+            //
+            // ⚠️ 화면·VoiceOver에 쓰이는 이름(팔레트 이름 포함)에는 상표가 된 색 이름을
+            // 쓰지 않는다. 1.0 심사에서 제3자 보호 자료 여부를 물어 와, 이 팔레트와
+            // 말린 꽃·구름·보석의 색 이름을 전부 일반 색 이름으로 바꿨다.
             // 다섯 색이 각자 다른 방향을 보는, 가장 넓은 팔레트.
             //
             // 베리 페리(2022) 대신 그리너리(2017)를 넣었다. 베리 페리와 클래식 블루가
             // 같은 청보라 계열이라 한 칸에 나란히 놓이면 경계가 뭉개졌고(OKLab ΔE 0.146),
             // 다섯 중 초록이 하나도 없어 캔버스가 붉은 쪽으로만 기울었다.
             [
-                ColorSwatch(name: "비바 마젠타", hex: "#BB2649"),   // 2023
-                ColorSwatch(name: "피치 퍼즈",   hex: "#FFBE98"),   // 2024
-                ColorSwatch(name: "그리너리",    hex: "#88B04B"),   // 2017
-                ColorSwatch(name: "클래식 블루", hex: "#0F4C81"),   // 2020
-                ColorSwatch(name: "모카 무스",   hex: "#A47864"),   // 2025
+                ColorSwatch(name: "마젠타",   hex: "#BB2649"),
+                ColorSwatch(name: "피치",     hex: "#FFBE98"),
+                ColorSwatch(name: "연두",     hex: "#88B04B"),
+                ColorSwatch(name: "코발트",   hex: "#0F4C81"),
+                ColorSwatch(name: "모카",     hex: "#A47864"),
             ]
         case .complementary:
             // 색상환의 정반대 두 축(주황 ↔ 파랑)만 쓴다. 고를 때마다
@@ -265,11 +269,11 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 견본 여덟 중 코블스톤(회갈색)·윌로(올리브)는 모카·텐드릴과 붙어 빠졌고,
             // 가드니아는 빈 칸과 구분되지 않아 바탕으로 돌렸다.
             [
-                ColorSwatch(name: "텐드릴",       hex: "#8C9E6E"),
-                ColorSwatch(name: "콘플라워 블루", hex: "#7890C4"),
-                ColorSwatch(name: "비올라",       hex: "#A393B6"),
-                ColorSwatch(name: "로즈 탄",      hex: "#C99E9A"),
-                ColorSwatch(name: "모카 무스",    hex: "#9C7867"),
+                ColorSwatch(name: "세이지",   hex: "#8C9E6E"),
+                ColorSwatch(name: "물빛 파랑", hex: "#7890C4"),
+                ColorSwatch(name: "연보라",   hex: "#A393B6"),
+                ColorSwatch(name: "장밋빛 베이지", hex: "#C99E9A"),
+                ColorSwatch(name: "갈색",     hex: "#9C7867"),
             ]
         case .triadic:
             // 색상환 120° 간격의 빨강·노랑·파랑에 명도 양끝을 더했다.
@@ -301,22 +305,22 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 다섯째 자리는 처음엔 오키드 틴트였는데 사용자 요청으로 레인드롭스 온
             // 로지스로 바꿨다. 같은 명도(0.68)에 두어 사다리는 그대로다.
             [
-                ColorSwatch(name: "레몬 아이싱",   hex: "#F5E8B6"),
-                ColorSwatch(name: "아이스 멜트",   hex: "#BFD4E7"),
-                ColorSwatch(name: "피치 더스트",   hex: "#D4B7A6"),
-                ColorSwatch(name: "올모스트 아쿠아", hex: "#A5B095"),
-                ColorSwatch(name: "레인드롭스 온 로지스", hex: "#AB9098"),
+                ColorSwatch(name: "레몬",     hex: "#F5E8B6"),
+                ColorSwatch(name: "하늘",     hex: "#BFD4E7"),
+                ColorSwatch(name: "살구",     hex: "#D4B7A6"),
+                ColorSwatch(name: "쑥색",     hex: "#A5B095"),
+                ColorSwatch(name: "장미",     hex: "#AB9098"),
             ]
         case .jewel:
             // 견본의 '색 조화' 띠 세 줄에서 함께 쓰인 색들. 금속 질감 칩 대신
             // 평평한 띠에서 색을 읽었다. 무채색인 오팔 그레이·카놀리 크림, 그리고
             // 어두운 바탕에서 가라앉는 글리스닝 그레이프는 뺐다.
             [
-                ColorSwatch(name: "클래식 블루",  hex: "#3B5287"),
-                ColorSwatch(name: "페이디드 제이드", hex: "#DDDEA1"),
-                ColorSwatch(name: "워터 님프",    hex: "#548E58"),
-                ColorSwatch(name: "스페이스 체리", hex: "#A33333"),
-                ColorSwatch(name: "브라스 너클즈", hex: "#A27256"),
+                ColorSwatch(name: "남청",     hex: "#3B5287"),
+                ColorSwatch(name: "옥빛",     hex: "#DDDEA1"),
+                ColorSwatch(name: "초록",     hex: "#548E58"),
+                ColorSwatch(name: "체리",     hex: "#A33333"),
+                ColorSwatch(name: "황동",     hex: "#A27256"),
             ]
         }
     }
