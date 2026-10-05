@@ -64,8 +64,9 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      xcargs: provisioning_xcargs,
-      export_xcargs: provisioning_xcargs
+      # gym은 xcargs를 아카이브와 내보내기 양쪽에 붙인다.
+      # export_xcargs로 한 번 더 주면 인증 옵션이 중복돼 xcodebuild가 거부한다.
+      xcargs: provisioning_xcargs
     )
 
     # 처리 완료(10~30분)까지 기다리지 않는다. 끝나면 Apple이 메일을 보낸다.
