@@ -60,14 +60,28 @@ struct TodayColorView: View {
 
     // MARK: 칠해진 얼굴
 
-    @ViewBuilder
-    private var paintedFace: some View {
-        let pigments = colors
+    /// 자리 순서의 색. nil은 빈 자리.
+    private var pigments: [HexColor.Components?] {
+        colors
             .prefix(DailyColorLog.maxColorsPerDay)
             .map { $0.isEmpty ? nil : HexColor.components(from: $0) }
+    }
+
+    private var hasColors: Bool { pigments.contains { $0 != nil } }
+
+    /// 오늘 고른 색으로 가장자리까지 칠한 면. 칠해진 얼굴과 고르는 얼굴의 배경이 함께 쓴다.
+    private var colorField: some View {
+        ZStack {
+            theme.background
+            FlatColorFill(pigments: pigments, seed: day.colorSeed)
+        }
+    }
+
+    @ViewBuilder
+    private var paintedFace: some View {
         let emptyTone = theme.stroke.opacity(theme.colorScheme == .dark ? 0.58 : 0.74)
 
-        if pigments.allSatisfy({ $0 == nil }) {
+        if !hasColors {
             // 앱 격자의 '오늘 · 비어 있음'과 같은 배합.
             ZStack {
                 theme.background
@@ -75,10 +89,7 @@ struct TodayColorView: View {
             }
             .accessibilityLabel("오늘 아직 기록 없음")
         } else {
-            ZStack {
-                theme.background
-                FlatColorFill(pigments: pigments, seed: day.colorSeed)
-            }
+            colorField
             .accessibilityLabel("오늘 색 \(pigments.count { $0 != nil })개 기록됨")
         }
     }
@@ -98,11 +109,22 @@ struct TodayColorView: View {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
 
         return ZStack {
-            SkyView(theme: theme, date: date)
+            if hasColors {
+                // 이미 고른 색이 있으면 그 색들이 배경이 된다. 지금까지의 하루 위에
+                // 다음 색을 얹는다는 게 보이도록. 살짝 가라앉혀 '칠해진 얼굴'과 구분하고
+                // 그 위의 색 다섯을 띄운다.
+                // ⚠️ 막은 반드시 검정. theme.ink는 어두운 팔레트에서 크림색이라
+                // 가라앉히는 대신 배경을 뿌옇게 바래게 만든다.
+                colorField
+                Color.black.opacity(0.16)
+            } else {
+                // 첫 색을 고를 때는 칠할 것이 없다. 시각의 하늘 위에 빈 오늘 칸.
+                SkyView(theme: theme, date: date)
 
-            DailyCellView(date: day, colors: colors, relation: .today, isHighlighted: true)
-                .frame(width: cell, height: cell)
-                .position(center)
+                DailyCellView(date: day, colors: colors, relation: .today, isHighlighted: true)
+                    .frame(width: cell, height: cell)
+                    .position(center)
+            }
 
             ForEach(Array(palette.swatches.enumerated()), id: \.element.id) { index, swatch in
                 // 12시에서 시작해 시계 방향으로. 앱의 원형 팔레트와 같은 순서.
@@ -111,7 +133,11 @@ struct TodayColorView: View {
                 Button(intent: RecordColorIntent(hex: swatch.hex, slot: target)) {
                     Circle()
                         .fill(swatch.color)
-                        .shadow(color: swatch.color.opacity(0.45), radius: orb * 0.16, y: orb * 0.06)
+                        // 같은 색 배경 위에서도 원이 묻히지 않도록 바탕색 테두리를 두른다.
+                        .overlay {
+                            Circle().strokeBorder(theme.surface.opacity(0.92), lineWidth: max(2, orb * 0.06))
+                        }
+                        .shadow(color: .black.opacity(0.22), radius: orb * 0.16, y: orb * 0.06)
                 }
                 .buttonStyle(.plain)
                 .frame(width: orb, height: orb)
