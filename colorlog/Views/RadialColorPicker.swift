@@ -182,11 +182,13 @@ struct RadialColorPicker: View {
         ZStack {
             // 바깥을 누르면 닫힌다. 닫기 버튼을 따로 두지 않는 이유는 글자 없이
             // 설명할 방법이 없기 때문 — 바깥 탭은 설명이 필요 없다.
-            // 딤은 배경색이 아니라 먹빛으로 깐다.
+            // 딤은 배경색이 아니라 검정으로 깐다.
             // 배경색으로 덮으면 밝은 팔레트에서 '흰색 위에 흰색'이라 아무 효과가 없어
             // 색 다섯 개가 허공에 떠 있는 것처럼 보인다.
+            // theme.ink(먹빛)도 안 된다 — 어두운 팔레트에서는 크림색이라 화면을
+            // 가라앉히는 대신 뿌옇게 바래게 만든다. 어두운 바탕은 이미 어두우므로 조금 더 진하게.
             Rectangle()
-                .fill(theme.ink.opacity(unfurled ? 0.34 : 0))
+                .fill(Color.black.opacity(unfurled ? (theme.colorScheme == .dark ? 0.45 : 0.34) : 0))
                 .ignoresSafeArea()
                 .contentShape(.rect)
                 .onTapGesture {
