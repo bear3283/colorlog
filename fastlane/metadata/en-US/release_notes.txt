@@ -1,0 +1,2 @@
+· When picking a color in the widget, the colors you already chose today now fill the background, so you can see how your day is shaping up.
+· Color borders inside each day now run in more varied directions.
