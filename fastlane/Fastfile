@@ -55,7 +55,11 @@ platform :ios do
     asc_key
 
     # 앱과 위젯은 같은 빌드 번호여야 한다 — agvtool이 두 타깃을 함께 올린다.
-    next_build = latest_testflight_build_number(version: marketing_version, initial_build_number: 0) + 1
+    # 새 버전(예: 1.0.1)에서 TestFlight 번호가 0부터 다시 세지지 않도록,
+    # 프로젝트의 현재 번호보다 작아지지 않게 한다. 빌드 번호는 앱 전체에서 계속 오른다.
+    on_testflight = latest_testflight_build_number(version: marketing_version, initial_build_number: 0)
+    in_project = get_build_number(xcodeproj: PROJECT).to_i
+    next_build = [on_testflight, in_project].max + 1
     increment_build_number(xcodeproj: PROJECT, build_number: next_build)
 
     build_app(
