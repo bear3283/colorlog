@@ -95,11 +95,11 @@ struct FlatColorFill: View {
         var rng = SeededGenerator(seed: seed)
         let colors = pigments.compactMap { $0?.color }
 
-        // 경계 각도. 45°를 기준으로 날마다 조금씩 흔들린다.
-        // 완전 수직·수평이면 '줄무늬'로 보이므로 그 근처는 피한다.
-        let base = Double.random(in: 30...60, using: &rng)
-        let flipped = Bool.random(using: &rng)
-        angle = .degrees(flipped ? base : -base + 180)
+        // 경계 각도. 0~180° 전체에서 날마다 하나를 고른다(180°를 넘으면 같은 선이 반복된다).
+        // 처음엔 대각선 근처(30~60°·120~150°)만 썼는데, 격자 전체가 비슷한 사선으로만
+        // 보여 무작위라는 느낌이 없었다. 지금은 가로·세로에 가까운 경계도 나온다.
+        // 시드가 날짜이므로 같은 날은 언제 그려도 같은 각도다(앱 칸과 위젯이 일치).
+        angle = .degrees(Double.random(in: 0..<180, using: &rng))
 
         switch colors.count {
         case 0:
