@@ -48,6 +48,20 @@ nonisolated enum ColorLogStore {
         defaults.set(today.timeIntervalSinceReferenceDate, forKey: firstUseKey)
     }
 
+    private static let celebratedKey = "colorlog.celebrated"
+
+    /// 그날의 달성 축하를 차지한다. 이미 축하한 날이면 false.
+    ///
+    /// 하루에 한 번만 축하한다. 한 자리를 지웠다 다시 채울 때마다 팝업이 뜨면
+    /// 축하가 아니라 방해가 된다. 위젯에서 세 번째 색을 고른 날은 앱을 열 때
+    /// 여기서 처음 차지되므로, 그때 한 번 축하받는다.
+    static func claimCelebration(for day: Date) -> Bool {
+        let value = Calendar.current.startOfDay(for: day).timeIntervalSinceReferenceDate
+        guard defaults.double(forKey: celebratedKey) != value else { return false }
+        defaults.set(value, forKey: celebratedKey)
+        return true
+    }
+
     /// 앱과 위젯이 공유하는 영구 컨테이너.
     static let shared: ModelContainer = {
         let schema = Schema([DailyColorLog.self])

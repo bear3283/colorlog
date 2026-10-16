@@ -38,6 +38,7 @@ struct TimelineGridView: View {
     @Environment(\.paletteTheme) private var theme
     @Environment(\.colorPalette) private var palette
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @Query(oldestLogDescriptor) private var oldestLogs: [DailyColorLog]
 
     /// 자정을 넘겨도 원점이 어제에 머물지 않도록 상태로 들고 간다.
@@ -51,6 +52,8 @@ struct TimelineGridView: View {
     /// 칸들의 화면 위치. 스크롤할 때마다 바뀌므로 @State에 두면 그때마다 body가 다시 돈다.
     /// 관찰되지 않는 상자에 담아 두고 탭하는 순간에 꺼내 쓴다.
     @State private var frames = CellFrameBox()
+    /// 지금 축하하고 있는 오늘의 세 색. nil이면 축하 중이 아니다.
+    @State private var celebration: [String]?
 
     private var mapper: TimelineMapper { TimelineMapper(today: today) }
 
@@ -112,6 +115,20 @@ struct TimelineGridView: View {
             }
         }
         .background(SunlightBackground(theme: theme))
+        // 축하는 상단 버튼까지 덮는다. 떠 있는 동안에는 격자를 만질 일이 없다.
+        .overlay {
+            if let celebration {
+                SuccessPopupView(
+                    colors: celebration.map { Color(hex: $0, fallback: .gray) },
+                    seed: today.colorSeed,
+                    onDismiss: { self.celebration = nil })
+            }
+        }
+        // 위젯에서 세 번째 색을 고른 날은 앱으로 돌아오는 순간 축하한다.
+        .onAppear(perform: celebrateIfComplete)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { celebrateIfComplete() }
+        }
         .sensoryFeedback(.selection, trigger: selectedDate)
         .onReceive(NotificationCenter.default.publisher(
             for: UIApplication.significantTimeChangeNotification
@@ -310,6 +327,22 @@ struct TimelineGridView: View {
             selectedDate = nil
             selectedFrame = nil
         }
+        // 세 번째 색이 칸을 채우고 팔레트가 닫힌 걸 본 다음에 축하한다.
+        if Calendar.current.isDate(date, inSameDayAs: today) {
+            Task {
+                try? await Task.sleep(for: .milliseconds(480))
+                celebrateIfComplete()
+            }
+        }
+    }
+
+    /// 오늘 세 자리가 다 찼고 아직 축하하지 않았으면 축하한다.
+    private func celebrateIfComplete() {
+        guard celebration == nil else { return }
+        let slots = colors(on: today)
+        guard BearState(filledCount: slots.count { !$0.isEmpty }) == .completed,
+              ColorLogStore.claimCelebration(for: today) else { return }
+        celebration = slots
     }
 
     /// 알림에서 넘어온 날을 화면 한가운데로 가져온다.

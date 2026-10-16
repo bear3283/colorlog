@@ -27,25 +27,73 @@ import SwiftUI
 struct WatercolorBearView: View {
 
     /// 감정 색상. 하루 기록은 1~3개지만 몇 개든 받는다.
-    var moodColors: [Color]
-    var pose: BearPose = .standing
+    let moodColors: [Color]
+    let pose: BearPose
+    /// 칠할지, 선과 종이만 둘지, 옅은 선화로 둘지. 하루 칸이 어떤 얼굴인지는 `DayBear`가 정한다.
+    let style: DayBear.Style
     /// 번짐 배치의 시드. 같은 시드 = 같은 번짐. 앱에서는 `date.colorSeed`를 넘긴다.
-    var seed: UInt64 = 0
+    let seed: UInt64
 
     /// 0이면 물감이 아직 종이에 닿기 전, 1이면 다 번진 상태.
     @State private var bloom: CGFloat = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    var body: some View {
-        // 배치는 여기서 한 번만 계산한다. 물감 층은 애니메이션 프레임마다 다시 그려진다.
-        let washes = WatercolorWash.layout(count: moodColors.count, seed: seed, occupancy: pose.occupancy)
+    /// 하루 칸의 곰 그대로. 오늘 칸 · 지난 칸 · 미래 칸이 모두 이 길로 그린다.
+    init(day: DayBear, colors: [Color], seed: UInt64) {
+        self.init(moodColors: colors, pose: day.pose, style: day.style, seed: seed)
+    }
 
-        ZStack {
+    init(moodColors: [Color], pose: BearPose = .standing, style: DayBear.Style = .painted, seed: UInt64 = 0) {
+        self.moodColors = moodColors
+        self.pose = pose
+        self.style = style
+        self.seed = seed
+    }
+
+    /// 실제로 칠할 색. 칠하는 얼굴이 아니면 색을 받아도 쓰지 않는다.
+    private var paints: [Color] { style == .painted ? moodColors : [] }
+
+    var body: some View {
+        Group {
+            if style == .lineArt {
+                lineArt
+            } else {
+                watercolor
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .accessibilityElement()
+        .accessibilityLabel(accessibilityText)
+    }
+
+    /// 아직 오지 않았거나 아무것도 남기지 않은 날. 연필 선만 옅은 회색으로.
+    /// 종이도 물감도 깔지 않아 배경이 그대로 비친다.
+    private var lineArt: some View {
+        pose.art(.ink)
+            .grayscale(1)
+            .opacity(0.28)
+    }
+
+    /// 동작 이름은 읽어 주지 않는다. 날짜로 뽑은 동작이라, 화난 곰이 나와도
+    /// 그날 기분을 앱이 판단한 게 아니다.
+    private var accessibilityText: String {
+        switch style {
+        case .painted: "색 \(paints.count)개로 칠한 곰"
+        case .bare: "아직 칠하지 않은 곰"
+        case .lineArt: "빈 날"
+        }
+    }
+
+    private var watercolor: some View {
+        // 배치는 여기서 한 번만 계산한다. 물감 층은 애니메이션 프레임마다 다시 그려진다.
+        let washes = WatercolorWash.layout(count: paints.count, seed: seed, occupancy: pose.occupancy)
+
+        return ZStack {
             // 종이와 물감은 하나로 묶어 마스크한다.
             // compositingGroup이 없으면 multiply가 곰돌이 밖의 화면 배경과도 섞인다.
             ZStack {
                 WatercolorPaper(seed: seed)
-                WatercolorPaint(colors: moodColors, washes: washes, bloom: bloom)
+                WatercolorPaint(colors: paints, washes: washes, bloom: bloom)
                     .blendMode(.multiply)
             }
             .compositingGroup()
@@ -54,9 +102,8 @@ struct WatercolorBearView: View {
             pose.art(.keep)
             pose.art(.ink)
         }
-        .aspectRatio(1, contentMode: .fit)
         // 색 · 자세 · 시드 중 하나라도 바뀌면 다시 번진다.
-        .task(id: BloomKey(colors: moodColors, pose: pose, seed: seed)) {
+        .task(id: BloomKey(colors: paints, pose: pose, seed: seed)) {
             guard !reduceMotion else {
                 bloom = 1
                 return
@@ -66,8 +113,6 @@ struct WatercolorBearView: View {
             try? await Task.sleep(for: .milliseconds(40))
             withAnimation(.easeInOut(duration: 2.0)) { bloom = 1 }
         }
-        .accessibilityElement()
-        .accessibilityLabel("\(pose.spokenName) 곰, 색 \(moodColors.count)개")
     }
 }
 
@@ -102,25 +147,6 @@ enum BearPose: String, CaseIterable, Identifiable {
     case crying
 
     var id: Self { self }
-
-    var spokenName: String {
-        switch self {
-        case .standing: "서 있는"
-        case .waving: "손 흔드는"
-        case .sleeping: "자는"
-        case .sitting: "앉아 있는"
-        case .jumping: "뛰어오르는"
-        case .cheering: "만세하는"
-        case .running: "달리는"
-        case .eating: "도넛 먹는"
-        case .reading: "책 읽는"
-        case .proud: "뿌듯한"
-        case .pointing: "손가락으로 가리키는"
-        case .peeking: "빼꼼 내다보는"
-        case .angry: "화난"
-        case .crying: "우는"
-        }
-    }
 
     enum Layer: String {
         case ink = "Ink"
@@ -707,6 +733,26 @@ struct BearPoseSheet: View {
     BearPoseSheet(poses: BearPoseSheet.moods)
         .frame(maxHeight: .infinity)
         .background(Color.white)
+}
+
+#Preview("날마다 곰") {
+    // 지난 열흘 · 오늘 · 다가올 사흘. 채운 자리 수를 날마다 바꿔 세 얼굴을 모두 본다.
+    let calendar = Calendar.current
+    let today = calendar.startOfDay(for: .now)
+    let palette = ColorPalette.default.swatches.map(\.color)
+    let days = (-10...3).map { calendar.date(byAdding: .day, value: $0, to: today)! }
+
+    LazyVGrid(columns: Array(repeating: GridItem(spacing: 6), count: 7), spacing: 6) {
+        ForEach(days, id: \.self) { day in
+            let offset = calendar.dateComponents([.day], from: today, to: day).day!
+            let filled = offset == 0 ? 0 : [0, 1, 2, 3, 3, 1, 2][(offset + 70) % 7]
+            WatercolorBearView(
+                day: DayBear(date: day, filledCount: filled, relation: DayRelation(date: day, today: today)),
+                colors: (0..<filled).map { palette[(offset + 70 + $0 * 2) % palette.count] },
+                seed: day.colorSeed)
+        }
+    }
+    .padding()
 }
 
 #Preview("빨강 · 노랑 · 파랑") {
