@@ -471,7 +471,7 @@ private struct TimelineRowView: View {
                     Color.clear
                         .frame(width: cellSide, height: cellSide)
                 } else {
-                    DailyCellView(
+                    DayBearCell(
                         date: date,
                         log: lookup[date],
                         relation: relation,

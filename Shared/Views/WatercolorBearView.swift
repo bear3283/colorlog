@@ -33,21 +33,35 @@ struct WatercolorBearView: View {
     let style: DayBear.Style
     /// 번짐 배치의 시드. 같은 시드 = 같은 번짐. 앱에서는 `date.colorSeed`를 넘긴다.
     let seed: UInt64
+    /// 처음 나타날 때 번질지. 격자 칸은 이미 칠해진 채로 나타나고, 색이 바뀔 때만 번진다.
+    /// 스크롤로 칸이 다시 나타날 때마다 번지면 캔버스가 쉴 새 없이 꿈틀댄다.
+    let bloomsOnAppear: Bool
 
     /// 0이면 물감이 아직 종이에 닿기 전, 1이면 다 번진 상태.
-    @State private var bloom: CGFloat = 0
+    @State private var bloom: CGFloat
+    @State private var hasAppeared = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
 
     /// 하루 칸의 곰 그대로. 오늘 칸 · 지난 칸 · 미래 칸이 모두 이 길로 그린다.
-    init(day: DayBear, colors: [Color], seed: UInt64) {
-        self.init(moodColors: colors, pose: day.pose, style: day.style, seed: seed)
+    init(day: DayBear, colors: [Color], seed: UInt64, bloomsOnAppear: Bool = true) {
+        self.init(moodColors: colors, pose: day.pose, style: day.style, seed: seed, bloomsOnAppear: bloomsOnAppear)
     }
 
-    init(moodColors: [Color], pose: BearPose = .standing, style: DayBear.Style = .painted, seed: UInt64 = 0) {
+    init(
+        moodColors: [Color],
+        pose: BearPose = .standing,
+        style: DayBear.Style = .painted,
+        seed: UInt64 = 0,
+        bloomsOnAppear: Bool = true
+    ) {
         self.moodColors = moodColors
         self.pose = pose
         self.style = style
         self.seed = seed
+        self.bloomsOnAppear = bloomsOnAppear
+        // 번지지 않고 나타나는 곰은 첫 프레임부터 다 칠해져 있어야 한 번 깜빡이지 않는다.
+        _bloom = State(initialValue: bloomsOnAppear ? 0 : 1)
     }
 
     /// 실제로 칠할 색. 칠하는 얼굴이 아니면 색을 받아도 쓰지 않는다.
@@ -69,9 +83,12 @@ struct WatercolorBearView: View {
     /// 아직 오지 않았거나 아무것도 남기지 않은 날. 연필 선만 옅은 회색으로.
     /// 종이도 물감도 깔지 않아 배경이 그대로 비친다.
     private var lineArt: some View {
+        // 갈색 연필 선을 회색으로 빼서 옅게 둔다. 어두운 배경에서는 회색 선이 바탕에 묻히므로
+        // 밝기를 뒤집어 옅은 회색 선으로 그린다.
         pose.art(.ink)
             .grayscale(1)
-            .opacity(0.28)
+            .colorInvert(colorScheme == .dark)
+            .opacity(colorScheme == .dark ? 0.32 : 0.28)
     }
 
     /// 동작 이름은 읽어 주지 않는다. 날짜로 뽑은 동작이라, 화난 곰이 나와도
@@ -104,7 +121,9 @@ struct WatercolorBearView: View {
         }
         // 색 · 자세 · 시드 중 하나라도 바뀌면 다시 번진다.
         .task(id: BloomKey(colors: paints, pose: pose, seed: seed)) {
-            guard !reduceMotion else {
+            let isFirst = !hasAppeared
+            hasAppeared = true
+            guard !reduceMotion, bloomsOnAppear || !isFirst else {
                 bloom = 1
                 return
             }
@@ -507,19 +526,31 @@ private struct WatercolorPaint: View, Animatable {
                 let pigment = colors[wash.colorIndex]
                 let outline = wash.path(center: center, radius: radius)
 
+                let inner = wash.path(
+                    center: CGPoint(x: center.x + wash.innerOffset.x * radius,
+                                    y: center.y + wash.innerOffset.y * radius),
+                    radius: radius * 0.6)
+
+                // 가장자리만 누그러뜨린다. 반지름의 6% — 경계는 보이되 칼로 자른 듯하지는 않게.
+                // 격자 칸처럼 작을 땐 이 블러가 반 픽셀도 안 돼 눈에 보이지 않는다.
+                // 그 크기에서는 레이어(오프스크린 버퍼)를 열지 않고 바로 칠한다 — 칸 하나를
+                // 그리는 비용 대부분이 얼룩마다 여는 레이어였다.
+                guard radius * 0.06 >= 0.75 else {
+                    // 테두리도 뺀다. 블러 없이 작게 그리면 테두리끼리 이어져 잎맥 같은 금으로 보인다.
+                    context.fill(outline, with: .color(pigment.opacity(0.19 * t)))
+                    context.fill(inner, with: .color(pigment.opacity(0.1 * t)))
+                    continue
+                }
+
                 context.drawLayer { layer in
                     layer.blendMode = .multiply
                     layer.opacity = t
-                    // 가장자리만 누그러뜨린다. 반지름의 6% — 경계는 보이되 칼로 자른 듯하지는 않게.
                     layer.addFilter(.blur(radius: radius * 0.06))
 
                     // 묽은 바탕칠.
                     layer.fill(outline, with: .color(pigment.opacity(0.19)))
                     // 물감이 더 고인 속칠. 가운데에서 비켜 앉아 얼룩 안에 농담이 생긴다.
-                    let inner = CGPoint(x: center.x + wash.innerOffset.x * radius,
-                                        y: center.y + wash.innerOffset.y * radius)
-                    layer.fill(wash.path(center: inner, radius: radius * 0.6),
-                               with: .color(pigment.opacity(0.1)))
+                    layer.fill(inner, with: .color(pigment.opacity(0.1)))
                     // 마르면서 가장자리로 밀려 고인 안료. 수채화가 수채화로 읽히는 건 이 테두리 덕이다.
                     layer.stroke(outline, with: .color(pigment.opacity(0.18)),
                                  lineWidth: max(radius * 0.045, 1))
@@ -629,6 +660,13 @@ private struct WatercolorWash {
                 delay: CGFloat(colorIndex) / CGFloat(count) * 0.45 + .random(in: 0...0.12, using: &rng),
                 contour: contour)
         }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func colorInvert(_ isOn: Bool) -> some View {
+        if isOn { colorInvert() } else { self }
     }
 }
 
