@@ -4,12 +4,15 @@
 //
 //  달력이 아니라 '오늘'을 원점으로 삼는 좌표계.
 //
-//   -2행:  D-17 D-16 D-15 [D-14]  D-13 D-12 D-11
-//   -1행:  D-10 D-9  D-8  [D-7]   D-6  D-5  D-4
-//    0행:  D-3  D-2  D-1  [오늘]  D+1  D+2  D+3
-//    1행:  D+4  D+5  D+6  [D+7]   D+8  D+9  D+10
+//   -2행:  D-12 D-11 [D-10]  D-9  D-8
+//   -1행:  D-7  D-6  [D-5]   D-4  D-3
+//    0행:  D-2  D-1  [오늘]  D+1  D+2
+//    1행:  D+3  D+4  [D+5]   D+6  D+7
 //
-//  => offset = (column - 3) + 7 * row
+//  => offset = (column - 2) + 5 * row
+//
+//  한 행은 일주일이 아니라 닷새다. 칸마다 곰이 앉으면서 일곱 마리는 너무 빽빽했다.
+//  다섯이면 곰이 한 치수 커져 동작이 읽히고, 그래도 오늘은 정중앙에 놓인다(홀수).
 //
 //  시간은 글을 읽듯 **왼쪽에서 오른쪽으로, 위에서 아래로** 흐른다.
 //  위로 올라갈수록 과거, 아래로 내려갈수록 미래다.
@@ -22,10 +25,10 @@ import Foundation
 
 nonisolated struct TimelineMapper: Equatable, Sendable {
 
-    /// 7열 고정. 중앙(오늘)이 존재하려면 홀수여야 한다.
-    static let columnCount = 7
-    /// 0-based 정중앙 = 4번째 칸.
-    static let centerColumn = columnCount / 2   // 3
+    /// 5열 고정. 중앙(오늘)이 존재하려면 홀수여야 한다.
+    static let columnCount = 5
+    /// 0-based 정중앙 = 3번째 칸.
+    static let centerColumn = columnCount / 2   // 2
 
     /// 아무리 화면이 짧아도 이만큼의 미래는 보여 준다.
     static let minimumFutureRows = 3
@@ -88,7 +91,7 @@ nonisolated struct TimelineMapper: Equatable, Sendable {
             return nil
         }
 
-        // offset = (c - 3) + 7r  =>  r = floor((offset + 3) / 7)
+        // offset = (c - 2) + 5r  =>  r = floor((offset + 2) / 5)
         let row = Self.floorDiv(offset + Self.centerColumn, Self.columnCount)
         let column = offset - Self.columnCount * row + Self.centerColumn
         guard (0..<Self.columnCount).contains(column) else { return nil }

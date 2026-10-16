@@ -23,6 +23,9 @@ struct DayBearCell: View {
     /// 기록에 저장된 곰의 동작. nil이면 날짜 시드로 고른다.
     var pose: BearPose? = nil
     var isHighlighted: Bool = false
+    /// 지난 칠한 칸을 한 번 그린 그림으로 대신할지. 크게 띄워 색을 고치는 곳에서는
+    /// 물감이 번지는 걸 보여야 하므로 끈다.
+    var usesSnapshot: Bool = true
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.displayScale) private var displayScale
@@ -32,12 +35,20 @@ struct DayBearCell: View {
         self.init(date: date, colors: log?.slotColors ?? [], relation: relation, pose: log?.pose, isHighlighted: isHighlighted)
     }
 
-    init(date: Date, colors: [String], relation: DayRelation, pose: BearPose? = nil, isHighlighted: Bool = false) {
+    init(
+        date: Date,
+        colors: [String],
+        relation: DayRelation,
+        pose: BearPose? = nil,
+        isHighlighted: Bool = false,
+        usesSnapshot: Bool = true
+    ) {
         self.date = date
         self.colors = colors
         self.relation = relation
         self.pose = pose
         self.isHighlighted = isHighlighted
+        self.usesSnapshot = usesSnapshot
     }
 
     private var filled: [String] { colors.prefix(DailyColorLog.maxColorsPerDay).filter { !$0.isEmpty } }
@@ -69,7 +80,7 @@ struct DayBearCell: View {
     private var face: some View {
         if isToday {
             breathingBear
-        } else if relation == .past, day.style == .painted {
+        } else if usesSnapshot, relation == .past, day.style == .painted {
                 // 지나간 칠한 날은 다시 바뀔 일이 드물다. 한 번 그린 그림을 그대로 쓴다.
                 GeometryReader { proxy in
                     if let image = cachedImage(side: proxy.size.width) {

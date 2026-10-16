@@ -26,11 +26,8 @@ import WidgetKit
 
 struct TimelineGridView: View {
 
-    /// 원형 팔레트가 칸의 위치를 읽어 오는 좌표 공간.
-    private static let canvasSpace = "colorlog.canvas"
-
     var horizontalPadding: CGFloat = 18
-    var spacing: CGFloat = 7
+    var spacing: CGFloat = 10
     var onOpenSettings: () -> Void = {}
     /// 알림을 눌러 들어온 경우 열어야 할 날. 처리한 뒤 nil로 되돌린다.
     var openRequest: Binding<Date?> = .constant(nil)
@@ -47,11 +44,8 @@ struct TimelineGridView: View {
     /// 가시성을 그대로 쓴다 — 여백·안전영역 계산이 한 군데라도 어긋나면
     /// 버튼이 엉뚱할 때 떠 버리기 때문.
     @State private var isTodayVisible = true
-    @State private var selectedDate: Date?
-    @State private var selectedFrame: CGRect?
-    /// 칸들의 화면 위치. 스크롤할 때마다 바뀌므로 @State에 두면 그때마다 body가 다시 돈다.
-    /// 관찰되지 않는 상자에 담아 두고 탭하는 순간에 꺼내 쓴다.
-    @State private var frames = CellFrameBox()
+    /// 하루 한 장을 열어 둔 날.
+    @State private var openedDay: OpenedDay?
     /// 지금 축하하고 있는 오늘의 세 색. nil이면 축하 중이 아니다.
     @State private var celebration: [String]?
     /// 곰의 동작을 고르고 있는 날의 기록.
@@ -88,26 +82,7 @@ struct TimelineGridView: View {
                 // 안전영역 안에서 중앙을 잡으면 위쪽 상태바만큼 아래로 내려앉아 보인다.
                 let fullHeight = proxy.size.height + insets.top + insets.bottom
 
-                ZStack {
-                    canvas(cellSide: side, viewportHeight: fullHeight, proxy: scrollProxy)
-
-                    if let selectedDate, let selectedFrame {
-                        let slots = colors(on: selectedDate)
-                        RadialColorPicker(
-                            palette: palette,
-                            slotColors: slots,
-                            initialSlot: DailyColorLog.Slot.defaultSelection(
-                                slotColors: slots, due: dueSlots(on: selectedDate)
-                            ),
-                            anchor: selectedFrame,
-                            bounds: proxy.size,
-                            onSet: { slot, hex in setColor(hex, for: slot, on: selectedDate) },
-                            onDismiss: { close() }
-                        )
-                        .id(selectedDate)
-                    }
-                }
-                .coordinateSpace(.named(Self.canvasSpace))
+                canvas(cellSide: side, viewportHeight: fullHeight, proxy: scrollProxy)
                 // 버튼들은 격자와 달리 안전영역 안에 머문다.
                 .overlay(alignment: .top) { topBar }
                 .overlay(alignment: .bottom) {
@@ -126,6 +101,19 @@ struct TimelineGridView: View {
                     onDismiss: { self.celebration = nil })
             }
         }
+        // 곰을 누르면 하루 한 장이 올라온다. 날짜 · 큰 곰 · 색 한 줄.
+        .sheet(item: $openedDay) { day in
+            DayDetailSheet(
+                date: day.date,
+                relation: DayRelation(date: day.date, today: today),
+                palette: palette,
+                due: dueSlots(on: day.date),
+                onSet: { slot, hex in setColor(hex, for: slot, on: day.date) }
+            )
+            .environment(\.paletteTheme, theme)
+            .environment(\.colorPalette, palette)
+            .preferredColorScheme(theme.colorScheme)
+        }
         .sheet(item: $poseEditing) { log in
             BearPosePicker(log: log)
                 .environment(\.paletteTheme, theme)
@@ -138,7 +126,7 @@ struct TimelineGridView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { celebrateIfComplete() }
         }
-        .sensoryFeedback(.selection, trigger: selectedDate)
+        .sensoryFeedback(.selection, trigger: openedDay)
         .onReceive(NotificationCenter.default.publisher(
             for: UIApplication.significantTimeChangeNotification
         )) { _ in
@@ -176,10 +164,6 @@ struct TimelineGridView: View {
                             cellSide: cellSide,
                             spacing: spacing,
                             startDate: startDate,
-                            selectedDate: selectedDate,
-                            selectedFrame: $selectedFrame,
-                            frames: frames,
-                            coordinateSpace: Self.canvasSpace,
                             onTap: { date in open(date) },
                             onLongPress: { date in editPose(on: date) }
                         )
@@ -201,10 +185,6 @@ struct TimelineGridView: View {
         .ignoresSafeArea(.container, edges: .vertical)
         .scrollTargetBehavior(.viewAligned(limitBehavior: .never))
         .scrollIndicators(.hidden)
-        .scrollDisabled(selectedDate != nil)
-        // 스크롤이 움직이면 닫던 로직은 뺐다.
-        // 감속이 남은 동안 탭하면 열리자마자 닫혀 '눌러도 반응이 없는' 것처럼 보였다.
-        // 앵커는 선택된 칸이 계속 보고하므로, 격자가 움직여도 원이 그대로 따라간다.
         // 오늘을 화면 한가운데로. 스크롤 뷰가 화면 전체를 차지하므로
         // .center가 곧 기기 화면의 중앙이다.
         .task {
@@ -234,8 +214,6 @@ struct TimelineGridView: View {
         .overlay { Capsule().strokeBorder(theme.stroke.opacity(0.5), lineWidth: 0.6) }
         .padding(.horizontal, horizontalPadding)
         .padding(.top, 6)
-        .opacity(selectedDate == nil ? 1 : 0)
-        .animation(.smooth(duration: 0.2), value: selectedDate)
     }
 
     /// 설정 진입점. 아이콘도 글자도 아닌, 지금 팔레트의 색 자체.
@@ -256,7 +234,7 @@ struct TimelineGridView: View {
     /// 오늘에서 멀어지면 돌아올 길을 남긴다. 글자 대신 틴트 색 점 하나.
     @ViewBuilder
     private func returnToTodayButton(proxy: ScrollViewProxy) -> some View {
-        if !isTodayVisible, selectedDate == nil {
+        if !isTodayVisible {
             Button {
                 withAnimation(.smooth(duration: 0.45)) {
                     proxy.scrollTo(0, anchor: .center)
@@ -283,26 +261,9 @@ struct TimelineGridView: View {
     /// 위치는 계산하지 않는다. 예전에는 (행, 열)과 스크롤 오프셋으로 화면 좌표를
     /// 산술로 구했는데, 안전영역·콘텐츠 인셋·스냅 애니메이션 중 하나만 어긋나도
     /// 원이 뒤 격자와 맞지 않았다. 지금은 **선택된 칸이 자기 프레임을 직접 보고**한다.
+    /// 곰을 누르면 그날의 한 장을 연다.
     private func open(_ date: Date) {
-        if selectedDate == date {
-            close()
-            return
-        }
-        // 위치를 '나중에 알려 주기를 기다리지' 않는다. 이미 받아 둔 값을 그 자리에서 쓴다.
-        // 기다리는 구조였을 때는 알림이 오지 않으면 팔레트가 영영 뜨지 않고,
-        // scrollDisabled까지 걸려 화면이 죽은 것처럼 보였다.
-        guard let frame = frames.rects[date] else { return }
-        withAnimation(.smooth(duration: 0.28)) {
-            selectedDate = date
-            selectedFrame = frame
-        }
-    }
-
-    private func close() {
-        withAnimation(.smooth(duration: 0.24)) {
-            selectedDate = nil
-            selectedFrame = nil
-        }
+        openedDay = OpenedDay(date: date)
     }
 
     /// 자리 순서의 HEX. 언제나 세 칸, 빈 자리는 "".
@@ -331,18 +292,17 @@ struct TimelineGridView: View {
             }
         }
         WidgetCenter.shared.reloadAllTimelines()
-        // 고른 색이 칸을 채우는 순간을 잠깐 보여 준 뒤 닫는다.
-        // 이 지연 동안에도 원형 팔레트는 이미 탭을 받지 않으므로 다음 탭이 막히지 않는다.
-        withAnimation(.smooth(duration: 0.26).delay(0.16)) {
-            selectedDate = nil
-            selectedFrame = nil
-        }
-        // 세 번째 색이 칸을 채우고 팔레트가 닫힌 걸 본 다음에 축하한다.
-        if Calendar.current.isDate(date, inSameDayAs: today) {
-            Task {
-                try? await Task.sleep(for: .milliseconds(480))
-                celebrateIfComplete()
-            }
+
+        // 오늘 세 번째 색이 들어갔으면 한 장을 내리고 축하한다. 축하는 격자 위에 뜨므로
+        // 시트가 떠 있으면 그 밑에 깔려 보이지 않는다. 색이 곰에 스며드는 걸 잠깐 본 뒤 내린다.
+        guard Calendar.current.isDate(date, inSameDayAs: today),
+              BearState(filledCount: colors(on: today).count { !$0.isEmpty }) == .completed
+        else { return }
+        Task {
+            try? await Task.sleep(for: .milliseconds(700))
+            openedDay = nil
+            try? await Task.sleep(for: .milliseconds(450))
+            celebrateIfComplete()
         }
     }
 
@@ -433,14 +393,10 @@ private struct TimelineRowView: View {
     let spacing: CGFloat
     /// 캔버스가 시작하는 날. 이보다 이른 칸은 아예 그리지 않는다.
     let startDate: Date
-    let selectedDate: Date?
-    @Binding var selectedFrame: CGRect?
-    let frames: CellFrameBox
-    let coordinateSpace: String
     let onTap: (Date) -> Void
     let onLongPress: (Date) -> Void
 
-    /// 이 행이 덮는 7일치만 조회한다.
+    /// 이 행이 덮는 며칠치만 조회한다.
     @Query private var logs: [DailyColorLog]
 
     init(
@@ -449,10 +405,6 @@ private struct TimelineRowView: View {
         cellSide: CGFloat,
         spacing: CGFloat,
         startDate: Date,
-        selectedDate: Date?,
-        selectedFrame: Binding<CGRect?>,
-        frames: CellFrameBox,
-        coordinateSpace: String,
         onTap: @escaping (Date) -> Void,
         onLongPress: @escaping (Date) -> Void
     ) {
@@ -461,10 +413,6 @@ private struct TimelineRowView: View {
         self.cellSide = cellSide
         self.spacing = spacing
         self.startDate = startDate
-        self.selectedDate = selectedDate
-        self._selectedFrame = selectedFrame
-        self.frames = frames
-        self.coordinateSpace = coordinateSpace
         self.onTap = onTap
         self.onLongPress = onLongPress
 
@@ -499,16 +447,6 @@ private struct TimelineRowView: View {
                         isHighlighted: relation == .today
                     )
                     .frame(width: cellSide, height: cellSide)
-                    // 조건 없이 모든 칸이 자기 자리를 보고한다. 조건부로 붙이면
-                    // 탭하는 순간 뷰 아이덴티티가 바뀌어 제스처가 취소될 수 있고,
-                    // 새로 붙은 수식어가 알림을 한 번도 안 줄 수도 있다.
-                    .onGeometryChange(for: CGRect.self) {
-                        $0.frame(in: .named(coordinateSpace))
-                    } action: { rect in
-                        frames.rects[date] = rect
-                        // 열려 있는 칸이면 원형 팔레트도 같이 따라간다.
-                        if selectedDate == date { selectedFrame = rect }
-                    }
                     .contentShape(.rect)
                     .onTapGesture { onTap(date) }
                     // 칠한 날의 곰은 길게 눌러 동작을 바꾼다. 빈 날은 부모가 무시한다.
@@ -525,12 +463,10 @@ private struct TimelineRowView: View {
     }
 }
 
-/// 칸들의 화면 위치를 담아 두는 상자.
-///
-/// 관찰되지 않는 평범한 클래스다. 여기에 값을 써도 뷰가 다시 그려지지 않으므로,
-/// 스크롤하는 동안 매 프레임 갱신해도 비용이 거의 없다.
-private final class CellFrameBox {
-    var rects: [Date: CGRect] = [:]
+/// 시트로 여는 하루. `sheet(item:)`이 날짜를 구분할 수 있게 감싼다.
+private struct OpenedDay: Identifiable, Equatable {
+    let date: Date
+    var id: Date { date }
 }
 
 // MARK: - 가장 오래된 기록 (캔버스의 끝을 정한다)
