@@ -54,6 +54,8 @@ struct TimelineGridView: View {
     @State private var frames = CellFrameBox()
     /// 지금 축하하고 있는 오늘의 세 색. nil이면 축하 중이 아니다.
     @State private var celebration: [String]?
+    /// 곰의 동작을 고르고 있는 날의 기록.
+    @State private var poseEditing: DailyColorLog?
 
     private var mapper: TimelineMapper { TimelineMapper(today: today) }
 
@@ -124,6 +126,13 @@ struct TimelineGridView: View {
                     onDismiss: { self.celebration = nil })
             }
         }
+        .sheet(item: $poseEditing) { log in
+            BearPosePicker(log: log)
+                .environment(\.paletteTheme, theme)
+                .environment(\.colorPalette, palette)
+                .preferredColorScheme(theme.colorScheme)
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: poseEditing != nil) { _, isOpen in isOpen }
         // 위젯에서 세 번째 색을 고른 날은 앱으로 돌아오는 순간 축하한다.
         .onAppear(perform: celebrateIfComplete)
         .onChange(of: scenePhase) { _, phase in
@@ -171,7 +180,8 @@ struct TimelineGridView: View {
                             selectedFrame: $selectedFrame,
                             frames: frames,
                             coordinateSpace: Self.canvasSpace,
-                            onTap: { date in open(date) }
+                            onTap: { date in open(date) },
+                            onLongPress: { date in editPose(on: date) }
                         )
                         .id(row)
                         .modifier(TodayVisibilityReporter(isTodayRow: row == 0, isVisible: $isTodayVisible))
@@ -336,6 +346,14 @@ struct TimelineGridView: View {
         }
     }
 
+    /// 칠한 날의 곰을 길게 누르면 동작 고르기를 연다. 빈 날에는 바꿀 곰이 없다.
+    private func editPose(on date: Date) {
+        var descriptor = FetchDescriptor<DailyColorLog>(predicate: DailyColorLog.predicate(for: date))
+        descriptor.fetchLimit = 1
+        guard let log = try? modelContext.fetch(descriptor).first, !log.isEmpty else { return }
+        poseEditing = log
+    }
+
     /// 오늘 세 자리가 다 찼고 아직 축하하지 않았으면 축하한다.
     private func celebrateIfComplete() {
         guard celebration == nil else { return }
@@ -420,6 +438,7 @@ private struct TimelineRowView: View {
     let frames: CellFrameBox
     let coordinateSpace: String
     let onTap: (Date) -> Void
+    let onLongPress: (Date) -> Void
 
     /// 이 행이 덮는 7일치만 조회한다.
     @Query private var logs: [DailyColorLog]
@@ -434,7 +453,8 @@ private struct TimelineRowView: View {
         selectedFrame: Binding<CGRect?>,
         frames: CellFrameBox,
         coordinateSpace: String,
-        onTap: @escaping (Date) -> Void
+        onTap: @escaping (Date) -> Void,
+        onLongPress: @escaping (Date) -> Void
     ) {
         self.row = row
         self.mapper = mapper
@@ -446,6 +466,7 @@ private struct TimelineRowView: View {
         self.frames = frames
         self.coordinateSpace = coordinateSpace
         self.onTap = onTap
+        self.onLongPress = onLongPress
 
         let range = mapper.dayRange(row: row)
         _logs = Query(
@@ -490,6 +511,13 @@ private struct TimelineRowView: View {
                     }
                     .contentShape(.rect)
                     .onTapGesture { onTap(date) }
+                    // 칠한 날의 곰은 길게 눌러 동작을 바꾼다. 빈 날은 부모가 무시한다.
+                    .onLongPressGesture(minimumDuration: 0.45) { onLongPress(date) }
+                    .accessibilityActions {
+                        if !(lookup[date]?.isEmpty ?? true) {
+                            Button("곰 바꾸기") { onLongPress(date) }
+                        }
+                    }
                     .allowsHitTesting(relation != .future)
                 }
             }

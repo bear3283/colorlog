@@ -42,6 +42,16 @@ final class DailyColorLog {
     /// 나중에 사용자가 테마를 바꿔도 "그날의 색이 어떤 세계관에서 골라졌는지"는 보존된다.
     var themePalette: String
 
+    /// 그날 곰의 동작(`BearPose.rawValue`).
+    ///
+    /// 처음 기록될 때 무작위로 정해지고, 사용자가 칸을 길게 눌러 바꿀 수 있다.
+    /// 색에 감정 이름이 없듯 동작도 앱이 정해 주지 않는다 — 고른 색이 무슨 기분인지는
+    /// 사용자만 안다. 그래서 처음엔 아무 곰이나 앉히고, 바꾸는 건 사용자에게 맡긴다.
+    ///
+    /// 선택값이라 기존 저장소는 마이그레이션 없이 열린다. nil은 이 속성이 생기기 전의
+    /// 기록이고, 그동안 보여 주던 날짜 시드 동작을 그대로 쓴다.
+    var poseRawValue: String?
+
     /// 하루의 자리 수 (아침·점심·저녁).
     static let maxColorsPerDay = 3
 
@@ -50,6 +60,7 @@ final class DailyColorLog {
         self.date = Calendar.current.startOfDay(for: date)
         self.colors = Self.sanitize(colors)
         self.themePalette = palette.rawValue
+        self.poseRawValue = BearPose.allCases.randomElement()?.rawValue
     }
 
     /// 잘못된 HEX는 빈 자리로, 나머지는 정규형으로. 언제나 세 자리.

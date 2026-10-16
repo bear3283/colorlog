@@ -7,9 +7,10 @@
 //  상태는 따로 저장하지 않는다. 그날 채운 자리 수에서 매번 계산한다.
 //  상태를 저장해 두면 기록을 지우거나 고쳤을 때 둘이 어긋난다.
 //
-//  곰의 동작은 상태가 아니라 **날짜**가 정한다. 색이 하나라도 칠해진 날은
-//  자세 열네 가지 중 하나를 날짜 시드로 뽑는다. 무작위로 보이지만 같은 날은
-//  언제 봐도 같은 곰이다 — 그릴 때마다 새로 뽑으면 스크롤할 때마다 곰이 바뀐다.
+//  곰의 동작은 상태가 아니라 **기록**이 정한다. 처음 기록될 때 열네 가지 중 하나가
+//  무작위로 저장되고(`DailyColorLog.poseRawValue`), 사용자가 칸을 길게 눌러 바꿀 수 있다.
+//  동작이 저장되기 전의 기록은 날짜 시드로 뽑는다 — 그릴 때마다 새로 뽑으면
+//  스크롤할 때마다 곰이 바뀐다.
 //  색과 동작을 묶지 않은 건, 팔레트의 색에 감정 이름이 없기 때문이다. 색의 뜻은
 //  사용자가 정하고, 앱이 '이 색이면 화난 곰'이라고 읽어 주지 않는다.
 //
@@ -71,10 +72,11 @@ struct DayBear: Equatable {
     let style: Style
 
     /// 그날의 날짜 · 칠한 자리 수 · 오늘과의 관계로 곰을 고른다.
+    /// 칠한 날의 동작은 기록에 저장된 것(`storedPose`)을 쓰고, 없으면 날짜 시드로 고른다.
     ///
     /// 아무것도 남기지 않고 지나간 날을 시무룩한 곰으로 그리지 않는다. 빈 날마다
     /// 시무룩한 곰이 쌓이면 밀린 숙제처럼 읽힌다. 미래와 같은 옅은 선화로 둔다.
-    init(date: Date, filledCount: Int, relation: DayRelation) {
+    init(date: Date, filledCount: Int, relation: DayRelation, storedPose: BearPose? = nil) {
         switch (relation, filledCount) {
         case (.future, _):
             self.init(pose: .standing, style: .lineArt)
@@ -83,13 +85,21 @@ struct DayBear: Equatable {
         case (.past, ..<1):
             self.init(pose: .standing, style: .lineArt)
         default:
-            self.init(pose: .random(for: date), style: .painted)
+            self.init(pose: storedPose ?? .random(for: date), style: .painted)
         }
     }
 
     init(pose: BearPose, style: Style) {
         self.pose = pose
         self.style = style
+    }
+}
+
+extension DailyColorLog {
+    /// 그날 곰의 동작. nil이면 동작이 저장되기 전의 기록.
+    var pose: BearPose? {
+        get { poseRawValue.flatMap(BearPose.init(rawValue:)) }
+        set { poseRawValue = newValue?.rawValue }
     }
 }
 

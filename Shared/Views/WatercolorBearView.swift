@@ -144,7 +144,8 @@ private struct BloomKey: Equatable {
 
 // MARK: - 자세
 
-enum BearPose: String, CaseIterable, Identifiable {
+/// 기록 모델(SwiftData)과 위젯 · App Intent가 함께 쓰므로 MainActor 격리를 벗겨 둔다.
+nonisolated enum BearPose: String, CaseIterable, Identifiable, Sendable {
     /// 정면으로 선 기본 자세.
     case standing
     case waving
@@ -173,7 +174,29 @@ enum BearPose: String, CaseIterable, Identifiable {
         case keep = "Keep"
     }
 
+    /// 동작 고르기에서 VoiceOver가 읽는 이름. 격자 칸에서는 읽지 않는다 —
+    /// 앱이 고른 동작이 그날 기분을 판단한 것처럼 들리지 않도록.
+    var spokenName: String {
+        switch self {
+        case .standing: "서 있는 곰"
+        case .waving: "손 흔드는 곰"
+        case .sleeping: "자는 곰"
+        case .sitting: "앉아 있는 곰"
+        case .jumping: "뛰어오르는 곰"
+        case .cheering: "만세하는 곰"
+        case .running: "달리는 곰"
+        case .eating: "도넛 먹는 곰"
+        case .reading: "책 읽는 곰"
+        case .proud: "뿌듯한 곰"
+        case .pointing: "손가락으로 가리키는 곰"
+        case .peeking: "빼꼼 내다보는 곰"
+        case .angry: "화난 곰"
+        case .crying: "우는 곰"
+        }
+    }
+
     /// 원화에서 뽑은 한 겹. 모든 겹은 같은 정사각형이라 그대로 포개면 맞는다.
+    @MainActor
     func art(_ layer: Layer) -> some View {
         Image("Bear\(layer.rawValue)\(rawValue.capitalized)")
             .resizable()

@@ -32,6 +32,8 @@ struct TodayColorView: View {
     /// 지금 물어보는 자리. nil이면 칠해진 얼굴.
     let target: DailyColorLog.Slot?
     var palette: ColorPalette = .default
+    /// 오늘 기록에 저장된 곰의 동작. 앱에서 바꾼 동작이 위젯에도 그대로 앉는다.
+    var pose: BearPose? = nil
 
     /// 지금 물어볼 자리.
     ///
@@ -88,7 +90,7 @@ struct TodayColorView: View {
     /// 색 다섯 사이에 시무룩하게 앉는다. 고른 색이 있으면 그 색으로 칠한 오늘의 곰.
     private var paintedFace: some View {
         let bear = hasColors
-            ? DayBear(date: day, filledCount: filledCount, relation: .today)
+            ? DayBear(date: day, filledCount: filledCount, relation: .today, storedPose: pose)
             : DayBear(pose: BearState.sleeping.pose ?? .sleeping, style: .bare)
 
         return ZStack {
@@ -121,7 +123,7 @@ struct TodayColorView: View {
             // 앱의 원형 팔레트와 같은 모양이라 '곰을 누르면 색이 둘러선다'는 한 동작으로 이어진다.
             SkyView(theme: theme, date: date)
 
-            todayBear(DayBear(date: day, filledCount: filledCount, relation: .today))
+            todayBear(DayBear(date: day, filledCount: filledCount, relation: .today, storedPose: pose))
                 .frame(width: bearSide, height: bearSide)
                 .position(center)
 

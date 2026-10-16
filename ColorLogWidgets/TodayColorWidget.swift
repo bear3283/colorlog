@@ -29,6 +29,8 @@ struct TodayColorEntry: TimelineEntry {
     let colors: [String]
     /// 이 시각에 물어보는 자리. nil이면 칠해진 얼굴.
     let target: DailyColorLog.Slot?
+    /// 오늘 기록에 저장된 곰의 동작.
+    var pose: BearPose? = nil
 }
 
 // MARK: - Provider
@@ -49,7 +51,8 @@ struct TodayColorProvider: TimelineProvider {
                 colors: [palette.swatches[1].hex, "", ""], target: .afternoon
             ))
         } else {
-            completion(entry(at: .now, colors: todaysColors(), reminders: Reminder.load()))
+            let today = todaysLog()
+            completion(entry(at: .now, colors: today.colors, pose: today.pose, reminders: Reminder.load()))
         }
     }
 
@@ -57,7 +60,7 @@ struct TodayColorProvider: TimelineProvider {
         let calendar = Calendar.current
         let now = Date()
         let reminders = Reminder.load()
-        let colors = todaysColors()
+        let today = todaysLog()
 
         // 오늘 남은 물어보는 시각들.
         let upcoming = reminders
@@ -69,9 +72,11 @@ struct TodayColorProvider: TimelineProvider {
         let midnight = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))
             ?? now.addingTimeInterval(86_400)
 
-        var entries = ([now] + upcoming).map { entry(at: $0, colors: colors, reminders: reminders) }
+        var entries = ([now] + upcoming).map {
+            entry(at: $0, colors: today.colors, pose: today.pose, reminders: reminders)
+        }
         // 자정이 지나면 새 하루 — 빈 색으로 돌아간다.
-        entries.append(entry(at: midnight, colors: Self.emptySlots, reminders: reminders))
+        entries.append(entry(at: midnight, colors: Self.emptySlots, pose: nil, reminders: reminders))
 
         // 마지막 엔트리(자정)가 지나면 다음 날 타임라인을 새로 짠다.
         completion(Timeline(entries: entries, policy: .atEnd))
@@ -79,7 +84,7 @@ struct TodayColorProvider: TimelineProvider {
 
     // MARK: 보조
 
-    private func entry(at date: Date, colors: [String], reminders: [Reminder]) -> TodayColorEntry {
+    private func entry(at date: Date, colors: [String], pose: BearPose?, reminders: [Reminder]) -> TodayColorEntry {
         TodayColorEntry(
             date: date,
             palette: currentPalette(),
@@ -87,7 +92,8 @@ struct TodayColorProvider: TimelineProvider {
             target: TodayColorView.target(
                 slotColors: colors,
                 due: Reminder.dueSlots(at: date, reminders: reminders)
-            )
+            ),
+            pose: pose
         )
     }
 
@@ -101,13 +107,14 @@ struct TodayColorProvider: TimelineProvider {
     private static let emptySlots = Array(repeating: "", count: DailyColorLog.maxColorsPerDay)
 
     /// 오늘 하루치만 읽는다. 위젯 프로세스는 SwiftData 객체를 오래 들고 있지 않는다.
-    private func todaysColors() -> [String] {
+    private func todaysLog() -> (colors: [String], pose: BearPose?) {
         let context = ModelContext(ColorLogStore.shared)
         var descriptor = FetchDescriptor<DailyColorLog>(
             predicate: DailyColorLog.predicate(for: .now)
         )
         descriptor.fetchLimit = 1
-        return (try? context.fetch(descriptor).first?.slotColors) ?? Self.emptySlots
+        let log = try? context.fetch(descriptor).first
+        return (log?.slotColors ?? Self.emptySlots, log?.pose)
     }
 }
 
@@ -120,7 +127,8 @@ struct TodayColorWidget: Widget {
                 date: entry.date,
                 colors: entry.colors,
                 target: entry.target,
-                palette: entry.palette
+                palette: entry.palette,
+                pose: entry.pose
             )
             // 색은 콘텐츠로 그린다. 컨테이너 배경은 시스템이 상황에 따라
             // 걷어 내므로(스탠바이·틴트 모드), 거기에 색을 두면 위젯이 통째로 비어 버린다.
