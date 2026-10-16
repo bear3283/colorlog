@@ -34,6 +34,7 @@ GRID = 20
 
 FIVE = "Gemini_Generated_Image_az054oaz054oaz05.png"
 EIGHT = "Gemini_Generated_Image_5xs0p85xs0p85xs0.png"
+PROPS = "Gemini_Generated_Image_4o4nqe4o4nqe4o4n.png"
 
 # (자세, 원화 파일, 잘라 낼 영역 x0, y0, x1, y1 또는 None, 지울 영역 목록)
 # 시트에서 잘라 낼 때는 이웃 곰과 겹치지 않게 경계를 잡고, 칸 안에 걸친 이름표는 지운다.
@@ -52,6 +53,13 @@ SOURCES = [
     ("peeking", EIGHT, (1140, 985, 1575, 1348), []),
     ("angry", EIGHT, (1615, 728, 2142, 1348), []),
     ("crying", EIGHT, (2150, 798, 2652, 1348), []),
+    # 소품 시트. 위 줄 오른쪽 모자 곰은 아래 줄 모자 곰과 표정만 달라 하나(아래 줄)만 쓴다.
+    ("sunglasses", PROPS, (140, 120, 690, 695), []),
+    ("music", PROPS, (815, 90, 1370, 695), []),
+    ("umbrella", PROPS, (1500, 30, 2120, 695), []),
+    ("hat", PROPS, (160, 830, 640, 1400), []),
+    ("workout", PROPS, (1030, 835, 1725, 1400), []),
+    ("studying", PROPS, (2120, 870, 2665, 1400), []),
 ]
 
 
@@ -173,13 +181,22 @@ def extract(rgb):
                 if nearest:
                     muzzle = ndimage.binary_fill_holes(ndimage.binary_closing(nearest[1], iterations=3))
 
-    # 소품: 몸 안에서 연필 선으로 둘러싸인 칸 중 물감보다 훨씬 진한 색(책의 주황, 도넛의 분홍).
-    # 파스텔 물감 칸은 채도 중앙값이 0.2 아래라 여기에 걸리지 않는다(도넛 0.34, 몸 0.16).
+    # 소품: 몸 안에서 연필 선으로 둘러싸인 칸 중 파스텔 물감과 확연히 다른 칸.
+    #  · 물감보다 훨씬 진한 색 — 책의 주황, 도넛의 분홍, 모자의 노랑.
+    #    파스텔 물감 칸은 채도 중앙값이 0.2 아래라 걸리지 않는다(도넛 0.34, 몸 0.16).
+    #  · 색이 없는 회색 · 검정 — 아령, 선글라스 렌즈.
+    #  · 새하얀 종이 — 공책 속지.
+    # 몸통 칸 자체가 걸리지 않도록 실루엣의 35%를 넘는 칸은 소품으로 보지 않는다.
     props = np.zeros_like(silhouette)
     cells, count = ndimage.label(silhouette & ~walls)
     for index in range(1, count + 1):
         cell = cells == index
-        if cell.sum() >= 150 and np.median(sat[cell]) > 0.28:
+        if not 150 <= cell.sum() <= silhouette.sum() * 0.35:
+            continue
+        cell_sat, cell_lum = np.median(sat[cell]), np.median(lum[cell])
+        vivid = cell_sat > 0.28
+        neutral = cell_sat < 0.1 and (cell_lum < 0.8 or cell_lum > 0.93)
+        if vivid or neutral:
             props |= ndimage.binary_dilation(cell, iterations=5) & ~ink
     props &= silhouette
 
