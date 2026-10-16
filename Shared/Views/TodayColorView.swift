@@ -4,18 +4,19 @@
 //
 //  홈 화면 위젯의 얼굴. 위젯은 **오늘이라는 칸 하나를 크게 키운 것**이다.
 //
-//  얼굴은 둘뿐이고, 둘 다 글자가 없다.
+//  얼굴은 둘뿐이고, 둘 다 글자가 없다. 두 얼굴 모두 오늘의 곰이 주인공이다.
 //
-//   · 칠해진 얼굴 — 위젯 전체가 오늘 고른 색으로 가장자리까지 칠해진다.
-//     앱 격자의 오늘 칸과 같은 시드를 쓰므로 경계 각도까지 똑같다.
-//     아직 아무것도 고르지 않았으면 앱의 빈 칸과 같은 빈 색.
+//   · 칠해진 얼굴 — 물어볼 차례가 아닐 때. 오늘 고른 색으로 칠한 곰이 앉아 있다.
+//     앱 격자의 오늘 칸과 같은 동작 · 같은 번짐이다.
+//     아직 아무것도 고르지 않았으면 곰은 색 없이 자고 있다.
 //
-//   · 고르는 얼굴 — 물어보는 시각이 되면 하늘이 깔리고, 가운데의 오늘 칸
-//     둘레로 색 다섯이 둘러선다. 앱의 원형 팔레트와 같은 모양이라
-//     '칸을 누르면 색이 둘러선다'는 한 가지 동작으로 두 표면이 이어진다.
+//   · 고르는 얼굴 — 물어보는 시각이 되면 하늘이 깔리고, 가운데 곰 둘레로
+//     색 다섯이 둘러선다. 첫 색을 기다릴 땐 곰이 시무룩하게 앉아 있다.
+//     앱의 원형 팔레트와 같은 모양이라 '칸을 누르면 색이 둘러선다'는 한 가지
+//     동작으로 두 표면이 이어진다.
 //
-//  두 얼굴은 모양부터 다르다. 칠해진 얼굴은 가장자리까지 꽉 찬 면이고,
-//  고르는 얼굴은 하늘 위에 떠 있는 알들이다. 그래서 '지금 고를 차례'라는 걸
+//  두 얼굴은 바탕부터 다르다. 칠해진 얼굴은 팔레트 바탕 위의 곰이고,
+//  고르는 얼굴은 하늘 위에 색 알들이 떠 있다. 그래서 '지금 고를 차례'라는 걸
 //  문장 없이도 알 수 있다.
 //
 
@@ -69,29 +70,34 @@ struct TodayColorView: View {
 
     private var hasColors: Bool { pigments.contains { $0 != nil } }
 
-    /// 오늘 고른 색으로 가장자리까지 칠한 면. 칠해진 얼굴과 고르는 얼굴의 배경이 함께 쓴다.
-    private var colorField: some View {
-        ZStack {
-            theme.background
-            FlatColorFill(pigments: pigments, seed: day.colorSeed)
-        }
+    /// 오늘의 곰. 앱 격자의 오늘 칸과 같은 동작 · 같은 번짐이다.
+    /// 위젯은 한 번 그려 보관되는 정지 화면이라 번지는 애니메이션 없이 다 칠한 채로 그린다.
+    private func todayBear(_ bear: DayBear) -> some View {
+        WatercolorBearView(
+            day: bear,
+            colors: colors.filter { !$0.isEmpty }.map { Color(hex: $0, fallback: .gray) },
+            seed: day.colorSeed,
+            bloomsOnAppear: false)
     }
 
-    @ViewBuilder
-    private var paintedFace: some View {
-        let emptyTone = theme.stroke.opacity(theme.colorScheme == .dark ? 0.58 : 0.74)
+    private var filledCount: Int { pigments.count { $0 != nil } }
 
-        if !hasColors {
-            // 앱 격자의 '오늘 · 비어 있음'과 같은 배합.
-            ZStack {
-                theme.background
-                emptyTone
-            }
-            .accessibilityLabel("오늘 아직 기록 없음")
-        } else {
-            colorField
-            .accessibilityLabel("오늘 색 \(pigments.count { $0 != nil })개 기록됨")
+    /// 칠해진 얼굴. 물어볼 차례가 아닐 때의 위젯.
+    ///
+    /// 아직 아무것도 고르지 않았으면 곰은 자고 있다 — 물어보는 시각이 오면 깨어나
+    /// 색 다섯 사이에 시무룩하게 앉는다. 고른 색이 있으면 그 색으로 칠한 오늘의 곰.
+    private var paintedFace: some View {
+        let bear = hasColors
+            ? DayBear(date: day, filledCount: filledCount, relation: .today)
+            : DayBear(pose: BearState.sleeping.pose ?? .sleeping, style: .bare)
+
+        return ZStack {
+            theme.background
+            todayBear(bear)
+                .padding(8)
         }
+        .accessibilityElement()
+        .accessibilityLabel(hasColors ? "오늘 색 \(filledCount)개 기록됨" : "오늘 아직 기록 없음")
     }
 
     // MARK: 고르는 얼굴
@@ -99,7 +105,8 @@ struct TodayColorView: View {
     private func chooser(in size: CGSize, target: DailyColorLog.Slot) -> some View {
         let short = min(size.width, size.height)
         let orb = min(short * 0.24, 54)
-        let cell = min(short * 0.23, 76)
+        // 곰은 둘러선 색 안쪽에 들어가야 한다. 세로 반지름에서 색 한 알만큼 비운 크기.
+        let bearSide = min(short * 0.36, 128)
         let inset = short * 0.075
 
         // 정사각형이면 원, 가로로 긴 위젯이면 타원으로 둘러선다.
@@ -109,22 +116,14 @@ struct TodayColorView: View {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
 
         return ZStack {
-            if hasColors {
-                // 이미 고른 색이 있으면 그 색들이 배경이 된다. 지금까지의 하루 위에
-                // 다음 색을 얹는다는 게 보이도록. 살짝 가라앉혀 '칠해진 얼굴'과 구분하고
-                // 그 위의 색 다섯을 띄운다.
-                // ⚠️ 막은 반드시 검정. theme.ink는 어두운 팔레트에서 크림색이라
-                // 가라앉히는 대신 배경을 뿌옇게 바래게 만든다.
-                colorField
-                Color.black.opacity(0.16)
-            } else {
-                // 첫 색을 고를 때는 칠할 것이 없다. 시각의 하늘 위에 빈 오늘 칸.
-                SkyView(theme: theme, date: date)
+            // 시각의 하늘 위, 색 다섯이 둘러선 한가운데에 오늘의 곰이 앉는다.
+            // 첫 색을 기다릴 땐 색 없이 시무룩하게, 이미 고른 색이 있으면 그 색으로 칠한 채.
+            // 앱의 원형 팔레트와 같은 모양이라 '곰을 누르면 색이 둘러선다'는 한 동작으로 이어진다.
+            SkyView(theme: theme, date: date)
 
-                DailyCellView(date: day, colors: colors, relation: .today, isHighlighted: true)
-                    .frame(width: cell, height: cell)
-                    .position(center)
-            }
+            todayBear(DayBear(date: day, filledCount: filledCount, relation: .today))
+                .frame(width: bearSide, height: bearSide)
+                .position(center)
 
             ForEach(Array(palette.swatches.enumerated()), id: \.element.id) { index, swatch in
                 // 12시에서 시작해 시계 방향으로. 앱의 원형 팔레트와 같은 순서.
