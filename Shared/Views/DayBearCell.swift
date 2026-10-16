@@ -43,16 +43,9 @@ struct DayBearCell: View {
 
     var body: some View {
         ZStack {
-            if isHighlighted {
-                // 오늘. 테두리 대신 곰 뒤에 고이는 옅은 빛.
-                Circle()
-                    .fill(EllipticalGradient(
-                        colors: [theme.tint.opacity(theme.colorScheme == .dark ? 0.32 : 0.22), .clear],
-                        center: .center, startRadiusFraction: 0, endRadiusFraction: 0.5))
-                    .scaleEffect(1.25)
-            }
-
-            if relation == .past, day.style == .painted {
+            if relation == .today {
+                todayBear
+            } else if relation == .past, day.style == .painted {
                 // 지나간 칠한 날은 다시 바뀔 일이 드물다. 한 번 그린 그림을 그대로 쓴다.
                 GeometryReader { proxy in
                     if let image = cachedImage(side: proxy.size.width) {
@@ -61,15 +54,6 @@ struct DayBearCell: View {
                         bear
                     }
                 }
-            } else if relation == .today, day.style == .bare, !reduceMotion {
-                // 아직 아무것도 칠하지 않은 오늘. 시무룩하게 앉은 곰이 천천히 숨을 쉰다.
-                // 글자로 재촉하는 대신, 살아서 기다리고 있다는 것만 보여 준다.
-                // 발을 바닥에 붙인 채 몸만 아주 조금 부풀었다 가라앉는다.
-                bear.phaseAnimator([false, true]) { content, isInhaling in
-                    content.scaleEffect(x: isInhaling ? 1.015 : 1, y: isInhaling ? 1.04 : 1, anchor: .bottom)
-                } animation: { _ in
-                    .easeInOut(duration: 2.2)
-                }
             } else {
                 bear
             }
@@ -77,6 +61,33 @@ struct DayBearCell: View {
         .aspectRatio(1, contentMode: .fit)
         .accessibilityElement()
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    /// 오늘. 테두리 없이 세 가지로 눈에 띈다.
+    ///  · 곰 뒤에 팔레트 틴트가 둥글게 고인다.
+    ///  · 곰이 이웃보다 한 치수 크다. 발을 기준으로 키워 행의 바닥선은 그대로다.
+    ///  · 곰이 천천히 숨을 쉰다. 격자에서 움직이는 건 오늘뿐이라 눈이 먼저 간다.
+    ///    아직 칠하지 않은 오늘엔 '기다리고 있다'는 뜻도 된다.
+    private var todayBear: some View {
+        ZStack {
+            if isHighlighted {
+                Circle()
+                    .fill(theme.tint.opacity(theme.colorScheme == .dark ? 0.42 : 0.3))
+                    .scaleEffect(1.05)
+                    .blur(radius: 7)
+            }
+
+            if reduceMotion {
+                bear
+            } else {
+                bear.phaseAnimator([false, true]) { content, isInhaling in
+                    content.scaleEffect(x: isInhaling ? 1.015 : 1, y: isInhaling ? 1.04 : 1, anchor: .bottom)
+                } animation: { _ in
+                    .easeInOut(duration: 2.2)
+                }
+            }
+        }
+        .scaleEffect(isHighlighted ? 1.18 : 1, anchor: .bottom)
     }
 
     private var bear: some View {
