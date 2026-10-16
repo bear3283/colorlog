@@ -24,6 +24,7 @@ struct DayBearCell: View {
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.displayScale) private var displayScale
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(date: Date, log: DailyColorLog?, relation: DayRelation, isHighlighted: Bool = false) {
         self.init(date: date, colors: log?.slotColors ?? [], relation: relation, isHighlighted: isHighlighted)
@@ -59,6 +60,15 @@ struct DayBearCell: View {
                     } else {
                         bear
                     }
+                }
+            } else if relation == .today, day.style == .bare, !reduceMotion {
+                // 아직 아무것도 칠하지 않은 오늘. 시무룩하게 앉은 곰이 천천히 숨을 쉰다.
+                // 글자로 재촉하는 대신, 살아서 기다리고 있다는 것만 보여 준다.
+                // 발을 바닥에 붙인 채 몸만 아주 조금 부풀었다 가라앉는다.
+                bear.phaseAnimator([false, true]) { content, isInhaling in
+                    content.scaleEffect(x: isInhaling ? 1.015 : 1, y: isInhaling ? 1.04 : 1, anchor: .bottom)
+                } animation: { _ in
+                    .easeInOut(duration: 2.2)
                 }
             } else {
                 bear
