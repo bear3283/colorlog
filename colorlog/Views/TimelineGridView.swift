@@ -484,12 +484,12 @@ private let oldestLogDescriptor: FetchDescriptor<DailyColorLog> = {
     TimelineGridView()
         .paletteTheme(.pantone)
         .preferredColorScheme(.light)
-        .modelContainer(ColorLogStore.inMemory(seedDays: 140, palette: .pantone))
+        .modelContainer(ColorLogStore.inMemory(seedDays: 140, palette: Palette(preset: .pantone)))
 }
 
 #Preview("타임라인 · 네온") {
     TimelineGridView()
         .paletteTheme(.triadic)
         .preferredColorScheme(.dark)
-        .modelContainer(ColorLogStore.inMemory(seedDays: 140, palette: .triadic))
+        .modelContainer(ColorLogStore.inMemory(seedDays: 140, palette: Palette(preset: .triadic)))
 }

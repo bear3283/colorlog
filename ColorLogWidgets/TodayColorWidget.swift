@@ -24,7 +24,7 @@ import WidgetKit
 
 struct TodayColorEntry: TimelineEntry {
     let date: Date
-    let palette: ColorPalette
+    let palette: Palette
     /// 자리별 색. ""는 빈 자리.
     let colors: [String]
     /// 이 시각에 물어보는 자리. nil이면 칠해진 얼굴.
@@ -97,12 +97,7 @@ struct TodayColorProvider: TimelineProvider {
         )
     }
 
-    private func currentPalette() -> ColorPalette {
-        ColorPalette(
-            storedValue: ColorLogStore.defaults.string(forKey: ColorLogStore.paletteKey)
-                ?? ColorPalette.default.rawValue
-        )
-    }
+    private func currentPalette() -> Palette { .current }
 
     private static let emptySlots = Array(repeating: "", count: DailyColorLog.maxColorsPerDay)
 

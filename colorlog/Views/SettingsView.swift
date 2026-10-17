@@ -20,7 +20,7 @@ import UserNotifications
 
 struct SettingsView: View {
 
-    /// `ColorPalette.rawValue`. @AppStorage와 직접 연결된다.
+    /// `Palette.id`. @AppStorage와 직접 연결된다.
     @Binding var selection: String
     /// 홈 화면 아이콘을 팔레트에 맞출지.
     @Binding var syncsAppIcon: Bool
@@ -33,7 +33,7 @@ struct SettingsView: View {
 
     private let reminders = ReminderStore.shared
 
-    private var selected: ColorPalette { ColorPalette(storedValue: selection) }
+    private var selected: Palette { Palette.resolve(selection) }
 
     var body: some View {
         ScrollView {
@@ -71,19 +71,19 @@ struct SettingsView: View {
 
     private var palettes: some View {
         VStack(spacing: 14) {
-            ForEach(ColorPalette.allCases) { palette in
+            ForEach(Palette.all) { palette in
                 PaletteCard(
                     palette: palette,
-                    isSelected: palette == selected,
+                    isSelected: palette.id == selected.id,
                     action: {
                         withAnimation(.smooth(duration: 0.45)) {
-                            selection = palette.rawValue
+                            selection = palette.id
                         }
                     },
-                    onEdit: palette == .custom ? { openCustomEditor() } : nil
+                    onEdit: palette.source == .preset(.custom) ? { openCustomEditor() } : nil
                 )
                 // 나만의 팔레트 카드는 저장된 다섯 색을 읽어 그린다. 색이 바뀌면 새로 그린다.
-                .id(palette == .custom ? customHexes : palette.rawValue)
+                .id(palette.source == .preset(.custom) ? customHexes : palette.id)
             }
         }
         .sheet(isPresented: $isEditingCustom) {
@@ -232,7 +232,7 @@ private extension View {
 /// 이름표가 없다. 그 팔레트로 칠해진 카드 자체가 이름이다.
 private struct PaletteCard: View {
 
-    let palette: ColorPalette
+    let palette: Palette
     let isSelected: Bool
     let action: () -> Void
     /// 있으면 마지막 칸이 '빈 날' 대신 붓 버튼이 된다(나만의 팔레트).
@@ -274,7 +274,7 @@ private struct PaletteCard: View {
             .scaleEffect(isSelected ? 1 : 0.98)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(palette.displayName)
+        .accessibilityLabel(palette.name)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         // 붓 버튼은 카드 버튼 밖에 겹쳐 둔다. 버튼 안의 버튼은 누르는 곳이 엉킨다.
         .overlay(alignment: .trailing) {
@@ -314,6 +314,6 @@ private struct PaletteCard: View {
     @Previewable @State var syncsIcon = true
 
     SettingsView(selection: $selection, syncsAppIcon: $syncsIcon)
-        .paletteTheme(ColorPalette(storedValue: selection))
+        .paletteTheme(Palette.resolve(selection))
         .environment(\.locale, .colorLog)
 }

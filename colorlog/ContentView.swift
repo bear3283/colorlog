@@ -16,10 +16,10 @@ import WidgetKit
 
 struct ContentView: View {
 
-    /// 선택한 팔레트는 `rawValue`로 영속된다.
-    /// `@AppStorage`는 String을 다루므로 enum 변환은 이 경계에서 한 번만 한다.
+    /// 선택한 팔레트는 `Palette.id`로 영속된다.
+    /// `@AppStorage`는 String을 다루므로 팔레트로 푸는 건 이 경계에서 한 번만 한다.
     @AppStorage(ColorLogStore.paletteKey, store: ColorLogStore.defaults)
-    private var paletteID = ColorPalette.default.rawValue
+    private var paletteID = Palette.default.id
     /// 홈 화면 아이콘까지 팔레트를 따라가게 할지.
     /// 기본값 false — iOS는 아이콘이 바뀔 때마다 시스템 알림을 띄운다.
     /// 팔레트를 구경하는 것만으로 알림이 쏟아지면 안 되므로 켜는 건 사용자의 선택으로 둔다.
@@ -34,10 +34,10 @@ struct ContentView: View {
     private let router = NotificationRouter.shared
     private let reminders = ReminderStore.shared
 
-    private var palette: ColorPalette {
+    private var palette: Palette {
         // customHexes를 읽어 두어야 나만의 팔레트 색이 바뀔 때 이 화면이 다시 그려진다.
         _ = customHexes
-        return ColorPalette(storedValue: paletteID)
+        return Palette.resolve(paletteID)
     }
 
     var body: some View {
@@ -84,7 +84,7 @@ struct ContentView: View {
 
     /// 홈 화면 아이콘을 현재 팔레트에 맞춘다.
     /// 이미 같은 아이콘이면 호출하지 않는다 — 불필요한 시스템 알림을 막기 위해.
-    private func applyAppIcon(for palette: ColorPalette) {
+    private func applyAppIcon(for palette: Palette) {
         let application = UIApplication.shared
         guard application.supportsAlternateIcons else { return }
 

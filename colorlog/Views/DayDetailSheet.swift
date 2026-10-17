@@ -31,7 +31,7 @@ struct DayDetailSheet: View {
 
     let date: Date
     let relation: DayRelation
-    let palette: ColorPalette
+    let palette: Palette
     /// 그날 이미 물어본 자리들. 색을 넣은 뒤 다음에 골라 둘 자리를 정할 때 쓴다.
     let due: [Slot]
     /// 한 자리에 색을 넣는다. nil이면 비운다.
@@ -46,7 +46,7 @@ struct DayDetailSheet: View {
     init(
         date: Date,
         relation: DayRelation,
-        palette: ColorPalette,
+        palette: Palette,
         due: [Slot],
         onSet: @escaping (Slot, String?) -> Void
     ) {
@@ -310,7 +310,7 @@ private enum GaeguFont {
 #Preview("하루 한 장") {
     @Previewable @State var isPresented = true
     let container = ColorLogStore.inMemory()
-    let palette = ColorPalette.default
+    let palette = Palette.default
     let today = Calendar.current.startOfDay(for: .now)
     let log = DailyColorLog(date: today, colors: [palette.swatches[0].hex, "", ""], palette: palette)
     container.mainContext.insert(log)

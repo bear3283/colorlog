@@ -2,10 +2,11 @@
 //  ColorPalette.swift
 //  colorlog
 //
-//  팔레트 프리셋 하나가 두 가지를 동시에 결정한다.
-//   1) 앱 전체의 테마 토큰 (배경 / 잉크 / 테두리 / 틴트)
+//  앱에 실려 나가는 팔레트 프리셋의 정의.
+//   1) 테마 토큰 (위젯 바탕 / 잉크 / 테두리 / 틴트)
 //   2) 사용자가 하루의 색을 고를 때 제시되는 스와치 목록
-//  둘을 한 타입에 묶어 두어야 "테마를 바꾸면 세계관이 통째로 바뀌는" 경험이 성립한다.
+//   3) 맞춰 그려 둔 대체 앱 아이콘
+//  화면은 이걸 직접 받지 않고 `Palette`로 풀어서 받는다(`Palette.swift`).
 //
 
 import SwiftUI
@@ -370,11 +371,6 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
         }
     }
 
-    /// 설정 화면에서 팔레트를 미리 보여줄 때 쓰는 대표 4색.
-    var previewColors: [Color] {
-        swatches.prefix(4).map(\.color)
-    }
-
     /// 이 팔레트에 대응하는 대체 앱 아이콘 이름. 기본 팔레트는 기본 아이콘(nil)을 쓴다.
     /// 값은 Assets.xcassets의 appiconset 이름과 정확히 일치해야 한다.
     var alternateIconName: String? {
@@ -390,78 +386,5 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
         case .triadic:       "AppIcon-Triadic"
         case .monochrome:    "AppIcon-Monochrome"
         }
-    }
-
-    /// HEX가 이 팔레트에 속하는 색인지. (저장된 로그의 이름 역추적용)
-    func swatch(for hex: String) -> ColorSwatch? {
-        guard let normalized = HexColor.normalized(hex) else { return nil }
-        return swatches.first { $0.hex.uppercased() == normalized }
-    }
-}
-
-// MARK: - Environment
-
-extension EnvironmentValues {
-    /// 테마 토큰을 뷰 계층 전체에 흘려보낸다.
-    /// 셀 하나하나에 테마를 인자로 넘기면 그리드가 배관 코드로 뒤덮이므로
-    /// 루트에서 한 번만 주입하고 말단에서 꺼내 쓴다.
-    @Entry var paletteTheme: PaletteTheme = ColorPalette.default.theme
-
-    /// 팔레트 자체. 색을 기록할 때 `themePalette`로 함께 저장해야 하므로
-    /// 파생된 토큰만으로는 부족하다.
-    @Entry var colorPalette: ColorPalette = .default
-}
-
-extension ColorPalette {
-
-    /// 앱 화면의 테마.
-    ///
-    /// 바탕은 팔레트와 상관없이 **흰 종이**(라이트) 또는 **먹빛**(다크)이고, 시스템의
-    /// 화면 모드를 따른다. 팔레트마다 바탕을 물들였더니 칸마다 앉은 수채화 곰과 겹쳐
-    /// 화면이 탁해졌다. 바탕을 비워 두면 곰과 그날의 색이 가장 또렷하다.
-    /// 팔레트에서는 틴트(오늘의 빛 · 선택 표시)만 가져온다.
-    ///
-    /// 위젯은 홈 화면 위에 놓이는 작은 물건이라 지금처럼 팔레트 자체의 바탕(`theme`)을 쓴다.
-    func appTheme(for scheme: ColorScheme) -> PaletteTheme {
-        switch scheme {
-        case .dark:
-            PaletteTheme(
-                background:   Color(hex: "#121214", fallback: .black),
-                surface:      Color(hex: "#1E1E21", fallback: .black),
-                ink:          Color(hex: "#F1EEE9", fallback: .white),
-                inkSecondary: Color(hex: "#8F8B87", fallback: .gray),
-                stroke:       Color(hex: "#2E2E32", fallback: .gray),
-                tint:         theme.tint,
-                colorScheme:  .dark
-            )
-        default:
-            PaletteTheme(
-                background:   Color(hex: "#FFFFFF", fallback: .white),
-                surface:      Color(hex: "#F4F3F1", fallback: .white),
-                ink:          Color(hex: "#221E1B", fallback: .black),
-                inkSecondary: Color(hex: "#8E8984", fallback: .gray),
-                stroke:       Color(hex: "#E7E4E0", fallback: .gray),
-                tint:         theme.tint,
-                colorScheme:  .light
-            )
-        }
-    }
-}
-
-extension View {
-    /// 하위 트리에 팔레트를 적용한다. 바탕은 시스템의 화면 모드를 따른다(`appTheme(for:)`).
-    func paletteTheme(_ palette: ColorPalette) -> some View {
-        modifier(AppThemeModifier(palette: palette))
-    }
-}
-
-private struct AppThemeModifier: ViewModifier {
-    let palette: ColorPalette
-    @Environment(\.colorScheme) private var colorScheme
-
-    func body(content: Content) -> some View {
-        content
-            .environment(\.colorPalette, palette)
-            .environment(\.paletteTheme, palette.appTheme(for: colorScheme))
     }
 }

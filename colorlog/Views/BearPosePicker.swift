@@ -35,7 +35,7 @@ struct BearPosePicker: View {
 #Preview("곰 바꾸기") {
     @Previewable @State var isPresented = true
     let container = ColorLogStore.inMemory()
-    let palette = ColorPalette.default
+    let palette = Palette.default
     let log = DailyColorLog(date: .now, colors: [palette.swatches[0].hex, palette.swatches[3].hex], palette: palette)
     container.mainContext.insert(log)
 

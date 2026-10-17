@@ -38,7 +38,7 @@ final class DailyColorLog {
     /// 예전 기록은 3개보다 짧을 수 있다 — 읽을 때는 반드시 `slotColors`를 거친다.
     private(set) var colors: [String]
 
-    /// 기록 당시 적용돼 있던 팔레트의 `ColorPalette.rawValue`.
+    /// 기록 당시 적용돼 있던 팔레트의 `Palette.id`.
     /// 나중에 사용자가 테마를 바꿔도 "그날의 색이 어떤 세계관에서 골라졌는지"는 보존된다.
     var themePalette: String
 
@@ -56,10 +56,10 @@ final class DailyColorLog {
     static let maxColorsPerDay = 3
 
     /// - Parameter colors: 자리 순서의 HEX. ""는 빈 자리.
-    init(date: Date = .now, colors: [String] = [], palette: ColorPalette = .default) {
+    init(date: Date = .now, colors: [String] = [], palette: Palette = .default) {
         self.date = Calendar.current.startOfDay(for: date)
         self.colors = Self.sanitize(colors)
-        self.themePalette = palette.rawValue
+        self.themePalette = palette.id
         self.poseRawValue = BearPose.allCases.randomElement()?.rawValue
     }
 
@@ -76,9 +76,10 @@ final class DailyColorLog {
 extension DailyColorLog {
 
     /// 이 로그가 기록될 당시의 팔레트.
-    var palette: ColorPalette {
-        get { ColorPalette(storedValue: themePalette) }
-        set { themePalette = newValue.rawValue }
+    /// 지워진 팔레트였다면 기본 팔레트. 색 자체는 HEX로 남아 있어 그날의 곰은 그대로다.
+    var palette: Palette {
+        get { Palette.resolve(themePalette) }
+        set { themePalette = newValue.id }
     }
 
     /// 언제나 세 칸. 빈 자리는 "". 화면은 전부 이걸 읽는다.

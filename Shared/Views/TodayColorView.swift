@@ -31,7 +31,7 @@ struct TodayColorView: View {
     let colors: [String]
     /// 지금 물어보는 자리. nil이면 칠해진 얼굴.
     let target: DailyColorLog.Slot?
-    var palette: ColorPalette = .default
+    var palette: Palette = .default
     /// 오늘 기록에 저장된 곰의 동작. 앱에서 바꾼 동작이 위젯에도 그대로 앉는다.
     var pose: BearPose? = nil
 
@@ -162,7 +162,7 @@ let todayWidgetSizes: [(name: String, size: CGSize)] = [
 ]
 
 #Preview("오늘 위젯") {
-    let palette = ColorPalette.pantone
+    let palette = Palette(preset: .pantone)
     let hexes = palette.swatches.map(\.hex)
     ScrollView {
         VStack(spacing: 16) {

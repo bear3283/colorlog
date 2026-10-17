@@ -16,7 +16,7 @@ import SwiftUI
 
 struct AppIconView: View {
 
-    let palette: ColorPalette
+    let palette: Palette
 
     /// 아이콘의 번짐은 고정된 그림이어야 한다. 날짜가 아니라 상수 시드를 쓴다.
     private static let seed: UInt64 = 0xC0_10B3_A2
@@ -52,7 +52,7 @@ struct AppIconView: View {
 
 #Preview("앱 아이콘") {
     VStack(spacing: 22) {
-        ForEach(Array(ColorPalette.allCases.chunked(into: 2)), id: \.first) { row in
+        ForEach(Array(Palette.all.chunked(into: 2)), id: \.first?.id) { row in
             HStack(spacing: 22) {
                 ForEach(row) { palette in
                     VStack(spacing: 8) {

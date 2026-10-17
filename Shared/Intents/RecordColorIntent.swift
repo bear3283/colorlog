@@ -33,10 +33,7 @@ struct RecordColorIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult {
-        let palette = ColorPalette(
-            storedValue: ColorLogStore.defaults.string(forKey: ColorLogStore.paletteKey)
-                ?? ColorPalette.default.rawValue
-        )
+        let palette = Palette.current
 
         guard let target = DailyColorLog.Slot(rawValue: slot) else { return .result() }
 

@@ -86,7 +86,7 @@ nonisolated enum ColorLogStore {
 
     /// 프리뷰/테스트용. 디스크에 남지 않는다.
     @MainActor
-    static func inMemory(seedDays: Int = 0, palette: ColorPalette = .default) -> ModelContainer {
+    static func inMemory(seedDays: Int = 0, palette: Palette = .default) -> ModelContainer {
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         do {
             let container = try ModelContainer(for: DailyColorLog.self, configurations: configuration)
@@ -102,7 +102,7 @@ nonisolated enum ColorLogStore {
     /// 과거 `days`일을 팔레트 색으로 채운다. 오늘은 일부러 1~2개만 채워 둬
     /// "아직 하루가 끝나지 않은" 상태를 프리뷰에서 볼 수 있게 한다.
     @MainActor
-    static func seed(into context: ModelContext, days: Int, palette: ColorPalette) {
+    static func seed(into context: ModelContext, days: Int, palette: Palette) {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
         var generator = SystemRandomNumberGenerator()
@@ -138,7 +138,7 @@ nonisolated extension ModelContext {
     /// 그날의 로그를 가져오고, 없으면 만들어서 넣는다.
     /// 알림·위젯·앱 어디서 들어와도 같은 레코드를 잡도록 하는 단일 진입점.
     @discardableResult
-    func dailyColorLog(for day: Date, palette: ColorPalette) throws -> DailyColorLog {
+    func dailyColorLog(for day: Date, palette: Palette) throws -> DailyColorLog {
         var descriptor = FetchDescriptor<DailyColorLog>(
             predicate: DailyColorLog.predicate(for: day)
         )
@@ -157,7 +157,7 @@ nonisolated extension ModelContext {
     /// 캔버스의 시작점을 끌어당기지 않도록.
     @discardableResult
     func setColor(
-        _ hex: String?, for slot: DailyColorLog.Slot, on day: Date = .now, palette: ColorPalette
+        _ hex: String?, for slot: DailyColorLog.Slot, on day: Date = .now, palette: Palette
     ) throws -> Bool {
         let log = try dailyColorLog(for: day, palette: palette)
         guard log.setColor(hex, for: slot) else { return false }
