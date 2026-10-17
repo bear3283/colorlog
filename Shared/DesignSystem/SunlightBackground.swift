@@ -2,7 +2,8 @@
 //  SunlightBackground.swift
 //  colorlog (앱 · 위젯 공용)
 //
-//  격자 뒤에서 하루가 흐르는 배경.
+//  하루가 흐르는 하늘. 지금은 위젯의 '고르는 얼굴'이 쓴다.
+//  (앱 화면의 바탕은 흰 종이 · 먹빛으로 바뀌었다 — `ColorPalette.appTheme(for:)`)
 //
 //  두 겹이다.
 //   1) 하늘 — 배경색 자체가 시각을 따라 바뀐다. 새벽의 장밋빛, 아침의 옅은 금빛,
@@ -20,21 +21,7 @@
 
 import SwiftUI
 
-struct SunlightBackground: View {
-
-    let theme: PaletteTheme
-
-    var body: some View {
-        // 1분마다 다시 그린다. 하늘은 그보다 빨리 변하지 않는다.
-        TimelineView(.everyMinute) { context in
-            SkyView(theme: theme, date: context.date)
-        }
-        .ignoresSafeArea()
-        .animation(.smooth(duration: 1.2), value: theme.background)
-    }
-}
-
-/// 특정 시각의 하늘 한 장. 위젯은 TimelineView 없이 이걸 직접 쓴다.
+/// 특정 시각의 하늘 한 장.
 struct SkyView: View {
 
     let theme: PaletteTheme

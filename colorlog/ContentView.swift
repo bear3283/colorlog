@@ -40,7 +40,6 @@ struct ContentView: View {
             openRequest: Bindable(router).requestedDate
         )
         .paletteTheme(palette)
-        .preferredColorScheme(palette.theme.colorScheme)
         // DatePicker 같은 시스템 컨트롤도 앱의 언어를 따르게 한다.
         // (없으면 한국어 화면 안에 "8:00 AM"이 섞인다)
         .environment(\.locale, .colorLog)
@@ -50,8 +49,6 @@ struct ContentView: View {
             SettingsView(selection: $paletteID, syncsAppIcon: $syncsAppIcon)
                 .paletteTheme(palette)
                 .environment(\.locale, .colorLog)
-                .preferredColorScheme(palette.theme.colorScheme)
-                .presentationBackground(palette.theme.background)
         }
         .task {
             ColorLogStore.registerFirstUseIfNeeded()

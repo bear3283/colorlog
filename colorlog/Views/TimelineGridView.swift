@@ -91,7 +91,8 @@ struct TimelineGridView: View {
                 }
             }
         }
-        .background(SunlightBackground(theme: theme))
+        // 바탕은 흰 종이(다크 모드에서는 먹빛). 칸마다 앉은 수채화 곰이 가장 또렷하게 보인다.
+        .background(theme.background.ignoresSafeArea())
         // 축하는 상단 버튼까지 덮는다. 떠 있는 동안에는 격자를 만질 일이 없다.
         .overlay {
             if let celebration {
@@ -112,13 +113,11 @@ struct TimelineGridView: View {
             )
             .environment(\.paletteTheme, theme)
             .environment(\.colorPalette, palette)
-            .preferredColorScheme(theme.colorScheme)
         }
         .sheet(item: $poseEditing) { log in
             BearPosePicker(log: log)
                 .environment(\.paletteTheme, theme)
                 .environment(\.colorPalette, palette)
-                .preferredColorScheme(theme.colorScheme)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: poseEditing != nil) { _, isOpen in isOpen }
         // 위젯에서 세 번째 색을 고른 날은 앱으로 돌아오는 순간 축하한다.

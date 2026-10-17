@@ -46,8 +46,9 @@ struct SettingsView: View {
             .padding(.bottom, 44)
         }
         .task { await reminders.refreshAuthorization() }
-        // 시트 뒤의 하늘이 그대로 이어져야 시트가 다른 시각의 방처럼 보이지 않는다.
-        .background(SunlightBackground(theme: theme))
+        // 바탕은 격자와 같은 흰 종이(다크 모드에서는 먹빛).
+        .background(theme.background)
+        .presentationBackground(theme.background)
         .scrollIndicators(.hidden)
         // 닫기 버튼은 두지 않는다. 첫 팔레트 카드와 겹치는 데다,
         // 시트는 아래로 쓸어내려 닫는 게 이미 몸에 익은 동작이다.
@@ -268,5 +269,4 @@ private struct PaletteCard: View {
     SettingsView(selection: $selection, syncsAppIcon: $syncsIcon)
         .paletteTheme(ColorPalette(storedValue: selection))
         .environment(\.locale, .colorLog)
-        .preferredColorScheme(ColorPalette(storedValue: selection).theme.colorScheme)
 }

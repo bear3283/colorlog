@@ -364,10 +364,56 @@ extension EnvironmentValues {
     @Entry var colorPalette: ColorPalette = .default
 }
 
+extension ColorPalette {
+
+    /// 앱 화면의 테마.
+    ///
+    /// 바탕은 팔레트와 상관없이 **흰 종이**(라이트) 또는 **먹빛**(다크)이고, 시스템의
+    /// 화면 모드를 따른다. 팔레트마다 바탕을 물들였더니 칸마다 앉은 수채화 곰과 겹쳐
+    /// 화면이 탁해졌다. 바탕을 비워 두면 곰과 그날의 색이 가장 또렷하다.
+    /// 팔레트에서는 틴트(오늘의 빛 · 선택 표시)만 가져온다.
+    ///
+    /// 위젯은 홈 화면 위에 놓이는 작은 물건이라 지금처럼 팔레트 자체의 바탕(`theme`)을 쓴다.
+    func appTheme(for scheme: ColorScheme) -> PaletteTheme {
+        switch scheme {
+        case .dark:
+            PaletteTheme(
+                background:   Color(hex: "#121214", fallback: .black),
+                surface:      Color(hex: "#1E1E21", fallback: .black),
+                ink:          Color(hex: "#F1EEE9", fallback: .white),
+                inkSecondary: Color(hex: "#8F8B87", fallback: .gray),
+                stroke:       Color(hex: "#2E2E32", fallback: .gray),
+                tint:         theme.tint,
+                colorScheme:  .dark
+            )
+        default:
+            PaletteTheme(
+                background:   Color(hex: "#FFFFFF", fallback: .white),
+                surface:      Color(hex: "#F4F3F1", fallback: .white),
+                ink:          Color(hex: "#221E1B", fallback: .black),
+                inkSecondary: Color(hex: "#8E8984", fallback: .gray),
+                stroke:       Color(hex: "#E7E4E0", fallback: .gray),
+                tint:         theme.tint,
+                colorScheme:  .light
+            )
+        }
+    }
+}
+
 extension View {
-    /// 하위 트리에 팔레트를 적용한다.
+    /// 하위 트리에 팔레트를 적용한다. 바탕은 시스템의 화면 모드를 따른다(`appTheme(for:)`).
     func paletteTheme(_ palette: ColorPalette) -> some View {
-        environment(\.colorPalette, palette)
-            .environment(\.paletteTheme, palette.theme)
+        modifier(AppThemeModifier(palette: palette))
+    }
+}
+
+private struct AppThemeModifier: ViewModifier {
+    let palette: ColorPalette
+    @Environment(\.colorScheme) private var colorScheme
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.colorPalette, palette)
+            .environment(\.paletteTheme, palette.appTheme(for: colorScheme))
     }
 }
