@@ -49,7 +49,8 @@ nonisolated struct Palette: Identifiable, Equatable, Sendable {
         source = .preset(preset)
         name = preset.displayName
         theme = preset.theme
-        if let override {
+        // 원래 색과 똑같이 덮어쓴 값은 고치지 않은 것으로 본다. 아이콘도 그대로.
+        if let override, override != preset.swatches.map(\.hex) {
             let originals = Dictionary(preset.swatches.map { ($0.hex, $0.name) }, uniquingKeysWith: { first, _ in first })
             swatches = override.enumerated().map { index, hex in
                 ColorSwatch(name: originals[hex] ?? "\(preset.displayName) 색 \(index + 1)", hex: hex)

@@ -205,14 +205,22 @@ struct DayDetailSheet: View {
     // MARK: 색
 
     private var colorRow: some View {
-        HStack(spacing: 14) {
-            ForEach(palette.swatches) { swatch in
-                orb(swatch)
+        // 팔레트의 색은 3~7개다. 일곱 개도 한 줄에 들어가도록 알의 크기가 개수를 따른다.
+        GeometryReader { proxy in
+            let count = CGFloat(palette.swatches.count)
+            let spacing: CGFloat = count > 5 ? 10 : 14
+            let size = min(50, (proxy.size.width - spacing * (count - 1)) / count)
+            HStack(spacing: spacing) {
+                ForEach(palette.swatches) { swatch in
+                    orb(swatch, size: size)
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(height: 50)
     }
 
-    private func orb(_ swatch: ColorSwatch) -> some View {
+    private func orb(_ swatch: ColorSwatch, size: CGFloat) -> some View {
         // 골라 둔 자리에 이미 든 색. 한 번 더 누르면 그 자리가 빈다.
         let isCurrent = HexColor.normalized(swatch.hex) == color(of: selected)
 
@@ -225,7 +233,7 @@ struct DayDetailSheet: View {
                         .padding(7)
                 }
             }
-            .frame(width: 50, height: 50)
+            .frame(width: size, height: size)
         }
         .buttonStyle(OrbPressStyle())
         .animation(.smooth(duration: 0.25), value: isCurrent)
