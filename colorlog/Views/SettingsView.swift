@@ -90,10 +90,19 @@ struct SettingsView: View {
             }
         }
         .sheet(item: $editing) { item in
-            CustomPaletteEditor(paletteID: item.id)
+            PaletteEditor(paletteID: item.id, onDelete: { selectNeighbor(ofDeleted: item.id) })
                 .paletteTheme(Palette.resolve(item.id))
                 .environment(\.locale, .colorLog)
         }
+    }
+
+    /// 지금 쓰던 팔레트를 지우면 목록에서 바로 앞 팔레트로 넘어간다.
+    private func selectNeighbor(ofDeleted id: String) {
+        guard selection == id else { return }
+        let all = Palette.all
+        guard let index = all.firstIndex(where: { $0.id == id }) else { return }
+        let neighbor = index > 0 ? all[index - 1] : Palette.default
+        withAnimation(.smooth(duration: 0.45)) { selection = neighbor.id }
     }
 
     /// 붓을 누르면 그 팔레트로 바꾸고 편집기를 연다. 고치는 색이 곧 캔버스의 색이 되도록.
