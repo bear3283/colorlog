@@ -1,8 +1,9 @@
-# 컬러로그 배포.
+# 칼라베어(colorbear) 배포. 저장소 · 번들 ID는 예전 이름 colorlog 그대로다.
 #
 #   fastlane status     TestFlight 최신 빌드 번호 확인 (읽기 전용 · 키 연결 확인)
 #   fastlane beta       빌드 번호 +1 → 아카이브 → TestFlight 업로드 → 번호 변경 커밋
 #   fastlane metadata   스토어 문구·스크린샷만 업로드 (바이너리·제출 없음)
+#                       스크린샷이 아직 옛 화면이면: fastlane metadata skip_screenshots:true
 #   fastlane submit     최신 빌드를 붙여 심사 제출
 #
 # 인증은 전부 App Store Connect API 키로 한다. 키 정보는 fastlane/.env 에 있고
@@ -45,7 +46,7 @@ platform :ios do
     asc_key
     version = marketing_version
     build = latest_testflight_build_number(version: version, initial_build_number: 0)
-    UI.success("컬러로그 #{version} — TestFlight 최신 빌드: #{build}")
+    UI.success("칼라베어 #{version} — TestFlight 최신 빌드: #{build}")
   end
 
   desc "빌드 번호를 올리고 TestFlight에 업로드한다"
@@ -94,13 +95,15 @@ platform :ios do
   end
 
   desc "스토어 문구와 스크린샷만 올린다"
-  lane :metadata do
+  lane :metadata do |options|
     asc_key
+    skip_screenshots = options[:skip_screenshots] == true || options[:skip_screenshots].to_s == "true"
     deliver(
       app_version: marketing_version,
       metadata_path: metadata_path_for_upload,
       skip_binary_upload: true,
-      overwrite_screenshots: true,
+      skip_screenshots: skip_screenshots,
+      overwrite_screenshots: !skip_screenshots,
       submit_for_review: false,
       run_precheck_before_submit: false,
       force: true   # HTML 미리보기 확인 단계 생략

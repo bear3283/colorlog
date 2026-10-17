@@ -1,18 +1,22 @@
 NO LOGIN OR ACCOUNT. The app has no account registration, login, user-generated content, in-app purchases, or subscriptions. No demo account is needed.
 
+APP NAME CHANGE
+This version renames the app from "ColorLog" (컬러로그) to "ColorBear" (칼라베어). The bundle ID and all features are the same app; the new version adds a watercolor bear character.
+
 PURPOSE AND AUDIENCE
-ColorLog is a mood diary that records feelings as colors instead of words. Three times a day (morning, afternoon, evening) a local reminder asks how the user feels, and the user answers by picking one of five colors. Each day's colors fill one square on a grid centered on today, so mood patterns over days and weeks become visible at a glance. It is for people who want to reflect on their feelings but find writing a daily journal burdensome.
+ColorBear is a mood diary that records feelings as colors instead of words. Three times a day (morning, afternoon, evening) a local reminder asks how the user feels, and the user answers by picking one of five colors. Each day appears as a watercolor bear painted in that day's colors, on a grid centered on today, so mood patterns over days and weeks become visible at a glance. It is for people who want to reflect on their feelings but find writing a daily journal burdensome.
 
 HOW TO USE THE MAIN FEATURES
-1. Launch the app. Today is the square with a colored border in the center of the grid.
-2. Tap today's square. A row with three slots (sunrise = morning, sun = afternoon, moon = evening) appears above it, and five colors appear around it. Tap a color to record it in the selected slot; the square fills with that color.
-3. Tap a different slot (sunrise / sun / moon) to record or change that time of day. Tapping the color already in a slot clears it. Other slots never move.
-4. Tap the small colored dots at the top right to open Settings. There you can switch among nine color palettes, set the three reminder times, and allow notifications with the bell button.
-5. Home Screen widget: long-press the Home Screen, tap Edit > Add Widget, and add "오늘의 색" (ColorLog). At each reminder time the widget shows five colors; tapping one records it without opening the app.
-6. The background color changes gradually with the time of day.
+1. Launch the app. Today is the slightly larger bear with a soft glow in the center of the grid (five bears per row). If nothing is recorded yet, today's bear sits uncolored and breathes slowly.
+2. Tap today's bear. A sheet opens with the date at the top, a large bear in the middle, three slots (sunrise = morning, sun = afternoon, moon = evening), and a row of five colors at the bottom.
+3. Tap a color to record it in the selected slot; the paint spreads over the bear and the next empty slot is selected. Tap a different slot to change that time of day. Tapping the color already in a slot clears it.
+4. When all three slots of today are filled, the sheet closes and a short celebration shows the bear cheering. Tap anywhere to dismiss it.
+5. Each recorded day gets a randomly chosen bear pose. Long-press a colored bear to open a small sheet and pick a different pose.
+6. Tap the small colored dots at the top right to open Settings. There you can switch among ten color palettes, set the three reminder times, and allow notifications with the bell button. The last card is a custom palette: tap its brush button to pick five colors with a hue slider and a depth slider (or the system color picker), with a live bear preview.
+7. Home Screen widget: long-press the Home Screen, tap Edit > Add Widget, and add "오늘의 색" (ColorBear). At each reminder time the widget shows five colors around the bear; tapping one records it without opening the app.
 
 EXTERNAL SERVICES
-None. The app makes no network connections and uses no third-party SDKs, analytics, advertising, authentication, payment, or AI services. All data is stored only on the device (SwiftData in an App Group container shared with the widget). Reminders are local notifications scheduled on the device.
+None. The app makes no network connections and uses no third-party SDKs, analytics, advertising, authentication, payment, or AI services. All data is stored only on the device (SwiftData in an App Group container shared with the widget). Reminders are local notifications scheduled on the device. The bundled Gaegu font is licensed under the SIL Open Font License.
 
 REGIONAL DIFFERENCES
-None. The app works the same in all regions. The interface is almost entirely colors and symbols; the few text elements (notification text, widget name) are in Korean in every region.
+None. The app works the same in all regions. The interface is almost entirely colors, bears, and symbols; the few text elements (the date, notification text, widget name) are in Korean in every region.

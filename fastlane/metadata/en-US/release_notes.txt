@@ -1,2 +1,9 @@
-· When picking a color in the widget, the colors you already chose today now fill the background, so you can see how your day is shaping up.
-· Color borders inside each day now run in more varied directions.
+ColorLog is now ColorBear.
+· Your day's colors now paint a cute watercolor bear. There are thirty-five bears — long-press to choose the one for your day.
+· Tap a bear to open the day's page and watch your color spread across a big bear.
+· Five bears per row, so each one is bigger and easier to see.
+· Fill all three check-ins and your bear cheers for you.
+· The widget has a bear too, and it naps between check-ins.
+· A clean white background that follows Dark Mode.
+· A new Watercolor Bear palette, and a custom palette where you pick your own five colors.
+· A new watercolor bear app icon.

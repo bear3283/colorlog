@@ -1,28 +1,31 @@
-ColorLog is a mood diary you write in color, not words.
-Even on days when your feelings are hard to put into words, you can still pick a color. Three times a day, a reminder asks how you feel — answer with one color. It takes ten seconds.
+ColorBear is a mood diary you write in color, not words.
+Even on days when your feelings are hard to put into words, you can still pick a color. Three times a day, choose a color for how you feel, and a cute watercolor bear soaks it up. It takes ten seconds.
 
-Over days and weeks, your colors show the flow of your moods at a glance. No writing, just a simple habit of checking in with yourself.
+A new bear joins you every day, and together they show the flow of your moods over days and weeks. No writing, just a small habit of checking in with yourself.
 
 ■ Mood check-ins, three times a day
 Morning, afternoon, and evening, a reminder asks: "What color is right now?" Change the times or turn them off whenever you like.
 
-■ A mood tracker that takes one tap
-Tap a day and five colors open around it. Pick one and you're done — journaling without the pressure of writing.
+■ Pick a color, watch the bear bloom
+Tap a bear to open that day's page: the date, a big bear, and a row of colors. Pick one and the paint spreads across the bear — journaling without the pressure of writing.
 
 ■ Edit morning, afternoon, or evening
 Choose a time of day with the sunrise, sun, and moon, then change just that color. Tap the same color again to clear it.
 
+■ Thirty-five bears
+Waving, napping, eating a donut, holding an umbrella, playing guitar, camping, and more. A bear arrives at random each day; long-press it to pick the one that fits your day. What each color means is up to you.
+
 ■ See your mood over time
-Today sits in the middle, with past days stacking up above. The more you log, the more your color diary grows.
+Today sits in the middle, with past days' bears stacking up above. Today's bear breathes quietly while it waits for your first color, and cheers when you've filled all three.
 
 ■ Log right from your Home Screen widget
-At each reminder time, five colors appear on the widget. Pick one without opening the app, and the widget fills with today's color.
+At each reminder time, five colors circle the bear on your widget. Pick one without opening the app, and today's bear is painted in that color. Between check-ins, the bear naps on your Home Screen.
 
-■ Nine color palettes
-Spring, Dried Flower, Cloud, Jewel, and more — change the colors you log and the mood of the whole app.
+■ Ten palettes, plus your own
+Watercolor Bear, Spring, Dried Flower, Cloud, Jewel, and more — or pick your own five colors. The bear previews each color as you choose it.
 
-■ A sky that follows your day
-The background shifts with the time of day: rose at dawn, clear blue at noon, amber at sunset, deep blue at night.
+■ White paper or night sky
+Bears sit on clean white paper by day, and on a dark background in Dark Mode.
 
 ■ Your entries stay on your device
 No account, no sign-in, no ads. Everything is stored only on your device and never sent anywhere.
@@ -30,5 +33,5 @@ No account, no sign-in, no ads. Everything is stored only on your device and nev
 Made for you if you
 · want to keep a diary but find daily writing hard
 · want a light way to track your mood through the day
-· want a small habit of reflecting on how you feel
-· are looking for a beautiful Home Screen widget
+· want a cute companion for a small reflection habit
+· are looking for a charming Home Screen widget

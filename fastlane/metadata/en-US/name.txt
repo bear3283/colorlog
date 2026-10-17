@@ -1,1 +1,1 @@
-ColorLog: Mood Diary in Color
+ColorBear: Mood Diary in Color
