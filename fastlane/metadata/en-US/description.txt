@@ -13,16 +13,17 @@ Tap a bear to open that day's page: the date, a big bear, and a row of colors. P
 Choose a time of day with the sunrise, sun, and moon, then change just that color. Tap the same color again to clear it.
 
 ■ Thirty-five bears
-Waving, napping, eating a donut, holding an umbrella, playing guitar, camping, and more. A bear arrives at random each day; long-press it to pick the one that fits your day. What each color means is up to you.
+Waving, napping, eating a donut, holding an umbrella, playing guitar, camping, and more. A bear arrives at random each day; tap the big bear on the day's page to line up all thirty-five and pick the one that fits your day. What each color means is up to you.
 
 ■ See your mood over time
 Today sits in the middle, with past days' bears stacking up above. Today's bear breathes quietly while it waits for your first color, and cheers when you've filled all three.
 
 ■ Log right from your Home Screen widget
-At each reminder time, five colors circle the bear on your widget. Pick one without opening the app, and today's bear is painted in that color. Between check-ins, the bear naps on your Home Screen.
+At each reminder time, your palette's colors circle the bear on your widget. Pick one without opening the app, and today's bear is painted in that color. Between check-ins, the bear naps on your Home Screen.
 
-■ Ten palettes, plus your own
-Watercolor Bear, Spring, Dried Flower, Cloud, Jewel, and more — or pick your own five colors. The bear previews each color as you choose it.
+■ Palettes you make your own
+Start with ten palettes — Watercolor Bear, Spring, Dried Flower, Cloud, Jewel, and more. Recolor any of them, and restore the original colors whenever you like.
+Tap + to make a new palette of your own. Choose colors with a rainbow slider and a depth slider, or the system color picker, and use anywhere from three to seven colors. The bear previews each color as you choose it. Delete a palette you no longer use — days you've already painted keep their colors.
 
 ■ White paper or night sky
 Bears sit on clean white paper by day, and on a dark background in Dark Mode.
