@@ -27,9 +27,11 @@ struct SettingsView: View {
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.openURL) private var openURL
-    /// 나만의 팔레트의 다섯 색. 편집기에서 바뀌면 카드도 따라 다시 그려진다.
-    @AppStorage(CustomPalette.key, store: ColorLogStore.defaults) private var customHexes = ""
-    @State private var isEditingCustom = false
+    // 사용자 팔레트 · 고친 프리셋. 편집기에서 바뀌면 카드도 따라 다시 그려진다.
+    @AppStorage(PaletteStore.userPalettesKey, store: ColorLogStore.defaults) private var userPalettesData = Data()
+    @AppStorage(PaletteStore.presetOverridesKey, store: ColorLogStore.defaults) private var overridesData = Data()
+    /// 편집기로 고치고 있는 팔레트.
+    @State private var editing: EditingPalette?
 
     private let reminders = ReminderStore.shared
 
@@ -70,7 +72,8 @@ struct SettingsView: View {
     // MARK: 팔레트
 
     private var palettes: some View {
-        VStack(spacing: 14) {
+        _ = (userPalettesData, overridesData)
+        return VStack(spacing: 14) {
             ForEach(Palette.all) { palette in
                 PaletteCard(
                     palette: palette,
@@ -80,23 +83,23 @@ struct SettingsView: View {
                             selection = palette.id
                         }
                     },
-                    onEdit: palette.source == .preset(.custom) ? { openCustomEditor() } : nil
+                    onEdit: palette.source.isUser ? { openEditor(for: palette) } : nil
                 )
-                // 나만의 팔레트 카드는 저장된 다섯 색을 읽어 그린다. 색이 바뀌면 새로 그린다.
-                .id(palette.source == .preset(.custom) ? customHexes : palette.id)
+                // 카드는 저장된 색을 읽어 그린다. 색이 바뀌면 새로 그린다.
+                .id(palette.id + palette.swatches.map(\.hex).joined())
             }
         }
-        .sheet(isPresented: $isEditingCustom) {
-            CustomPaletteEditor()
-                .paletteTheme(.custom)
+        .sheet(item: $editing) { item in
+            CustomPaletteEditor(paletteID: item.id)
+                .paletteTheme(Palette.resolve(item.id))
                 .environment(\.locale, .colorLog)
         }
     }
 
-    /// 붓을 누르면 나만의 팔레트로 바꾸고 편집기를 연다. 고치는 색이 곧 캔버스의 색이 되도록.
-    private func openCustomEditor() {
-        withAnimation(.smooth(duration: 0.45)) { selection = ColorPalette.custom.rawValue }
-        isEditingCustom = true
+    /// 붓을 누르면 그 팔레트로 바꾸고 편집기를 연다. 고치는 색이 곧 캔버스의 색이 되도록.
+    private func openEditor(for palette: Palette) {
+        withAnimation(.smooth(duration: 0.45)) { selection = palette.id }
+        editing = EditingPalette(id: palette.id)
     }
 
     // MARK: 홈 화면 아이콘
@@ -230,6 +233,11 @@ private extension View {
 // MARK: - 팔레트 카드
 
 /// 이름표가 없다. 그 팔레트로 칠해진 카드 자체가 이름이다.
+/// 편집기 시트에 넘기는 팔레트 id.
+private struct EditingPalette: Identifiable {
+    let id: String
+}
+
 private struct PaletteCard: View {
 
     let palette: Palette

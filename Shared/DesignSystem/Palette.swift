@@ -11,6 +11,7 @@
 //
 //  저장되는 건 `id` 문자열 하나다. 프리셋은 `ColorPalette.rawValue` 그대로라
 //  예전에 저장된 선택값과 기록의 `themePalette`가 바뀌지 않고 그대로 읽힌다.
+//  사용자 팔레트는 "user.<UUID>"다(`PaletteStore`).
 //
 
 import SwiftUI
@@ -20,6 +21,11 @@ nonisolated struct Palette: Identifiable, Equatable, Sendable {
     /// 팔레트가 어디서 왔는지.
     enum Source: Hashable, Sendable {
         case preset(ColorPalette)
+        case user(UUID)
+
+        var isUser: Bool {
+            if case .user = self { true } else { false }
+        }
     }
 
     /// 저장 키. 선택값(`ColorLogStore.paletteKey`)과 기록의 `themePalette`에 들어간다.
@@ -34,30 +40,82 @@ nonisolated struct Palette: Identifiable, Equatable, Sendable {
     /// 이 팔레트에 맞춘 대체 앱 아이콘. nil이면 기본 아이콘.
     let alternateIconName: String?
 
-    init(preset: ColorPalette) {
+    /// 프리셋. 사용자가 고친 색(`override`)이 있으면 그 색을 쓴다.
+    ///
+    /// 고친 색 중 원래 색과 같은 것은 원래 이름을 그대로 읽고, 바뀐 색은 순서로 부른다.
+    /// 대체 아이콘은 원래 색으로 미리 그려 둔 그림이라, 색을 고친 프리셋은 기본 아이콘을 쓴다.
+    init(preset: ColorPalette, override: [String]? = nil) {
         id = preset.rawValue
         source = .preset(preset)
         name = preset.displayName
-        swatches = preset.swatches
         theme = preset.theme
-        alternateIconName = preset.alternateIconName
+        if let override {
+            let originals = Dictionary(preset.swatches.map { ($0.hex, $0.name) }, uniquingKeysWith: { first, _ in first })
+            swatches = override.enumerated().map { index, hex in
+                ColorSwatch(name: originals[hex] ?? "\(preset.displayName) 색 \(index + 1)", hex: hex)
+            }
+            alternateIconName = nil
+        } else {
+            swatches = preset.swatches
+            alternateIconName = preset.alternateIconName
+        }
     }
 
-    static var `default`: Palette { Palette(preset: .default) }
+    /// 사용자가 만든 팔레트. 바탕은 흰 종이, 틴트는 첫 색.
+    init(user: UserPalette) {
+        id = user.paletteID
+        source = .user(user.id)
+        name = user.name
+        // 사용자가 고른 색에는 이름이 없다. VoiceOver는 순서로 부른다.
+        swatches = user.hexes.enumerated().map { index, hex in
+            ColorSwatch(name: "\(user.name) 색 \(index + 1)", hex: hex)
+        }
+        theme = PaletteTheme(
+            background:   Color(hex: "#FCFAF6", fallback: .white),
+            surface:      Color(hex: "#FFFFFF", fallback: .white),
+            ink:          Color(hex: "#2A2420", fallback: .black),
+            inkSecondary: Color(hex: "#948A82", fallback: .gray),
+            stroke:       Color(hex: "#ECE6E0", fallback: .gray),
+            tint:         Color(hex: user.hexes.first ?? "#EF8089", fallback: .pink),
+            colorScheme:  .light
+        )
+        alternateIconName = nil
+    }
 
-    /// 설정에 늘어놓는 순서 그대로의 모든 팔레트.
+    static var `default`: Palette { resolve(ColorPalette.default.rawValue) }
+
+    /// 설정에 늘어놓는 순서 그대로의 모든 팔레트. 프리셋 다음에 사용자 팔레트를 만든 순서로.
     static var all: [Palette] {
-        ColorPalette.allCases.map(Palette.init(preset:))
+        let overrides = PaletteStore.presetOverrides
+        return ColorPalette.allCases.map { Palette(preset: $0, override: overrides[$0.rawValue]) }
+            + PaletteStore.userPalettes.map(Palette.init(user:))
     }
 
     /// 저장된 id로 팔레트를 찾는다. 모르는 id(지워졌거나 손상된 값)면 기본 팔레트.
     static func resolve(_ id: String) -> Palette {
-        Palette(preset: ColorPalette(storedValue: id))
+        if let user = PaletteStore.userPalette(id: id) {
+            return Palette(user: user)
+        }
+        // 예전 '나만의 팔레트'로 기록된 날은 그걸 옮겨 만든 사용자 팔레트로 읽는다.
+        if id == PaletteStore.legacyCustomID,
+           let migrated = ColorLogStore.defaults.string(forKey: PaletteStore.migratedCustomKey),
+           let user = PaletteStore.userPalette(id: migrated) {
+            return Palette(user: user)
+        }
+        let preset = ColorPalette(rawValue: id) ?? .default
+        return Palette(preset: preset, override: PaletteStore.presetOverrides[preset.rawValue])
     }
 
     /// 지금 선택된 팔레트. 위젯 · 인텐트처럼 @AppStorage가 없는 곳에서 읽는다.
     static var current: Palette {
-        resolve(ColorLogStore.defaults.string(forKey: ColorLogStore.paletteKey) ?? ColorPalette.default.rawValue)
+        PaletteStore.migrateLegacyCustomIfNeeded()
+        return resolve(ColorLogStore.defaults.string(forKey: ColorLogStore.paletteKey) ?? ColorPalette.default.rawValue)
+    }
+
+    /// 사용자가 색을 고친 프리셋인지.
+    var isModifiedPreset: Bool {
+        guard case .preset(let preset) = source else { return false }
+        return swatches.map(\.hex) != preset.swatches.map(\.hex)
     }
 
     /// HEX가 이 팔레트에 속하는 색인지. (저장된 기록의 색 이름을 되찾을 때)

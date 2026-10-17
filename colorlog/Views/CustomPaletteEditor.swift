@@ -2,7 +2,7 @@
 //  CustomPaletteEditor.swift
 //  colorlog
 //
-//  나만의 팔레트를 만드는 시트.
+//  팔레트의 색을 고치는 시트. 사용자 팔레트와 프리셋을 같은 화면에서 고친다.
 //
 //   · 위 — 지금 다섯 색으로 칠한 곰. 손잡이를 움직이는 대로 곰의 색이 바뀐다.
 //     색은 결국 곰 위에 번질 물감이니, 동그라미가 아니라 곰을 보고 고르게 한다.
@@ -22,14 +22,22 @@ import WidgetKit
 
 struct CustomPaletteEditor: View {
 
-    @AppStorage(CustomPalette.key, store: ColorLogStore.defaults) private var stored = ""
+    /// 고치는 팔레트의 `Palette.id`.
+    let paletteID: String
+
+    // 저장소가 바뀌면 다시 그리도록 지켜본다. 값은 `Palette.resolve`가 읽는다.
+    @AppStorage(PaletteStore.userPalettesKey, store: ColorLogStore.defaults) private var userPalettesData = Data()
+    @AppStorage(PaletteStore.presetOverridesKey, store: ColorLogStore.defaults) private var overridesData = Data()
     @Environment(\.paletteTheme) private var theme
 
     @State private var selected = 0
     @State private var hue: Double = 0
     @State private var depth: Double = 0.6
 
-    private var hexes: [String] { CustomPalette.decode(stored) }
+    private var hexes: [String] {
+        _ = (userPalettesData, overridesData)
+        return Palette.resolve(paletteID).swatches.map(\.hex)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,14 +58,14 @@ struct CustomPaletteEditor: View {
             VStack(spacing: 22) {
                 PaintSlider(
                     value: hue / 360,
-                    track: (0...12).map { Color(hex: CustomPalette.color(hue: Double($0) * 30, depth: depth), fallback: .gray) },
+                    track: (0...12).map { Color(hex: PaintMix.color(hue: Double($0) * 30, depth: depth), fallback: .gray) },
                     thumb: currentColor,
                     label: "색상",
                     onChange: { hue = $0 * 360; apply() })
 
                 PaintSlider(
                     value: depth,
-                    track: [0, 0.5, 1].map { Color(hex: CustomPalette.color(hue: hue, depth: $0), fallback: .gray) },
+                    track: [0, 0.5, 1].map { Color(hex: PaintMix.color(hue: hue, depth: $0), fallback: .gray) },
                     thumb: currentColor,
                     label: "진하기",
                     onChange: { depth = $0; apply() })
@@ -76,7 +84,7 @@ struct CustomPaletteEditor: View {
 
                 Button {
                     withAnimation(.smooth(duration: 0.35)) {
-                        stored = CustomPalette.encode(CustomPalette.defaultHexes)
+                        PaletteStore.setHexes(ColorPalette.watercolor.swatches.map(\.hex), for: paletteID)
                     }
                     loadHandles()
                 } label: {
@@ -96,22 +104,19 @@ struct CustomPaletteEditor: View {
         .presentationDragIndicator(.visible)
         .presentationBackground(theme.background)
         .sensoryFeedback(.selection, trigger: selected)
-        .onAppear {
-            // 처음 열 때 저장된 값이 없으면 기본 다섯 색을 적어 둔다. 위젯도 같은 색을 보게.
-            if stored.isEmpty { stored = CustomPalette.encode(CustomPalette.defaultHexes) }
-            loadHandles()
-        }
+        .onAppear(perform: loadHandles)
         // 손잡이를 끄는 동안 위젯을 매번 다시 그리지 않는다. 닫을 때 한 번.
         .onDisappear { WidgetCenter.shared.reloadAllTimelines() }
     }
 
-    private var currentColor: Color { Color(hex: hexes[selected], fallback: .gray) }
+    private var currentHex: String { hexes[min(selected, hexes.count - 1)] }
+    private var currentColor: Color { Color(hex: currentHex, fallback: .gray) }
 
     // MARK: 다섯 색
 
     private var swatchRow: some View {
         HStack(spacing: 14) {
-            ForEach(0..<5, id: \.self) { index in
+            ForEach(hexes.indices, id: \.self) { index in
                 let isSelected = index == selected
                 Circle()
                     .fill(Color(hex: hexes[index], fallback: .gray))
@@ -139,13 +144,13 @@ struct CustomPaletteEditor: View {
     // MARK: 손잡이
 
     private func loadHandles() {
-        let handles = CustomPalette.handles(for: hexes[selected])
+        let handles = PaintMix.handles(for: currentHex)
         hue = handles.hue
         depth = handles.depth
     }
 
     private func apply() {
-        write(CustomPalette.color(hue: hue, depth: depth))
+        write(PaintMix.color(hue: hue, depth: depth))
     }
 
     private func pickExact(_ color: Color) {
@@ -158,8 +163,9 @@ struct CustomPaletteEditor: View {
 
     private func write(_ hex: String) {
         var next = hexes
+        guard next.indices.contains(selected) else { return }
         next[selected] = hex
-        stored = CustomPalette.encode(next)
+        PaletteStore.setHexes(next, for: paletteID)
     }
 }
 
@@ -217,6 +223,6 @@ private struct PaintSlider: View {
 #Preview("나만의 팔레트") {
     @Previewable @State var isPresented = true
     Button("열기") { isPresented = true }
-        .sheet(isPresented: $isPresented) { CustomPaletteEditor() }
-        .paletteTheme(.custom)
+        .sheet(isPresented: $isPresented) { CustomPaletteEditor(paletteID: ColorPalette.watercolor.rawValue) }
+        .paletteTheme(.watercolor)
 }

@@ -6,6 +6,11 @@ import WidgetKit
     /// 알림 delegate는 앱이 실행을 마치기 전에 지정돼야 해서 AppDelegate가 필요하다.
     @UIApplicationDelegateAdaptor(ColorLogAppDelegate.self) private var appDelegate
 
+    init() {
+        // 첫 화면이 선택값을 읽기 전에 예전 '나만의 팔레트'를 옮겨 둔다.
+        PaletteStore.migrateLegacyCustomIfNeeded()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -27,16 +32,17 @@ struct ContentView: View {
     private var syncsAppIcon = false
 
     @State private var isShowingSettings = false
-    /// 나만의 팔레트의 다섯 색. 바뀌면 틴트 · 위쪽 팔레트 점들이 따라 다시 그려진다.
-    @AppStorage(CustomPalette.key, store: ColorLogStore.defaults) private var customHexes = ""
+    // 사용자 팔레트 · 고친 프리셋. 바뀌면 틴트 · 위쪽 팔레트 점들이 따라 다시 그려진다.
+    @AppStorage(PaletteStore.userPalettesKey, store: ColorLogStore.defaults) private var userPalettesData = Data()
+    @AppStorage(PaletteStore.presetOverridesKey, store: ColorLogStore.defaults) private var overridesData = Data()
     @Environment(\.scenePhase) private var scenePhase
 
     private let router = NotificationRouter.shared
     private let reminders = ReminderStore.shared
 
     private var palette: Palette {
-        // customHexes를 읽어 두어야 나만의 팔레트 색이 바뀔 때 이 화면이 다시 그려진다.
-        _ = customHexes
+        // 저장소 값을 읽어 두어야 팔레트의 색이 바뀔 때 이 화면이 다시 그려진다.
+        _ = (userPalettesData, overridesData)
         return Palette.resolve(paletteID)
     }
 
