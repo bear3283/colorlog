@@ -32,6 +32,8 @@ struct SettingsView: View {
     @AppStorage(PaletteStore.presetOverridesKey, store: ColorLogStore.defaults) private var overridesData = Data()
     /// 편집기로 고치고 있는 팔레트.
     @State private var editing: EditingPalette?
+    /// 길게 누른 메뉴에서 지우려는 사용자 팔레트. 확인을 한 번 거친다.
+    @State private var deleting: Palette?
 
     private let reminders = ReminderStore.shared
 
@@ -73,8 +75,9 @@ struct SettingsView: View {
 
     private var palettes: some View {
         _ = (userPalettesData, overridesData)
+        let all = Palette.all
         return VStack(spacing: 14) {
-            ForEach(Palette.all) { palette in
+            ForEach(all) { palette in
                 PaletteCard(
                     palette: palette,
                     isSelected: palette.id == selected.id,
@@ -87,13 +90,66 @@ struct SettingsView: View {
                 )
                 // 카드는 저장된 색을 읽어 그린다. 색이 바뀌면 새로 그린다.
                 .id(palette.id + palette.swatches.map(\.hex).joined())
+                .contextMenu { menu(for: palette, canAdd: all.count - ColorPalette.allCases.count < PaletteStore.maxUserPalettes) }
+                .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
+
+            NewPaletteCard(isEnabled: all.count - ColorPalette.allCases.count < PaletteStore.maxUserPalettes) {
+                addPalette(copying: selected)
+            }
+        }
+        .confirmationDialog(
+            deleting.map { "\($0.name)을 지울까요?" } ?? "",
+            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+            titleVisibility: .visible,
+            presenting: deleting
+        ) { palette in
+            Button("지우기", role: .destructive) { delete(palette) }
+        } message: { _ in
+            Text("이미 칠한 날의 색은 그대로 남아요.")
         }
         .sheet(item: $editing) { item in
             PaletteEditor(paletteID: item.id, onDelete: { selectNeighbor(ofDeleted: item.id) })
                 .paletteTheme(Palette.resolve(item.id))
                 .environment(\.locale, .colorLog)
         }
+    }
+
+    /// 카드를 길게 누르면 뜨는 메뉴. 시스템 메뉴라 글자가 있다.
+    @ViewBuilder
+    private func menu(for palette: Palette, canAdd: Bool) -> some View {
+        Button("색 고치기", systemImage: "paintbrush.pointed") { openEditor(for: palette) }
+        if canAdd {
+            Button("복제해서 새로 만들기", systemImage: "plus.square.on.square") { addPalette(copying: palette, opensEditor: false) }
+        }
+        switch palette.source {
+        case .preset(let preset):
+            if palette.isModifiedPreset {
+                Button("원래 색으로", systemImage: "arrow.counterclockwise") {
+                    withAnimation(.smooth(duration: 0.35)) { PaletteStore.resetPreset(preset) }
+                }
+            }
+        case .user:
+            Button("지우기", systemImage: "trash", role: .destructive) { deleting = palette }
+        }
+    }
+
+    /// 새 사용자 팔레트. 빈 색에서 시작하면 막막하니 바탕 팔레트의 색을 옮겨 담는다.
+    /// ＋ 카드에서는 지금 쓰는 팔레트에서 출발해 바로 고치고, 복제는 목록에 더하기만 한다.
+    private func addPalette(copying source: Palette, opensEditor: Bool = true) {
+        var created: UserPalette?
+        withAnimation(.smooth(duration: 0.4)) {
+            created = PaletteStore.addPalette(copying: source.swatches.map(\.hex))
+        }
+        guard let created, opensEditor else { return }
+        openEditor(for: Palette(user: created))
+    }
+
+    private func delete(_ palette: Palette) {
+        guard case .user(let id) = palette.source else { return }
+        selectNeighbor(ofDeleted: palette.id)
+        withAnimation(.smooth(duration: 0.4)) { PaletteStore.deletePalette(id: id) }
+        deleting = nil
     }
 
     /// 지금 쓰던 팔레트를 지우면 목록에서 바로 앞 팔레트로 넘어간다.
@@ -241,18 +297,18 @@ private extension View {
 
 // MARK: - 팔레트 카드
 
-/// 이름표가 없다. 그 팔레트로 칠해진 카드 자체가 이름이다.
 /// 편집기 시트에 넘기는 팔레트 id.
 private struct EditingPalette: Identifiable {
     let id: String
 }
 
+/// 이름표가 없다. 그 팔레트로 칠해진 카드 자체가 이름이다.
 private struct PaletteCard: View {
 
     let palette: Palette
     let isSelected: Bool
     let action: () -> Void
-    /// 있으면 마지막 칸이 '빈 날' 대신 붓 버튼이 된다(나만의 팔레트).
+    /// 있으면 마지막 칸이 '빈 날' 대신 붓 버튼이 된다(사용자 팔레트).
     var onEdit: (() -> Void)? = nil
 
     /// 자기 자신의 테마로 그려져야 한다. 현재 테마를 쓰면 모든 카드가
@@ -291,14 +347,32 @@ private struct PaletteCard: View {
             .scaleEffect(isSelected ? 1 : 0.98)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(palette.name)
+        // 고친 프리셋: 모서리에 작은 붓 점. 원래 색과 다르다는 표시.
+        .overlay(alignment: .topTrailing) {
+            if palette.isModifiedPreset {
+                Circle()
+                    .fill(ownTheme.tint)
+                    .frame(width: 20, height: 20)
+                    .overlay {
+                        Image(systemName: "paintbrush.pointed.fill")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                    .overlay { Circle().strokeBorder(ownTheme.background, lineWidth: 2) }
+                    .offset(x: 4, y: -4)
+                    .scaleEffect(isSelected ? 1 : 0.98)
+                    .accessibilityHidden(true)
+            }
+        }
+        .accessibilityLabel(palette.isModifiedPreset ? "\(palette.name), 고친 색" : palette.name)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         // 붓 버튼은 카드 버튼 밖에 겹쳐 둔다. 버튼 안의 버튼은 누르는 곳이 엉킨다.
         .overlay(alignment: .trailing) {
             if let onEdit {
                 GeometryReader { proxy in
-                    // 카드 안 여섯 칸(색 다섯 + 마지막 칸) 중 마지막 칸 자리.
-                    let cell = (proxy.size.width - 32 - 10 * 5) / 6
+                    // 카드 안 칸(색 + 마지막 칸) 중 마지막 칸 자리.
+                    let count = CGFloat(palette.swatches.count)
+                    let cell = (proxy.size.width - 32 - 10 * count) / (count + 1)
                     Button(action: onEdit) {
                         RoundedRectangle(cornerRadius: 11, style: .continuous)
                             .fill(ownTheme.surface)
@@ -317,10 +391,38 @@ private struct PaletteCard: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
                     .padding(.trailing, 16)
                     .scaleEffect(isSelected ? 1 : 0.98)
-                    .accessibilityLabel("나만의 팔레트 색 바꾸기")
+                    .accessibilityLabel("\(palette.name) 색 고치기")
                 }
             }
         }
+    }
+}
+
+/// 목록 끝의 점선 카드. 누르면 지금 팔레트의 색을 옮겨 담은 새 팔레트가 생기고 편집기가 열린다.
+private struct NewPaletteCard: View {
+    let isEnabled: Bool
+    let action: () -> Void
+
+    @Environment(\.paletteTheme) private var theme
+
+    var body: some View {
+        Button(action: action) {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .strokeBorder(theme.inkSecondary.opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [6, 6]))
+                .frame(height: 78)
+                .overlay {
+                    Image(systemName: "plus")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(theme.inkSecondary)
+                }
+                .contentShape(.rect(cornerRadius: 24, style: .continuous))
+                .scaleEffect(0.98)
+        }
+        .buttonStyle(.plain)
+        // 더 만들 수 없을 때는 흐리게. 숨기면 왜 사라졌는지 알 수 없다.
+        .opacity(isEnabled ? 1 : 0.35)
+        .disabled(!isEnabled)
+        .accessibilityLabel("새 팔레트 만들기")
     }
 }
 
