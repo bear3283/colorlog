@@ -7,7 +7,7 @@
 //  상태는 따로 저장하지 않는다. 그날 채운 자리 수에서 매번 계산한다.
 //  상태를 저장해 두면 기록을 지우거나 고쳤을 때 둘이 어긋난다.
 //
-//  곰의 동작은 상태가 아니라 **기록**이 정한다. 처음 기록될 때 스무 가지 중 하나가
+//  곰의 동작은 상태가 아니라 **기록**이 정한다. 처음 기록될 때 서른다섯 가지 중 하나가
 //  무작위로 저장되고(`DailyColorLog.poseRawValue`), 사용자가 칸을 길게 눌러 바꿀 수 있다.
 //  동작이 저장되기 전의 기록은 날짜 시드로 뽑는다 — 그릴 때마다 새로 뽑으면
 //  스크롤할 때마다 곰이 바뀐다.
@@ -105,12 +105,23 @@ extension DailyColorLog {
 
 extension BearPose {
 
-    /// 날짜로 고정한 무작위 동작. 스무 가지 모두가 후보다.
+    /// 날짜로 고정한 무작위 동작. 동작이 저장되지 않은 예전 기록에만 쓴다.
+    ///
+    /// 후보는 `legacyPool`로 못 박아 둔다. `allCases`에서 뽑으면 자세를 새로 그려 넣을
+    /// 때마다 같은 날의 곰이 다른 곰으로 바뀐다. 새 기록은 처음부터 동작을 저장하므로
+    /// 새 자세는 거기서 뽑힌다.
     ///
     /// `colorSeed`를 그대로 나머지 연산하면 날마다 같은 간격으로 건너뛰어 무늬가
     /// 보인다. 시드 생성기를 한 번 거쳐 이웃한 날끼리도 고르게 흩어지게 한다.
     static func random(for date: Date) -> BearPose {
         var rng = SeededGenerator(seed: Calendar.current.startOfDay(for: date).colorSeed ^ 0xBEA2_D0CE)
-        return allCases.randomElement(using: &rng) ?? .standing
+        return legacyPool.randomElement(using: &rng) ?? .standing
     }
+
+    /// 예전 기록의 곰을 고르는 고정 후보. 절대 바꾸지 않는다 — 순서까지 그대로여야
+    /// 같은 날이 같은 곰으로 남는다.
+    static let legacyPool: [BearPose] = [
+        .standing, .waving, .sleeping, .sitting, .jumping, .cheering, .running,
+        .eating, .reading, .proud, .pointing, .peeking, .angry, .crying,
+    ]
 }

@@ -35,6 +35,23 @@ GRID = 20
 FIVE = "Gemini_Generated_Image_az054oaz054oaz05.png"
 EIGHT = "Gemini_Generated_Image_5xs0p85xs0p85xs0.png"
 PROPS = "Gemini_Generated_Image_4o4nqe4o4nqe4o4n.png"
+# 일상 시트는 절반 해상도(1376×768)로만 받았다. 다른 시트와 같은 기준으로 뽑도록 2배로 키워 쓴다.
+DAILY = "Gemini_Generated_Image_o71xkeo71xkeo71x (2).png"
+UPSCALE = {DAILY: 2}
+
+# 일상 시트: 5열 × 3행. 각 행은 이름표 띠 바로 위에서 자른다.
+_COLUMNS = [(60, 630), (625, 1150), (1150, 1665), (1665, 2185), (2180, 2700)]
+# 행마다 곰 발끝과 이름표 사이 틈이 열마다 달라(이름표가 한 줄 · 두 줄) 열별로 적는다.
+_ROWS = [
+    [(40, 465)] * 5,
+    [(545, 922), (545, 922), (545, 930), (545, 936), (545, 936)],
+    [(1040, 1396), (1041, 1396), (1005, 1396), (1006, 1396), (1006, 1396)],
+]
+_DAILY_POSES = [
+    ["painting", "guitar", "singing", "bath", "icebox"],
+    ["laptop", "coffee", "gaming", "chefHeart", "cooking"],
+    ["loving", "idea", "gift", "photo", "camping"],
+]
 
 # (자세, 원화 파일, 잘라 낼 영역 x0, y0, x1, y1 또는 None, 지울 영역 목록)
 # 시트에서 잘라 낼 때는 이웃 곰과 겹치지 않게 경계를 잡고, 칸 안에 걸친 이름표는 지운다.
@@ -60,6 +77,10 @@ SOURCES = [
     ("hat", PROPS, (160, 830, 640, 1400), []),
     ("workout", PROPS, (1030, 835, 1725, 1400), []),
     ("studying", PROPS, (2120, 870, 2665, 1400), []),
+] + [
+    (pose, DAILY, (x0, y0, x1, y1), [])
+    for rows, names in zip(_ROWS, _DAILY_POSES)
+    for (x0, x1), (y0, y1), pose in zip(_COLUMNS, rows, names)
 ]
 
 
@@ -228,6 +249,9 @@ def main(source_dir):
 
     for pose, filename, box, erase in SOURCES:
         image = Image.open(source_dir / filename).convert("RGB")
+        if filename in UPSCALE:
+            factor = UPSCALE[filename]
+            image = image.resize((image.width * factor, image.height * factor), Image.LANCZOS)
         rgb = np.asarray(image, dtype=np.float32) / 255
         rgb = rgb.copy()
         for x0, y0, x1, y1 in erase:
@@ -255,7 +279,7 @@ def main(source_dir):
         mask_image = layer(np.ones_like(rgb), soft(silhouette, 1.0))
         keep_image = layer(rgb, keep_alpha)
 
-        title = pose.capitalize()
+        title = pose[0].upper() + pose[1:]
         save(f"BearInk{title}", np.asarray(ink_image), CATALOG)
         save(f"BearMask{title}", np.asarray(mask_image), CATALOG)
         save(f"BearKeep{title}", np.asarray(keep_image), CATALOG)
