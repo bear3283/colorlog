@@ -13,6 +13,11 @@
 //  격자에서는 곰이 작아 무슨 동작인지 겨우 보인다. 기록하는 순간만큼은 곰을 크게 보고,
 //  고른 색이 곰에 스며드는 걸 지켜볼 수 있게 했다.
 //
+//  큰 곰을 누르면 아래 색 줄 자리에 그날의 색으로 칠한 곰 서른다섯 마리가 올라온다
+//  (`BearPoseStrip`). 하나를 고르거나 큰 곰을 다시 누르면 색 줄로 돌아간다.
+//  곰의 동작은 처음 기록할 때 무작위로 정해지니, 바꿀 수 있는 건 색이 하나라도 든 날뿐이다.
+//  큰 곰 발밑의 옅은 빛이 천천히 숨쉬며 '눌러 볼 수 있다'를 글자 없이 알린다.
+//
 //  화면의 글자는 날짜뿐이다. 자리는 해 · 달 심볼이, 색은 색 자체가 말한다.
 //
 
@@ -34,6 +39,8 @@ struct DayDetailSheet: View {
 
     @Query private var logs: [DailyColorLog]
     @State private var selected: Slot
+    /// 아래 줄이 색 대신 곰을 보여 주는 중.
+    @State private var isChoosingPose = false
     @Environment(\.paletteTheme) private var theme
 
     init(
@@ -55,6 +62,12 @@ struct DayDetailSheet: View {
 
     private var log: DailyColorLog? { logs.first }
 
+    /// 동작을 바꿀 수 있는 기록. 색이 없는 날의 곰은 선화라 동작이 보이지 않는다.
+    private var poseLog: DailyColorLog? {
+        guard let log, !log.isEmpty else { return nil }
+        return log
+    }
+
     private var slotColors: [String] {
         log?.slotColors ?? Array(repeating: "", count: DailyColorLog.maxColorsPerDay)
     }
@@ -73,19 +86,32 @@ struct DayDetailSheet: View {
 
             Spacer(minLength: 12)
 
-            // 발 아래로 여유를 남긴다. 오늘의 곰은 이웃보다 한 치수 커서 위로 자란다.
-            DayBearCell(
-                date: date, colors: slotColors, relation: relation, pose: log?.pose,
-                isHighlighted: relation == .today, usesSnapshot: false)
-                .frame(width: 184, height: 184)
+            bear
 
             Spacer(minLength: 12)
 
-            slotRow
-                .padding(.bottom, 20)
-
-            colorRow
-                .padding(.bottom, 36)
+            // 두 줄은 같은 자리를 나눠 쓴다. 바뀌어도 시트 높이와 큰 곰의 자리는 그대로다.
+            ZStack {
+                if isChoosingPose, let poseLog {
+                    BearPoseStrip(log: poseLog, bearSize: 92) { _ in
+                        // 고른 곰이 큰 곰 자리에서 퐁 바뀌는 걸 본 뒤에 색 줄로 돌아간다.
+                        Task {
+                            try? await Task.sleep(for: .milliseconds(420))
+                            withAnimation(.smooth(duration: 0.35)) { isChoosingPose = false }
+                        }
+                    }
+                    .padding(.horizontal, -24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else {
+                    VStack(spacing: 20) {
+                        slotRow
+                        colorRow
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .frame(height: 124)
+            .padding(.bottom, 36)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 24)
@@ -93,9 +119,36 @@ struct DayDetailSheet: View {
         .presentationDragIndicator(.visible)
         .presentationBackground(theme.background)
         .sensoryFeedback(.selection, trigger: selected)
+        .sensoryFeedback(.impact(weight: .light), trigger: isChoosingPose)
         .onAppear {
             selected = Slot.defaultSelection(slotColors: slotColors, due: due)
         }
+    }
+
+    // MARK: 큰 곰
+
+    private var bear: some View {
+        // 발 아래로 여유를 남긴다. 오늘의 곰은 이웃보다 한 치수 커서 위로 자란다.
+        DayBearCell(
+            date: date, colors: slotColors, relation: relation, pose: log?.pose,
+            isHighlighted: relation == .today, usesSnapshot: false)
+            .frame(width: 184, height: 184)
+            .background(alignment: .bottom) {
+                if poseLog != nil {
+                    PoseHintGlow(tint: theme.tint, isLit: isChoosingPose)
+                }
+            }
+            .contentShape(.rect)
+            .onTapGesture(perform: togglePoseChoice)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(poseLog.map { ($0.pose ?? .random(for: date)).spokenName } ?? "곰")
+            .accessibilityAddTraits(poseLog != nil ? .isButton : [])
+            .accessibilityHint(poseLog != nil ? (isChoosingPose ? "색 고르기로 돌아가기" : "곰 바꾸기") : "")
+    }
+
+    private func togglePoseChoice() {
+        guard poseLog != nil else { return }
+        withAnimation(.smooth(duration: 0.35)) { isChoosingPose.toggle() }
     }
 
     // MARK: 자리
@@ -194,6 +247,32 @@ struct DayDetailSheet: View {
         if next[following.index].isEmpty {
             selected = following
         }
+    }
+}
+
+/// 큰 곰 발밑의 옅은 빛. 꺼져 있을 때는 천천히 숨쉬며 '눌러 볼 수 있다'를 알리고,
+/// 곰을 고르는 동안에는 켜진 채 머문다.
+private struct PoseHintGlow: View {
+    let tint: Color
+    let isLit: Bool
+
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var breathes = false
+
+    var body: some View {
+        Ellipse()
+            .fill(tint.opacity(colorScheme == .dark ? 0.5 : 0.36))
+            .frame(width: 128, height: 22)
+            .blur(radius: 9)
+            .opacity(isLit ? 1 : (breathes ? 0.75 : 0.25))
+            .offset(y: 4)
+            .animation(.smooth(duration: 0.35), value: isLit)
+            .onAppear {
+                guard !reduceMotion else { breathes = true; return }
+                withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) { breathes = true }
+            }
+            .accessibilityHidden(true)
     }
 }
 
