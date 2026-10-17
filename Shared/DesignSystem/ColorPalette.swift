@@ -58,6 +58,8 @@ nonisolated struct PaletteTheme: Sendable {
 /// 저장되는 값은 `rawValue`(안정적 ID)다. 한글 표기명은 절대 저장하지 않는다.
 nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Sendable {
     case pantone       = "pantone"
+    /// 칼라베어 앱 아이콘(수채화 곰 원화)에 번진 다섯 색.
+    case watercolor    = "watercolor"
     case complementary = "complementary"
     case analogous     = "analogous"
     case spring        = "spring"
@@ -66,6 +68,8 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     case monochrome    = "monochrome"
     case cloud         = "cloud"
     case jewel         = "jewel"
+    /// 사용자가 직접 고른 다섯 색(`CustomPalette`). 늘 목록의 맨 끝.
+    case custom        = "custom"
 
     static let `default`: ColorPalette = .pantone
 
@@ -82,6 +86,7 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     var displayName: String {
         switch self {
         case .pantone:       "클래식"
+        case .watercolor:    "수채 곰"
         case .complementary: "보색"
         case .analogous:     "유사색"
         case .spring:        "봄"
@@ -90,6 +95,7 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
         case .monochrome:    "단색"
         case .cloud:         "구름"
         case .jewel:         "보석"
+        case .custom:        "나만의 팔레트"
         }
     }
 
@@ -97,6 +103,28 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
 
     var theme: PaletteTheme {
         switch self {
+        case .custom:
+            // 바탕은 흰 종이. 틴트는 사용자가 고른 첫 색.
+            PaletteTheme(
+                background:   Color(hex: "#FCFAF6", fallback: .white),
+                surface:      Color(hex: "#FFFFFF", fallback: .white),
+                ink:          Color(hex: "#2A2420", fallback: .black),
+                inkSecondary: Color(hex: "#948A82", fallback: .gray),
+                stroke:       Color(hex: "#ECE6E0", fallback: .gray),
+                tint:         Color(hex: CustomPalette.hexes[0], fallback: .pink),
+                colorScheme: .light
+            )
+        case .watercolor:
+            // 원화의 종이처럼 살짝 따뜻한 흰빛. 틴트는 곰 볼에 번진 분홍.
+            PaletteTheme(
+                background:   Color(hex: "#FCFAF6", fallback: .white),
+                surface:      Color(hex: "#FFFFFF", fallback: .white),
+                ink:          Color(hex: "#3B2A22", fallback: .black),
+                inkSecondary: Color(hex: "#9A8E86", fallback: .gray),
+                stroke:       Color(hex: "#ECE6E0", fallback: .gray),
+                tint:         Color(hex: "#EF8089", fallback: .pink),
+                colorScheme: .light
+            )
         case .pantone:
             PaletteTheme(
                 background:   Color(hex: "#FAF7F4", fallback: .white),
@@ -210,6 +238,23 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     /// 이름은 화면에 뜨지 않는다 — VoiceOver 레이블로만 쓰인다.
     var swatches: [ColorSwatch] {
         switch self {
+        case .custom:
+            // 색 이름은 VoiceOver만 읽는다. 사용자가 고른 색에는 이름이 없으니 순서로 부른다.
+            CustomPalette.hexes.enumerated().map { index, hex in
+                ColorSwatch(name: "나만의 색 \(index + 1)", hex: hex)
+            }
+        case .watercolor:
+            // 앱 아이콘 원화에서 색상(hue)별로 묶어 읽은 다섯 색. 원화의 색은 이미 물에 풀린
+            // 파스텔이라 그대로 쓰면 곰을 칠할 때 거의 보이지 않는다. 색상은 그대로 두고
+            // 물감이 고인 정도로 진하게 잡았다 — 곰 위에 번지면 원화와 비슷한 파스텔이 된다.
+            // 원화의 연두는 노랑 · 민트와 겹쳐 뺐다.
+            [
+                ColorSwatch(name: "분홍",   hex: "#EF8089"),
+                ColorSwatch(name: "하늘",   hex: "#6CB2E5"),
+                ColorSwatch(name: "노랑",   hex: "#F6CD51"),
+                ColorSwatch(name: "라벤더", hex: "#B98CD9"),
+                ColorSwatch(name: "민트",   hex: "#64C4A1"),
+            ]
         case .pantone:
             // 해마다 따로 고른 '올해의 색' 계열에서 출발했다. 서로 조화를 전제하지 않는다.
             //
@@ -335,6 +380,9 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     var alternateIconName: String? {
         switch self {
         case .pantone:       nil
+        // 기본 아이콘이 바로 이 팔레트의 원화 곰이다.
+        case .watercolor:    nil
+        case .custom:        nil
         case .complementary: "AppIcon-Complementary"
         case .analogous:     "AppIcon-Analogous"
         // 전용 아이콘 에셋이 아직 없다. 생기면 이름을 넣는다.

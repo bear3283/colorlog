@@ -27,12 +27,18 @@ struct ContentView: View {
     private var syncsAppIcon = false
 
     @State private var isShowingSettings = false
+    /// 나만의 팔레트의 다섯 색. 바뀌면 틴트 · 위쪽 팔레트 점들이 따라 다시 그려진다.
+    @AppStorage(CustomPalette.key, store: ColorLogStore.defaults) private var customHexes = ""
     @Environment(\.scenePhase) private var scenePhase
 
     private let router = NotificationRouter.shared
     private let reminders = ReminderStore.shared
 
-    private var palette: ColorPalette { ColorPalette(storedValue: paletteID) }
+    private var palette: ColorPalette {
+        // customHexes를 읽어 두어야 나만의 팔레트 색이 바뀔 때 이 화면이 다시 그려진다.
+        _ = customHexes
+        return ColorPalette(storedValue: paletteID)
+    }
 
     var body: some View {
         TimelineGridView(

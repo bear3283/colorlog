@@ -27,6 +27,9 @@ struct SettingsView: View {
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.openURL) private var openURL
+    /// 나만의 팔레트의 다섯 색. 편집기에서 바뀌면 카드도 따라 다시 그려진다.
+    @AppStorage(CustomPalette.key, store: ColorLogStore.defaults) private var customHexes = ""
+    @State private var isEditingCustom = false
 
     private let reminders = ReminderStore.shared
 
@@ -76,10 +79,24 @@ struct SettingsView: View {
                         withAnimation(.smooth(duration: 0.45)) {
                             selection = palette.rawValue
                         }
-                    }
+                    },
+                    onEdit: palette == .custom ? { openCustomEditor() } : nil
                 )
+                // 나만의 팔레트 카드는 저장된 다섯 색을 읽어 그린다. 색이 바뀌면 새로 그린다.
+                .id(palette == .custom ? customHexes : palette.rawValue)
             }
         }
+        .sheet(isPresented: $isEditingCustom) {
+            CustomPaletteEditor()
+                .paletteTheme(.custom)
+                .environment(\.locale, .colorLog)
+        }
+    }
+
+    /// 붓을 누르면 나만의 팔레트로 바꾸고 편집기를 연다. 고치는 색이 곧 캔버스의 색이 되도록.
+    private func openCustomEditor() {
+        withAnimation(.smooth(duration: 0.45)) { selection = ColorPalette.custom.rawValue }
+        isEditingCustom = true
     }
 
     // MARK: 홈 화면 아이콘
@@ -218,6 +235,8 @@ private struct PaletteCard: View {
     let palette: ColorPalette
     let isSelected: Bool
     let action: () -> Void
+    /// 있으면 마지막 칸이 '빈 날' 대신 붓 버튼이 된다(나만의 팔레트).
+    var onEdit: (() -> Void)? = nil
 
     /// 자기 자신의 테마로 그려져야 한다. 현재 테마를 쓰면 모든 카드가
     /// 같은 배경 위에 놓여 '세계관의 차이'가 사라진다.
@@ -257,6 +276,34 @@ private struct PaletteCard: View {
         .buttonStyle(.plain)
         .accessibilityLabel(palette.displayName)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+        // 붓 버튼은 카드 버튼 밖에 겹쳐 둔다. 버튼 안의 버튼은 누르는 곳이 엉킨다.
+        .overlay(alignment: .trailing) {
+            if let onEdit {
+                GeometryReader { proxy in
+                    // 카드 안 여섯 칸(색 다섯 + 마지막 칸) 중 마지막 칸 자리.
+                    let cell = (proxy.size.width - 32 - 10 * 5) / 6
+                    Button(action: onEdit) {
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .fill(ownTheme.surface)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                                    .strokeBorder(ownTheme.inkSecondary.opacity(0.3), lineWidth: 1)
+                            }
+                            .overlay {
+                                Image(systemName: "paintbrush.pointed.fill")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(ownTheme.tint)
+                            }
+                            .frame(width: cell, height: 46)
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+                    .padding(.trailing, 16)
+                    .scaleEffect(isSelected ? 1 : 0.98)
+                    .accessibilityLabel("나만의 팔레트 색 바꾸기")
+                }
+            }
+        }
     }
 }
 

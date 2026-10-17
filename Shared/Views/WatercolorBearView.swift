@@ -36,6 +36,8 @@ struct WatercolorBearView: View {
     /// 처음 나타날 때 번질지. 격자 칸은 이미 칠해진 채로 나타나고, 색이 바뀔 때만 번진다.
     /// 스크롤로 칸이 다시 나타날 때마다 번지면 캔버스가 쉴 새 없이 꿈틀댄다.
     let bloomsOnAppear: Bool
+    /// 색이 바뀔 때 다시 번질지. 손잡이를 끌며 색을 고르는 동안에는 매번 번지면 깜빡이기만 한다.
+    let bloomsOnChange: Bool
 
     /// 0이면 물감이 아직 종이에 닿기 전, 1이면 다 번진 상태.
     @State private var bloom: CGFloat
@@ -53,13 +55,15 @@ struct WatercolorBearView: View {
         pose: BearPose = .standing,
         style: DayBear.Style = .painted,
         seed: UInt64 = 0,
-        bloomsOnAppear: Bool = true
+        bloomsOnAppear: Bool = true,
+        bloomsOnChange: Bool = true
     ) {
         self.moodColors = moodColors
         self.pose = pose
         self.style = style
         self.seed = seed
         self.bloomsOnAppear = bloomsOnAppear
+        self.bloomsOnChange = bloomsOnChange
         // 번지지 않고 나타나는 곰은 첫 프레임부터 다 칠해져 있어야 한 번 깜빡이지 않는다.
         _bloom = State(initialValue: bloomsOnAppear ? 0 : 1)
     }
@@ -123,7 +127,7 @@ struct WatercolorBearView: View {
         .task(id: BloomKey(colors: paints, pose: pose, seed: seed)) {
             let isFirst = !hasAppeared
             hasAppeared = true
-            guard !reduceMotion, bloomsOnAppear || !isFirst else {
+            guard !reduceMotion, isFirst ? bloomsOnAppear : bloomsOnChange else {
                 bloom = 1
                 return
             }
