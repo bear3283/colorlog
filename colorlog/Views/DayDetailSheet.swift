@@ -34,6 +34,8 @@ struct DayDetailSheet: View {
     let palette: Palette
     /// 그날 이미 물어본 자리들. 색을 넣은 뒤 다음에 골라 둘 자리를 정할 때 쓴다.
     let due: [Slot]
+    /// 처음 골라 둘 자리. 알림을 눌러 들어오면 그 알림이 물어본 자리. nil이면 밀린 자리부터.
+    let preferredSlot: Slot?
     /// 한 자리에 색을 넣는다. nil이면 비운다.
     let onSet: (Slot, String?) -> Void
 
@@ -42,18 +44,21 @@ struct DayDetailSheet: View {
     /// 아래 줄이 색 대신 곰을 보여 주는 중.
     @State private var isChoosingPose = false
     @Environment(\.paletteTheme) private var theme
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
 
     init(
         date: Date,
         relation: DayRelation,
         palette: Palette,
         due: [Slot],
+        preferredSlot: Slot? = nil,
         onSet: @escaping (Slot, String?) -> Void
     ) {
         self.date = date
         self.relation = relation
         self.palette = palette
         self.due = due
+        self.preferredSlot = preferredSlot
         self.onSet = onSet
         // 그날의 기록일 수 있는 것들(앞뒤 이틀). 그중 그날 것은 `log`가 고른다.
         _logs = Query(filter: DailyColorLog.candidatesPredicate(for: date))
@@ -122,7 +127,7 @@ struct DayDetailSheet: View {
         .sensoryFeedback(.selection, trigger: selected)
         .sensoryFeedback(.impact(weight: .light), trigger: isChoosingPose)
         .onAppear {
-            selected = Slot.defaultSelection(slotColors: slotColors, due: due)
+            selected = preferredSlot ?? Slot.defaultSelection(slotColors: slotColors, due: due)
         }
     }
 

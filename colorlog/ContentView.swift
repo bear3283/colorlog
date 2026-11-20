@@ -70,7 +70,7 @@ struct ContentView: View {
     var body: some View {
         TimelineGridView(
             onOpenSettings: { isShowingSettings = true },
-            openRequest: Bindable(router).requestedDate
+            openRequest: Bindable(router).request
         )
         .paletteTheme(palette)
         // DatePicker 같은 시스템 컨트롤도 앱의 언어를 따르게 한다.
@@ -103,6 +103,10 @@ struct ContentView: View {
             applyAppIcon(for: newPalette)
             // 위젯은 별도 프로세스라 테마가 바뀐 걸 스스로 알 수 없다.
             WidgetCenter.shared.reloadAllTimelines()
+        }
+        // 알림을 눌러 들어왔는데 설정 시트가 떠 있으면 그 위로는 하루 한 장을 띄울 수 없다.
+        .onChange(of: router.request) { _, request in
+            if request != nil { isShowingSettings = false }
         }
         .onChange(of: syncsAppIcon) { _, _ in
             applyAppIcon(for: palette)

@@ -101,7 +101,8 @@ final class ReminderStore {
             content.title = String(localized: "칼라베어", comment: "알림 제목. 앱 이름")
             content.body = reminder.slot.prompt
             content.sound = .default
-            content.userInfo = ["slot": reminder.slot.rawValue]
+            // 알림을 누르면 이 자리를 골라 둔 채 그날의 한 장이 열린다(NotificationRouter).
+            content.userInfo = [NotificationOpenRequest.slotKey: reminder.slot.rawValue]
 
             let request = UNNotificationRequest(
                 identifier: reminder.id,

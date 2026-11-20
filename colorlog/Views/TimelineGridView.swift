@@ -32,8 +32,8 @@ struct TimelineGridView: View {
     var horizontalPadding: CGFloat = 18
     var spacing: CGFloat = 10
     var onOpenSettings: () -> Void = {}
-    /// 알림을 눌러 들어온 경우 열어야 할 날. 처리한 뒤 nil로 되돌린다.
-    var openRequest: Binding<Date?> = .constant(nil)
+    /// 알림을 눌러 들어온 경우 열어야 할 하루. 처리한 뒤 nil로 되돌린다.
+    var openRequest: Binding<NotificationOpenRequest?> = .constant(nil)
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.colorPalette) private var palette
@@ -115,6 +115,7 @@ struct TimelineGridView: View {
                 relation: DayRelation(date: day.date, today: today),
                 palette: palette,
                 due: dueSlots(on: day.date),
+                preferredSlot: day.preferredSlot,
                 onSet: { slot, hex in setColor(hex, for: slot, on: day.date) }
             )
             .environment(\.paletteTheme, theme)
@@ -340,14 +341,31 @@ struct TimelineGridView: View {
         celebration = slots
     }
 
-    /// 알림에서 넘어온 날을 화면 한가운데로 가져온다.
+    /// 알림에서 넘어온 날을 화면 한가운데로 가져오고, 그날의 한 장을 알림이 물어본 자리로 연다.
     private func consumeOpenRequest(proxy: ScrollViewProxy) {
-        guard let requested = openRequest.wrappedValue else { return }
+        guard let request = openRequest.wrappedValue else { return }
         openRequest.wrappedValue = nil
-        guard let position = mapper.position(of: requested) else { return }
+        // 자정을 넘긴 채 잠들어 있던 앱이 알림으로 깨어났을 수 있다. 원점부터 오늘로 맞춘다.
+        let current = Calendar.current.startOfDay(for: .now)
+        if current != today { today = current }
+        // 미래 칸은 열 수 없다(격자에서도 누를 수 없는 칸).
+        guard DayRelation(date: request.day, today: today) != .future else { return }
 
-        withAnimation(.smooth(duration: 0.4)) {
-            proxy.scrollTo(position.row, anchor: .center)
+        if let position = mapper.position(of: request.day) {
+            withAnimation(.smooth(duration: 0.4)) {
+                proxy.scrollTo(position.row, anchor: .center)
+            }
+        }
+
+        // 다른 시트가 떠 있으면 내린 뒤에 올린다. 시트 위에 시트를 바로 띄우면 시스템이 무시한다.
+        // 막 켜진 경우에도 첫 화면이 자리 잡을 틈을 조금 준다.
+        let wasPresenting = openedDay != nil || poseEditing != nil
+        openedDay = nil
+        poseEditing = nil
+        celebration = nil
+        Task {
+            try? await Task.sleep(for: .milliseconds(wasPresenting ? 550 : 350))
+            openedDay = OpenedDay(date: request.day, preferredSlot: request.slot)
         }
     }
 }
@@ -489,6 +507,8 @@ private struct TimelineRowView: View {
 /// 시트로 여는 하루. `sheet(item:)`이 날짜를 구분할 수 있게 감싼다.
 private struct OpenedDay: Identifiable, Equatable {
     let date: Date
+    /// 알림에서 왔으면 그 알림이 물어본 자리. 칸을 눌러 열면 nil.
+    var preferredSlot: DailyColorLog.Slot? = nil
     var id: Date { date }
 }
 
