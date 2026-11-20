@@ -55,12 +55,13 @@ struct DayDetailSheet: View {
         self.palette = palette
         self.due = due
         self.onSet = onSet
-        _logs = Query(filter: DailyColorLog.predicate(for: date))
+        // 그날의 기록일 수 있는 것들(앞뒤 이틀). 그중 그날 것은 `log`가 고른다.
+        _logs = Query(filter: DailyColorLog.candidatesPredicate(for: date))
         // 실제 골라 둘 자리는 기록을 읽은 뒤(onAppear) 정한다.
         _selected = State(initialValue: .morning)
     }
 
-    private var log: DailyColorLog? { logs.first }
+    private var log: DailyColorLog? { DailyColorLog.pick(logs, for: DayKey(date)) }
 
     /// 동작을 바꿀 수 있는 기록. 색이 없는 날의 곰은 선화라 동작이 보이지 않는다.
     private var poseLog: DailyColorLog? {

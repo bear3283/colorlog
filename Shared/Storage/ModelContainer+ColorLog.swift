@@ -238,19 +238,24 @@ nonisolated enum ColorLogStore {
 /// 알림·위젯·App Intent 어디서든 불린다.
 nonisolated extension ModelContext {
 
+    /// 그날의 기록. 없으면 nil.
+    ///
+    /// 날은 `DayKey`로 가른다 — 다른 시간대에서 남긴 기록도 그 사람이 본 달력의 날로 찾는다.
+    func existingDailyColorLog(for day: Date, calendar: Calendar = .current) throws -> DailyColorLog? {
+        let candidates = try fetch(FetchDescriptor<DailyColorLog>(
+            predicate: DailyColorLog.candidatesPredicate(for: day, calendar: calendar)
+        ))
+        return DailyColorLog.pick(candidates, for: DayKey(day, calendar: calendar), calendar: calendar)
+    }
+
     /// 그날의 로그를 가져오고, 없으면 만들어서 넣는다.
     /// 알림·위젯·앱 어디서 들어와도 같은 레코드를 잡도록 하는 단일 진입점.
     @discardableResult
-    func dailyColorLog(for day: Date, palette: Palette) throws -> DailyColorLog {
-        var descriptor = FetchDescriptor<DailyColorLog>(
-            predicate: DailyColorLog.predicate(for: day)
-        )
-        descriptor.fetchLimit = 1
-
-        if let existing = try fetch(descriptor).first {
+    func dailyColorLog(for day: Date, palette: Palette, calendar: Calendar = .current) throws -> DailyColorLog {
+        if let existing = try existingDailyColorLog(for: day, calendar: calendar) {
             return existing
         }
-        let created = DailyColorLog(date: day, palette: palette)
+        let created = DailyColorLog(date: day, palette: palette, calendar: calendar)
         insert(created)
         return created
     }
@@ -258,11 +263,15 @@ nonisolated extension ModelContext {
     /// 그날의 한 자리에 색을 넣고(nil이면 비우고) 저장까지 끝낸다.
     /// 자리가 전부 비면 레코드를 지운다 — 빈 레코드가 '가장 오래된 기록'으로 잡혀
     /// 캔버스의 시작점을 끌어당기지 않도록.
+    /// - Returns: 실제로 바뀌었는지. 잘못된 HEX면 아무것도 만들지 않고 false.
     @discardableResult
     func setColor(
-        _ hex: String?, for slot: DailyColorLog.Slot, on day: Date = .now, palette: Palette
+        _ hex: String?, for slot: DailyColorLog.Slot, on day: Date = .now, palette: Palette,
+        calendar: Calendar = .current
     ) throws -> Bool {
-        let log = try dailyColorLog(for: day, palette: palette)
+        // 잘못된 HEX로 빈 레코드만 넣어 두고 돌아가지 않도록, 고치기 전에 먼저 거른다.
+        if let hex, HexColor.normalized(hex) == nil { return false }
+        let log = try dailyColorLog(for: day, palette: palette, calendar: calendar)
         guard log.setColor(hex, for: slot) else { return false }
         if log.isEmpty { delete(log) }
         try save()

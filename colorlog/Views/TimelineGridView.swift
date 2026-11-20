@@ -56,7 +56,8 @@ struct TimelineGridView: View {
     /// 캔버스가 시작하는 날. 앱과 함께한 첫날, 또는 그보다 오래된 기록이 있으면 그날.
     private var startDate: Date {
         let first = ColorLogStore.firstUseDate
-        guard let oldest = oldestLogs.first?.date else { return first }
+        // 다른 시간대에서 남긴 기록이면 저장값이 하루 어긋나 있을 수 있다. 그날의 자정으로 맞춘다.
+        guard let oldest = oldestLogs.first?.day().startOfDay() else { return first }
         return min(first, oldest)
     }
 
@@ -267,9 +268,7 @@ struct TimelineGridView: View {
 
     /// 자리 순서의 HEX. 언제나 세 칸, 빈 자리는 "".
     private func colors(on date: Date) -> [String] {
-        var descriptor = FetchDescriptor<DailyColorLog>(predicate: DailyColorLog.predicate(for: date))
-        descriptor.fetchLimit = 1
-        return (try? modelContext.fetch(descriptor).first?.slotColors)
+        (try? modelContext.existingDailyColorLog(for: date)?.slotColors)
             ?? Array(repeating: "", count: DailyColorLog.maxColorsPerDay)
     }
 
@@ -307,9 +306,7 @@ struct TimelineGridView: View {
 
     /// 칠한 날의 곰을 길게 누르면 동작 고르기를 연다. 빈 날에는 바꿀 곰이 없다.
     private func editPose(on date: Date) {
-        var descriptor = FetchDescriptor<DailyColorLog>(predicate: DailyColorLog.predicate(for: date))
-        descriptor.fetchLimit = 1
-        guard let log = try? modelContext.fetch(descriptor).first, !log.isEmpty else { return }
+        guard let log = try? modelContext.existingDailyColorLog(for: date), !log.isEmpty else { return }
         poseEditing = log
     }
 
@@ -359,26 +356,28 @@ private struct TodayProgressView: View {
     let date: Date
 
     @Environment(\.paletteTheme) private var theme
-    @Query private var logs: [DailyColorLog]
+    /// 오늘의 기록일 수 있는 것들(앞뒤 이틀). 그중 오늘 것은 `log`가 고른다.
+    @Query private var candidates: [DailyColorLog]
 
     init(date: Date) {
         self.date = date
-        var descriptor = FetchDescriptor<DailyColorLog>(
-            predicate: DailyColorLog.predicate(for: date)
-        )
-        descriptor.fetchLimit = 1
-        _logs = Query(descriptor)
+        _candidates = Query(filter: DailyColorLog.candidatesPredicate(for: date))
+    }
+
+    private var log: DailyColorLog? {
+        DailyColorLog.pick(candidates, for: DayKey(date))
     }
 
     var body: some View {
+        let log = log
         RecordedDots(
-            recordedHexes: logs.first?.slotColors ?? [],
+            recordedHexes: log?.slotColors ?? [],
             dotSize: 11,
             emptyStroke: theme.inkSecondary
         )
-        .animation(.smooth(duration: 0.3), value: logs.first?.slotColors ?? [])
+        .animation(.smooth(duration: 0.3), value: log?.slotColors ?? [])
         .accessibilityElement()
-        .accessibilityLabel("오늘 \(logs.first?.filledCount ?? 0)개 기록됨")
+        .accessibilityLabel("오늘 \(log?.filledCount ?? 0)개 기록됨")
     }
 }
 
@@ -415,19 +414,23 @@ private struct TimelineRowView: View {
         self.onTap = onTap
         self.onLongPress = onLongPress
 
+        // 저장값은 '기록한 시간대의 자정'이라 지금 시간대의 행 구간을 벗어날 수 있다.
+        // 앞뒤로 넓혀 읽고, 칸은 날(DayKey)로 맞춘다.
         let range = mapper.dayRange(row: row)
+        let widened = DailyColorLog.candidateRange(from: range.start, until: range.end)
         _logs = Query(
-            filter: DailyColorLog.predicate(from: range.start, until: range.end),
+            filter: DailyColorLog.predicate(from: widened.start, until: widened.end),
             sort: [SortDescriptor(\DailyColorLog.date)]
         )
     }
 
-    private var logsByDate: [Date: DailyColorLog] {
-        Dictionary(logs.map { ($0.date, $0) }, uniquingKeysWith: { first, _ in first })
+    /// 날 → 기록. `Date` 완전 일치로 찾으면 시간대가 바뀐 뒤 기록이 빈 칸으로 보인다.
+    private var logsByDay: [DayKey: DailyColorLog] {
+        DailyColorLog.byDay(logs)
     }
 
     var body: some View {
-        let lookup = logsByDate
+        let lookup = logsByDay
 
         HStack(spacing: spacing) {
             ForEach(0..<TimelineMapper.columnCount, id: \.self) { column in
@@ -441,7 +444,7 @@ private struct TimelineRowView: View {
                 } else {
                     DayBearCell(
                         date: date,
-                        log: lookup[date],
+                        log: lookup[DayKey(date)],
                         relation: relation,
                         isHighlighted: relation == .today
                     )
@@ -451,7 +454,7 @@ private struct TimelineRowView: View {
                     // 칠한 날의 곰은 길게 눌러 동작을 바꾼다. 빈 날은 부모가 무시한다.
                     .onLongPressGesture(minimumDuration: 0.45) { onLongPress(date) }
                     .accessibilityActions {
-                        if !(lookup[date]?.isEmpty ?? true) {
+                        if !(lookup[DayKey(date)]?.isEmpty ?? true) {
                             Button("곰 바꾸기") { onLongPress(date) }
                         }
                     }

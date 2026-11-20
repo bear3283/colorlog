@@ -82,7 +82,7 @@ struct BearPoseStrip: View {
             assertionFailure("곰 동작 저장 실패: \(error)")
         }
         // 오늘의 곰은 위젯에도 앉아 있다.
-        if Calendar.current.isDateInToday(log.date) {
+        if log.day() == DayKey(.now) {
             WidgetCenter.shared.reloadAllTimelines()
         }
     }

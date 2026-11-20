@@ -106,11 +106,7 @@ struct TodayColorProvider: TimelineProvider {
         // 저장소를 열지 못했으면(예: 첫 잠금 해제 전) 빈 하루로 그린다. 다음 갱신에서 다시 열어 본다.
         guard let container = ColorLogStore.shared else { return (Self.emptySlots, nil) }
         let context = ModelContext(container)
-        var descriptor = FetchDescriptor<DailyColorLog>(
-            predicate: DailyColorLog.predicate(for: .now)
-        )
-        descriptor.fetchLimit = 1
-        let log = try? context.fetch(descriptor).first
+        let log = try? context.existingDailyColorLog(for: .now)
         return (log?.slotColors ?? Self.emptySlots, log?.pose)
     }
 }

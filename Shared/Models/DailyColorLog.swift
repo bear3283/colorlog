@@ -66,8 +66,8 @@ final class DailyColorLog {
     static let maxColorsPerDay = 3
 
     /// - Parameter colors: 자리 순서의 HEX. ""는 빈 자리.
-    init(date: Date = .now, colors: [String] = [], palette: Palette = .default) {
-        self.date = Calendar.current.startOfDay(for: date)
+    init(date: Date = .now, colors: [String] = [], palette: Palette = .default, calendar: Calendar = .current) {
+        self.date = calendar.startOfDay(for: date)
         self.colors = Self.sanitize(colors)
         self.themePalette = palette.id
         self.poseRawValue = BearPose.allCases.randomElement()?.rawValue
@@ -208,21 +208,47 @@ extension DailyColorLog {
         #Predicate { $0.date >= start && $0.date < end }
     }
 
-    /// 하루치.
-    static func predicate(for day: Date, calendar: Calendar = .current) -> Predicate<DailyColorLog> {
-        let start = calendar.startOfDay(for: day)
-        let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start
-        return predicate(from: start, until: end)
+    /// 이 기록이 속한 날. 다른 시간대에서 남긴 기록도 그 사람이 본 달력의 날로 읽는다.
+    func day(in calendar: Calendar = .current) -> DayKey {
+        DayKey(recordedMidnight: date, calendar: calendar)
     }
 
-    /// 타임라인이 화면에 보이는 구간만 끊어 읽을 때 쓰는 디스크립터.
-    /// - Parameters:
-    ///   - start: 포함(inclusive)
-    ///   - end: 미포함(exclusive)
-    static func descriptor(from start: Date, until end: Date) -> FetchDescriptor<DailyColorLog> {
-        FetchDescriptor(
-            predicate: predicate(from: start, until: end),
-            sortBy: [SortDescriptor(\.date, order: .reverse)]
-        )
+    /// `[start, end)` 날들의 기록일 수 있는 저장 구간.
+    ///
+    /// 저장값은 '기록한 시간대의 자정'이라 지금 시간대의 하루 구간에서 최대 26시간 벗어난다.
+    /// 앞뒤로 이틀씩 넓혀 읽고, 어느 날인지는 `day(in:)`로 가른다.
+    static func candidateRange(from start: Date, until end: Date, calendar: Calendar = .current) -> (start: Date, end: Date) {
+        let widenedStart = calendar.date(byAdding: .day, value: -2, to: start) ?? start
+        let widenedEnd = calendar.date(byAdding: .day, value: 2, to: end) ?? end
+        return (widenedStart, widenedEnd)
+    }
+
+    /// 그날의 기록일 수 있는 것들(앞뒤 이틀 포함). 반드시 `pick(_:for:)`로 고른다.
+    static func candidatesPredicate(for day: Date, calendar: Calendar = .current) -> Predicate<DailyColorLog> {
+        let start = calendar.startOfDay(for: day)
+        let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start
+        let range = candidateRange(from: start, until: end, calendar: calendar)
+        return predicate(from: range.start, until: range.end)
+    }
+
+    /// 후보들 가운데 그날의 기록 하나.
+    ///
+    /// 같은 날로 읽히는 기록이 둘 이상이면(해외에서 남긴 기록과 집에서 남긴 기록이 겹친 경우)
+    /// 지금 시간대의 자정에 저장된 것을 먼저, 그다음은 가장 이른 저장값을 쓴다.
+    /// 화면 · 위젯 · 쓰기가 모두 이 규칙을 따르므로 보이는 기록과 고치는 기록이 같다.
+    static func pick(_ candidates: [DailyColorLog], for day: DayKey, calendar: Calendar = .current) -> DailyColorLog? {
+        let matches = candidates.filter { $0.day(in: calendar) == day }
+        let localMidnight = day.startOfDay(in: calendar)
+        return matches.first { $0.date == localMidnight }
+            ?? matches.min { $0.date < $1.date }
+    }
+
+    /// 날 → 기록. 행(닷새) 단위 조회 결과를 칸에 나눠 줄 때 쓴다.
+    static func byDay(_ logs: [DailyColorLog], calendar: Calendar = .current) -> [DayKey: DailyColorLog] {
+        var result: [DayKey: DailyColorLog] = [:]
+        for key in Set(logs.map { $0.day(in: calendar) }) {
+            result[key] = pick(logs, for: key, calendar: calendar)
+        }
+        return result
     }
 }
