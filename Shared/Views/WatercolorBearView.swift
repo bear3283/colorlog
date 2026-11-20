@@ -102,9 +102,9 @@ struct WatercolorBearView: View {
     /// 그날 기분을 앱이 판단한 게 아니다.
     private var accessibilityText: String {
         switch style {
-        case .painted: "색 \(paints.count)개로 칠한 곰"
-        case .bare: "아직 칠하지 않은 곰"
-        case .lineArt: "빈 날"
+        case .painted: String(localized: "색 \(paints.count)개로 칠한 곰")
+        case .bare: String(localized: "아직 칠하지 않은 곰")
+        case .lineArt: String(localized: "빈 날")
         }
     }
 
@@ -221,41 +221,41 @@ nonisolated enum BearPose: String, CaseIterable, Identifiable, Sendable {
     /// 앱이 고른 동작이 그날 기분을 판단한 것처럼 들리지 않도록.
     var spokenName: String {
         switch self {
-        case .standing: "서 있는 곰"
-        case .waving: "손 흔드는 곰"
-        case .sleeping: "자는 곰"
-        case .sitting: "앉아 있는 곰"
-        case .jumping: "뛰어오르는 곰"
-        case .cheering: "만세하는 곰"
-        case .running: "달리는 곰"
-        case .eating: "도넛 먹는 곰"
-        case .reading: "책 읽는 곰"
-        case .proud: "뿌듯한 곰"
-        case .pointing: "손가락으로 가리키는 곰"
-        case .peeking: "빼꼼 내다보는 곰"
-        case .angry: "화난 곰"
-        case .crying: "우는 곰"
-        case .sunglasses: "선글라스 쓴 곰"
-        case .music: "음악 듣는 곰"
-        case .umbrella: "우산 쓴 곰"
-        case .hat: "모자 쓴 곰"
-        case .workout: "운동하는 곰"
-        case .studying: "공부하는 곰"
-        case .painting: "그림 그리는 곰"
-        case .guitar: "기타 치는 곰"
-        case .singing: "노래하는 곰"
-        case .bath: "거품 목욕하는 곰"
-        case .icebox: "상자 옆에 앉은 곰"
-        case .laptop: "노트북으로 일하는 곰"
-        case .coffee: "커피 마시는 곰"
-        case .gaming: "게임하는 곰"
-        case .chefHeart: "요리 모자 쓰고 하트 안은 곰"
-        case .cooking: "요리하는 곰"
-        case .loving: "하트를 안은 곰"
-        case .idea: "아이디어가 떠오른 곰"
-        case .gift: "선물을 건네는 곰"
-        case .photo: "사진 찍는 곰"
-        case .camping: "캠핑하는 곰"
+        case .standing: String(localized: "서 있는 곰")
+        case .waving: String(localized: "손 흔드는 곰")
+        case .sleeping: String(localized: "자는 곰")
+        case .sitting: String(localized: "앉아 있는 곰")
+        case .jumping: String(localized: "뛰어오르는 곰")
+        case .cheering: String(localized: "만세하는 곰")
+        case .running: String(localized: "달리는 곰")
+        case .eating: String(localized: "도넛 먹는 곰")
+        case .reading: String(localized: "책 읽는 곰")
+        case .proud: String(localized: "뿌듯한 곰")
+        case .pointing: String(localized: "손가락으로 가리키는 곰")
+        case .peeking: String(localized: "빼꼼 내다보는 곰")
+        case .angry: String(localized: "화난 곰")
+        case .crying: String(localized: "우는 곰")
+        case .sunglasses: String(localized: "선글라스 쓴 곰")
+        case .music: String(localized: "음악 듣는 곰")
+        case .umbrella: String(localized: "우산 쓴 곰")
+        case .hat: String(localized: "모자 쓴 곰")
+        case .workout: String(localized: "운동하는 곰")
+        case .studying: String(localized: "공부하는 곰")
+        case .painting: String(localized: "그림 그리는 곰")
+        case .guitar: String(localized: "기타 치는 곰")
+        case .singing: String(localized: "노래하는 곰")
+        case .bath: String(localized: "거품 목욕하는 곰")
+        case .icebox: String(localized: "상자 옆에 앉은 곰")
+        case .laptop: String(localized: "노트북으로 일하는 곰")
+        case .coffee: String(localized: "커피 마시는 곰")
+        case .gaming: String(localized: "게임하는 곰")
+        case .chefHeart: String(localized: "요리 모자 쓰고 하트 안은 곰")
+        case .cooking: String(localized: "요리하는 곰")
+        case .loving: String(localized: "하트를 안은 곰")
+        case .idea: String(localized: "아이디어가 떠오른 곰")
+        case .gift: String(localized: "선물을 건네는 곰")
+        case .photo: String(localized: "사진 찍는 곰")
+        case .camping: String(localized: "캠핑하는 곰")
         }
     }
 

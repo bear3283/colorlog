@@ -278,10 +278,10 @@ struct DailyCellView: View {
     private var accessibilityDescription: String {
         let formatted = date.formatted(.dateTime.month(.wide).day().locale(.colorLog))
         return switch (relation, filledCount) {
-        case (.future, _):  "\(formatted), 아직 오지 않은 날"
-        case (_, 0):        "\(formatted), 기록 없음"
-        case (.today, let count): "오늘 \(formatted), 색 \(count)개 기록됨"
-        case (_, let count):      "\(formatted), 색 \(count)개 기록됨"
+        case (.future, _):  String(localized: "\(formatted), 아직 오지 않은 날", comment: "격자 칸 VoiceOver. 날짜")
+        case (_, 0):        String(localized: "\(formatted), 기록 없음", comment: "격자 칸 VoiceOver. 날짜")
+        case (.today, let count): String(localized: "오늘 \(formatted), 색 \(count)개 기록됨")
+        case (_, let count):      String(localized: "\(formatted), 색 \(count)개 기록됨")
         }
     }
 }

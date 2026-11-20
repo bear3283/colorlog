@@ -119,7 +119,8 @@ nonisolated enum PaletteStore {
         return name(number: number)
     }
 
-    private static func name(number: Int) -> String { "나만의 팔레트 \(number)" }
+    /// 새 팔레트의 기본 이름. 만들 때 한 번 저장되고, 이후 언어를 바꿔도 그대로다.
+    private static func name(number: Int) -> String { String(localized: "나만의 팔레트 \(number)", comment: "새 사용자 팔레트 이름. 번호") }
 
     private static func save(_ palettes: [UserPalette]) {
         defaults.set(try? JSONEncoder().encode(palettes), forKey: userPalettesKey)

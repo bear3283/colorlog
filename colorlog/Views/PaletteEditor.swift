@@ -138,7 +138,7 @@ struct PaletteEditor: View {
         }
     }
 
-    private func actionButton(_ symbol: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func actionButton(_ symbol: String, label: LocalizedStringKey, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 17, weight: .semibold))
@@ -286,7 +286,7 @@ private struct PaintSlider: View {
     let value: Double
     let track: [Color]
     let thumb: Color
-    let label: String
+    let label: LocalizedStringKey
     let onChange: (Double) -> Void
 
     @Environment(\.paletteTheme) private var theme

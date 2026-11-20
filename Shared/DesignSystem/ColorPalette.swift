@@ -84,16 +84,16 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
     /// 설정 화면에서만 쓰인다. 캔버스에는 어떤 글자도 올리지 않는다.
     var displayName: String {
         switch self {
-        case .pantone:       "클래식"
-        case .watercolor:    "수채 곰"
-        case .complementary: "보색"
-        case .analogous:     "유사색"
-        case .spring:        "봄"
-        case .driedFlower:   "말린 꽃"
-        case .triadic:       "삼색"
-        case .monochrome:    "단색"
-        case .cloud:         "구름"
-        case .jewel:         "보석"
+        case .pantone:       String(localized: "클래식")
+        case .watercolor:    String(localized: "수채 곰")
+        case .complementary: String(localized: "보색")
+        case .analogous:     String(localized: "유사색")
+        case .spring:        String(localized: "봄")
+        case .driedFlower:   String(localized: "말린 꽃")
+        case .triadic:       String(localized: "삼색")
+        case .monochrome:    String(localized: "단색")
+        case .cloud:         String(localized: "구름")
+        case .jewel:         String(localized: "보석")
         }
     }
 
@@ -231,11 +231,11 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 물감이 고인 정도로 진하게 잡았다 — 곰 위에 번지면 원화와 비슷한 파스텔이 된다.
             // 원화의 연두는 노랑 · 민트와 겹쳐 뺐다.
             [
-                ColorSwatch(name: "분홍",   hex: "#EF8089"),
-                ColorSwatch(name: "하늘",   hex: "#6CB2E5"),
-                ColorSwatch(name: "노랑",   hex: "#F6CD51"),
-                ColorSwatch(name: "라벤더", hex: "#B98CD9"),
-                ColorSwatch(name: "민트",   hex: "#64C4A1"),
+                ColorSwatch(name: String(localized: "분홍", comment: "색 이름"),   hex: "#EF8089"),
+                ColorSwatch(name: String(localized: "하늘", comment: "색 이름"),   hex: "#6CB2E5"),
+                ColorSwatch(name: String(localized: "노랑", comment: "색 이름"),   hex: "#F6CD51"),
+                ColorSwatch(name: String(localized: "라벤더", comment: "색 이름"), hex: "#B98CD9"),
+                ColorSwatch(name: String(localized: "민트", comment: "색 이름"),   hex: "#64C4A1"),
             ]
         case .pantone:
             // 해마다 따로 고른 '올해의 색' 계열에서 출발했다. 서로 조화를 전제하지 않는다.
@@ -249,21 +249,21 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 같은 청보라 계열이라 한 칸에 나란히 놓이면 경계가 뭉개졌고(OKLab ΔE 0.146),
             // 다섯 중 초록이 하나도 없어 캔버스가 붉은 쪽으로만 기울었다.
             [
-                ColorSwatch(name: "마젠타",   hex: "#BB2649"),
-                ColorSwatch(name: "피치",     hex: "#FFBE98"),
-                ColorSwatch(name: "연두",     hex: "#88B04B"),
-                ColorSwatch(name: "코발트",   hex: "#0F4C81"),
-                ColorSwatch(name: "모카",     hex: "#A47864"),
+                ColorSwatch(name: String(localized: "마젠타", comment: "색 이름"),   hex: "#BB2649"),
+                ColorSwatch(name: String(localized: "피치", comment: "색 이름"),     hex: "#FFBE98"),
+                ColorSwatch(name: String(localized: "연두", comment: "색 이름"),     hex: "#88B04B"),
+                ColorSwatch(name: String(localized: "코발트", comment: "색 이름"),   hex: "#0F4C81"),
+                ColorSwatch(name: String(localized: "모카", comment: "색 이름"),     hex: "#A47864"),
             ]
         case .complementary:
             // 색상환의 정반대 두 축(주황 ↔ 파랑)만 쓴다. 고를 때마다
             // '따뜻한가 차가운가' 하나만 묻게 되는 팔레트.
             [
-                ColorSwatch(name: "밝은 주황",   hex: "#FF7A29"),
-                ColorSwatch(name: "진한 주황",   hex: "#C9450C"),
-                ColorSwatch(name: "연한 파랑",   hex: "#8FC5E8"),
-                ColorSwatch(name: "파랑",        hex: "#1D6FB8"),
-                ColorSwatch(name: "짙은 남색",   hex: "#0B2E4F"),
+                ColorSwatch(name: String(localized: "밝은 주황", comment: "색 이름"),   hex: "#FF7A29"),
+                ColorSwatch(name: String(localized: "진한 주황", comment: "색 이름"),   hex: "#C9450C"),
+                ColorSwatch(name: String(localized: "연한 파랑", comment: "색 이름"),   hex: "#8FC5E8"),
+                ColorSwatch(name: String(localized: "파랑", comment: "색 이름"),        hex: "#1D6FB8"),
+                ColorSwatch(name: String(localized: "짙은 남색", comment: "색 이름"),   hex: "#0B2E4F"),
             ]
         case .analogous:
             // 색상환에서 붙어 있는 구간(연두 → 청록 → 남색)만. 대비가 없어
@@ -273,11 +273,11 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // OKLCH 명도를 0.88 → 0.75 → 0.62 → 0.50 → 0.36으로 고르게 벌렸다.
             // (이전 값은 초록·청록이 0.72·0.65로 붙어 나란히 놓이면 한 덩어리로 보였다)
             [
-                ColorSwatch(name: "연두",   hex: "#CEE654"),
-                ColorSwatch(name: "초록",   hex: "#63C776"),
-                ColorSwatch(name: "청록",   hex: "#009B8F"),
-                ColorSwatch(name: "파랑",   hex: "#0E6A9B"),
-                ColorSwatch(name: "남색",   hex: "#223B6C"),
+                ColorSwatch(name: String(localized: "연두", comment: "색 이름"),   hex: "#CEE654"),
+                ColorSwatch(name: String(localized: "초록", comment: "색 이름"),   hex: "#63C776"),
+                ColorSwatch(name: String(localized: "청록", comment: "색 이름"),   hex: "#009B8F"),
+                ColorSwatch(name: String(localized: "파랑", comment: "색 이름"),   hex: "#0E6A9B"),
+                ColorSwatch(name: String(localized: "남색", comment: "색 이름"),   hex: "#223B6C"),
             ]
         case .spring:
             // 봄의 다섯. 연두·청록·주황·자주·분홍 — 색상환을 거의 한 바퀴 돈다.
@@ -285,42 +285,42 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 주황과 분홍은 명도가 비슷하지만(L 0.74·0.72) 색상이 60° 떨어져
             // 한 칸에 나란히 놓여도 경계가 읽힌다.
             [
-                ColorSwatch(name: "라임",   hex: "#ACCD4A"),
-                ColorSwatch(name: "청록",   hex: "#069792"),
-                ColorSwatch(name: "오렌지", hex: "#EE922D"),
-                ColorSwatch(name: "자주",   hex: "#B23F8A"),
-                ColorSwatch(name: "분홍",   hex: "#EE7B9C"),
+                ColorSwatch(name: String(localized: "라임", comment: "색 이름"),   hex: "#ACCD4A"),
+                ColorSwatch(name: String(localized: "청록", comment: "색 이름"),   hex: "#069792"),
+                ColorSwatch(name: String(localized: "오렌지", comment: "색 이름"), hex: "#EE922D"),
+                ColorSwatch(name: String(localized: "자주", comment: "색 이름"),   hex: "#B23F8A"),
+                ColorSwatch(name: String(localized: "분홍", comment: "색 이름"),   hex: "#EE7B9C"),
             ]
         case .driedFlower:
             // 말린 꽃과 흙빛. 사용자가 가져온 견본 이미지에서 색을 그대로 읽었다.
             // 견본 여덟 중 코블스톤(회갈색)·윌로(올리브)는 모카·텐드릴과 붙어 빠졌고,
             // 가드니아는 빈 칸과 구분되지 않아 바탕으로 돌렸다.
             [
-                ColorSwatch(name: "세이지",   hex: "#8C9E6E"),
-                ColorSwatch(name: "물빛 파랑", hex: "#7890C4"),
-                ColorSwatch(name: "연보라",   hex: "#A393B6"),
-                ColorSwatch(name: "장밋빛 베이지", hex: "#C99E9A"),
-                ColorSwatch(name: "갈색",     hex: "#9C7867"),
+                ColorSwatch(name: String(localized: "세이지", comment: "색 이름"),   hex: "#8C9E6E"),
+                ColorSwatch(name: String(localized: "물빛 파랑", comment: "색 이름"), hex: "#7890C4"),
+                ColorSwatch(name: String(localized: "연보라", comment: "색 이름"),   hex: "#A393B6"),
+                ColorSwatch(name: String(localized: "장밋빛 베이지", comment: "색 이름"), hex: "#C99E9A"),
+                ColorSwatch(name: String(localized: "갈색", comment: "색 이름"),     hex: "#9C7867"),
             ]
         case .triadic:
             // 색상환 120° 간격의 빨강·노랑·파랑에 명도 양끝을 더했다.
             // 검정 배경 위라 세 원색이 서로 물러서지 않는다.
             [
-                ColorSwatch(name: "빨강",   hex: "#E8302A"),
-                ColorSwatch(name: "노랑",   hex: "#F5C518"),
-                ColorSwatch(name: "파랑",   hex: "#1B5FCC"),
-                ColorSwatch(name: "흰빛",   hex: "#E9E9EE"),
-                ColorSwatch(name: "잿빛",   hex: "#5A5A6E"),
+                ColorSwatch(name: String(localized: "빨강", comment: "색 이름"),   hex: "#E8302A"),
+                ColorSwatch(name: String(localized: "노랑", comment: "색 이름"),   hex: "#F5C518"),
+                ColorSwatch(name: String(localized: "파랑", comment: "색 이름"),   hex: "#1B5FCC"),
+                ColorSwatch(name: String(localized: "흰빛", comment: "색 이름"),   hex: "#E9E9EE"),
+                ColorSwatch(name: String(localized: "잿빛", comment: "색 이름"),   hex: "#5A5A6E"),
             ]
         case .monochrome:
             // 색상 하나(인디고)의 명도만 다섯 단계. 무엇을 골라도 색이 아니라
             // **무게**를 고르게 되는 팔레트.
             [
-                ColorSwatch(name: "가장 옅게", hex: "#DDE0F5"),
-                ColorSwatch(name: "옅게",      hex: "#A3A9DE"),
-                ColorSwatch(name: "중간",      hex: "#6B73C4"),
-                ColorSwatch(name: "짙게",      hex: "#3F4691"),
-                ColorSwatch(name: "가장 짙게", hex: "#1E2252"),
+                ColorSwatch(name: String(localized: "가장 옅게", comment: "색 이름"), hex: "#DDE0F5"),
+                ColorSwatch(name: String(localized: "옅게", comment: "색 이름"),      hex: "#A3A9DE"),
+                ColorSwatch(name: String(localized: "중간", comment: "색 이름"),      hex: "#6B73C4"),
+                ColorSwatch(name: String(localized: "짙게", comment: "색 이름"),      hex: "#3F4691"),
+                ColorSwatch(name: String(localized: "가장 짙게", comment: "색 이름"), hex: "#1E2252"),
             ]
         case .cloud:
             // 구름 낀 아침의 파스텔. 견본 이미지의 색에서 출발했다.
@@ -332,22 +332,22 @@ nonisolated enum ColorPalette: String, CaseIterable, Identifiable, Codable, Send
             // 다섯째 자리는 처음엔 오키드 틴트였는데 사용자 요청으로 레인드롭스 온
             // 로지스로 바꿨다. 같은 명도(0.68)에 두어 사다리는 그대로다.
             [
-                ColorSwatch(name: "레몬",     hex: "#F5E8B6"),
-                ColorSwatch(name: "하늘",     hex: "#BFD4E7"),
-                ColorSwatch(name: "살구",     hex: "#D4B7A6"),
-                ColorSwatch(name: "쑥색",     hex: "#A5B095"),
-                ColorSwatch(name: "장미",     hex: "#AB9098"),
+                ColorSwatch(name: String(localized: "레몬", comment: "색 이름"),     hex: "#F5E8B6"),
+                ColorSwatch(name: String(localized: "하늘", comment: "색 이름"),     hex: "#BFD4E7"),
+                ColorSwatch(name: String(localized: "살구", comment: "색 이름"),     hex: "#D4B7A6"),
+                ColorSwatch(name: String(localized: "쑥색", comment: "색 이름"),     hex: "#A5B095"),
+                ColorSwatch(name: String(localized: "장미", comment: "색 이름"),     hex: "#AB9098"),
             ]
         case .jewel:
             // 견본의 '색 조화' 띠 세 줄에서 함께 쓰인 색들. 금속 질감 칩 대신
             // 평평한 띠에서 색을 읽었다. 무채색인 오팔 그레이·카놀리 크림, 그리고
             // 어두운 바탕에서 가라앉는 글리스닝 그레이프는 뺐다.
             [
-                ColorSwatch(name: "남청",     hex: "#3B5287"),
-                ColorSwatch(name: "옥빛",     hex: "#DDDEA1"),
-                ColorSwatch(name: "초록",     hex: "#548E58"),
-                ColorSwatch(name: "체리",     hex: "#A33333"),
-                ColorSwatch(name: "황동",     hex: "#A27256"),
+                ColorSwatch(name: String(localized: "남청", comment: "색 이름"),     hex: "#3B5287"),
+                ColorSwatch(name: String(localized: "옥빛", comment: "색 이름"),     hex: "#DDDEA1"),
+                ColorSwatch(name: String(localized: "초록", comment: "색 이름"),     hex: "#548E58"),
+                ColorSwatch(name: String(localized: "체리", comment: "색 이름"),     hex: "#A33333"),
+                ColorSwatch(name: String(localized: "황동", comment: "색 이름"),     hex: "#A27256"),
             ]
         }
     }

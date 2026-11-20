@@ -1,0 +1,1941 @@
+{
+  "sourceLanguage" : "ko",
+  "strings" : {
+    "\"지금, 어떤 색인가요?\" 알림을 누르면 바로 그 자리가 열려요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"What color is right now?\" Tap the reminder and that spot opens right away."
+          }
+        }
+      }
+    },
+    "%@ 물감으로 칠한 곰" : {
+      "comment" : "온보딩 곰 VoiceOver. 팔레트 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear painted with the %@ palette"
+          }
+        }
+      }
+    },
+    "%@ 색 %lld" : {
+      "comment" : "고친 팔레트의 이름 없는 색. 팔레트 이름, 순서\n사용자 팔레트의 색. 팔레트 이름, 순서",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ color %2$lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ 색 %2$lld"
+          }
+        }
+      }
+    },
+    "%@ 색 고치기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recolor %@"
+          }
+        }
+      }
+    },
+    "%@, %@" : {
+      "comment" : "격자 칸 VoiceOver. 날짜, 자리별 색",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "%@, 고친 색" : {
+      "comment" : "VoiceOver. 색을 고친 기본 팔레트",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, recolored"
+          }
+        }
+      }
+    },
+    "%@, 기록 없음" : {
+      "comment" : "격자 칸 VoiceOver. 날짜",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, nothing logged"
+          }
+        }
+      }
+    },
+    "%@, 색 %lld개 기록됨" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %#@colors@ logged"
+          },
+          "substitutions" : {
+            "colors" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg color"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg colors"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, 색 %2$lld개 기록됨"
+          }
+        }
+      }
+    },
+    "%@, 아직 오지 않은 날" : {
+      "comment" : "격자 칸 VoiceOver. 날짜",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, not here yet"
+          }
+        }
+      }
+    },
+    "%@에 %@ 기록" : {
+      "comment" : "VoiceOver. 자리, 색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log %2$@ for %1$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@에 %2$@ 기록"
+          }
+        }
+      }
+    },
+    "%@을 지울까요?" : {
+      "comment" : "팔레트 지우기 확인. 팔레트 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %@?"
+          }
+        }
+      }
+    },
+    "%@의 %@ 지우기" : {
+      "comment" : "VoiceOver. 자리, 색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear %2$@ from %1$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@의 %2$@ 지우기"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld/%lld쪽" : {
+      "comment" : "온보딩 쪽 번호",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page %1$lld of %2$lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld쪽"
+          }
+        }
+      }
+    },
+    "%lld번째 색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color %lld"
+          }
+        }
+      }
+    },
+    "%lld번째 색 직접 고르기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose color %lld exactly"
+          }
+        }
+      }
+    },
+    "iOS 설정에서 알림 켜기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on notifications in iOS Settings"
+          }
+        }
+      }
+    },
+    "가장 옅게" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lightest"
+          }
+        }
+      }
+    },
+    "가장 짙게" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deepest"
+          }
+        }
+      }
+    },
+    "갈색" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brown"
+          }
+        }
+      }
+    },
+    "거품 목욕하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear in a bubble bath"
+          }
+        }
+      }
+    },
+    "건너뛰기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        }
+      }
+    },
+    "게임하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear playing games"
+          }
+        }
+      }
+    },
+    "곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear"
+          }
+        }
+      }
+    },
+    "곰 바꾸기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change bear"
+          }
+        }
+      }
+    },
+    "곰을 바꾸지 못했어요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't change the bear"
+          }
+        }
+      }
+    },
+    "공부하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear studying"
+          }
+        }
+      }
+    },
+    "구름" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud"
+          }
+        }
+      }
+    },
+    "그동안 남긴 색은 지우지 않고 이 기기에 그대로 두었어요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your colors haven't been deleted. They're still on this device."
+          }
+        }
+      }
+    },
+    "그림 그리는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear painting"
+          }
+        }
+      }
+    },
+    "기록된 색" : {
+      "comment" : "VoiceOver. 이름을 모르는 색",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logged color"
+          }
+        }
+      }
+    },
+    "기록을 열지 못해 색을 남기지 못했어요. 앱을 열어 확인해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open your entries, so the color wasn't saved. Please open the app to check."
+          }
+        }
+      }
+    },
+    "기록을 열지 못했어요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open your entries"
+          }
+        }
+      }
+    },
+    "기타 치는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear playing guitar"
+          }
+        }
+      }
+    },
+    "나만의 팔레트 %lld" : {
+      "comment" : "새 사용자 팔레트 이름. 번호",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Palette %lld"
+          }
+        }
+      }
+    },
+    "나중에 설정에서 바꾸거나 직접 만들 수 있어요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change it or make your own later in Settings."
+          }
+        }
+      }
+    },
+    "나중에 할게요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Now"
+          }
+        }
+      }
+    },
+    "남색" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navy"
+          }
+        }
+      }
+    },
+    "남청" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indigo"
+          }
+        }
+      }
+    },
+    "노랑" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow"
+          }
+        }
+      }
+    },
+    "노래하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Singing bear"
+          }
+        }
+      }
+    },
+    "노트북으로 일하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear working on a laptop"
+          }
+        }
+      }
+    },
+    "다시 시도" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "다음" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "단색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monochrome"
+          }
+        }
+      }
+    },
+    "닫기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "달리는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running bear"
+          }
+        }
+      }
+    },
+    "도넛 먹는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear eating a donut"
+          }
+        }
+      }
+    },
+    "때가 되면 곰이 물어볼게요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The bear will check in with you"
+          }
+        }
+      }
+    },
+    "뛰어오르는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jumping bear"
+          }
+        }
+      }
+    },
+    "라벤더" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lavender"
+          }
+        }
+      }
+    },
+    "라임" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lime"
+          }
+        }
+      }
+    },
+    "레몬" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lemon"
+          }
+        }
+      }
+    },
+    "마음에 드는 물감을 골라요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick the paints you like"
+          }
+        }
+      }
+    },
+    "마젠타" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magenta"
+          }
+        }
+      }
+    },
+    "만세하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheering bear"
+          }
+        }
+      }
+    },
+    "말린 꽃" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dried Flower"
+          }
+        }
+      }
+    },
+    "모자 쓴 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear in a hat"
+          }
+        }
+      }
+    },
+    "모카" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mocha"
+          }
+        }
+      }
+    },
+    "물빛 파랑" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water Blue"
+          }
+        }
+      }
+    },
+    "물어보는 시각마다 팔레트의 색이 나타나고, 고른 색으로 하루가 칠해집니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At each check-in, your palette's colors appear, and the one you pick paints your day."
+          }
+        }
+      }
+    },
+    "민트" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mint"
+          }
+        }
+      }
+    },
+    "밝은 주황" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bright Orange"
+          }
+        }
+      }
+    },
+    "보색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complementary"
+          }
+        }
+      }
+    },
+    "보석" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jewel"
+          }
+        }
+      }
+    },
+    "복제해서 새로 만들기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicate as New Palette"
+          }
+        }
+      }
+    },
+    "봄" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spring"
+          }
+        }
+      }
+    },
+    "분홍" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pink"
+          }
+        }
+      }
+    },
+    "비어 있음" : {
+      "comment" : "VoiceOver. 색이 없는 자리",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty"
+          }
+        }
+      }
+    },
+    "빈 날" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty day"
+          }
+        }
+      }
+    },
+    "빨강" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        }
+      }
+    },
+    "빼꼼 내다보는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peeking bear"
+          }
+        }
+      }
+    },
+    "뿌듯한 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proud bear"
+          }
+        }
+      }
+    },
+    "사진 찍는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear taking a photo"
+          }
+        }
+      }
+    },
+    "살구" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apricot"
+          }
+        }
+      }
+    },
+    "삼색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triad"
+          }
+        }
+      }
+    },
+    "상자 옆에 앉은 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear sitting by a box"
+          }
+        }
+      }
+    },
+    "새 팔레트 만들기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New palette"
+          }
+        }
+      }
+    },
+    "색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        }
+      }
+    },
+    "색 %lld개로 칠한 곰" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bear painted with %lld color"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bear painted with %lld colors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "색 고르기로 돌아가기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to colors"
+          }
+        }
+      }
+    },
+    "색 고치기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Colors"
+          }
+        }
+      }
+    },
+    "색 기록하기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a Color"
+          }
+        }
+      }
+    },
+    "색 더하기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add color"
+          }
+        }
+      }
+    },
+    "색상" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hue"
+          }
+        }
+      }
+    },
+    "색을 남기지 못했어요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save the color"
+          }
+        }
+      }
+    },
+    "서 있는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standing bear"
+          }
+        }
+      }
+    },
+    "선글라스 쓴 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear in sunglasses"
+          }
+        }
+      }
+    },
+    "선물을 건네는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear giving a gift"
+          }
+        }
+      }
+    },
+    "설정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "세이지" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sage"
+          }
+        }
+      }
+    },
+    "손 흔드는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waving bear"
+          }
+        }
+      }
+    },
+    "손가락으로 가리키는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pointing bear"
+          }
+        }
+      }
+    },
+    "수채 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watercolor Bear"
+          }
+        }
+      }
+    },
+    "시작하기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get Started"
+          }
+        }
+      }
+    },
+    "쑥색" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moss"
+          }
+        }
+      }
+    },
+    "아이디어가 떠오른 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear with an idea"
+          }
+        }
+      }
+    },
+    "아직 칠하지 않은 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear not painted yet"
+          }
+        }
+      }
+    },
+    "아침" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning"
+          }
+        }
+      }
+    },
+    "아침 · 점심 · 저녁, 고른 색이 곰에게 스며들어요. 색의 뜻은 내가 정해요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning, afternoon, and evening, the color you pick soaks into the bear. What each color means is up to you."
+          }
+        }
+      }
+    },
+    "아침, 점심, 저녁 색으로 물드는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A bear filling with morning, afternoon, and evening colors"
+          }
+        }
+      }
+    },
+    "안내를 닫고 바로 시작해요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close the intro and start now"
+          }
+        }
+      }
+    },
+    "앉아 있는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitting bear"
+          }
+        }
+      }
+    },
+    "알림 받기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On Reminders"
+          }
+        }
+      }
+    },
+    "알림 켜기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on notifications"
+          }
+        }
+      }
+    },
+    "알림은 설정에서 언제든 켤 수 있어요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can turn on reminders anytime in Settings"
+          }
+        }
+      }
+    },
+    "앱을 완전히 닫았다가 다시 열어 보세요. 기기 저장 공간이 부족하다면 공간을 비운 뒤 다시 시도해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close the app completely and open it again. If your device is low on storage, free up some space and try again."
+          }
+        }
+      }
+    },
+    "연두" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Green"
+          }
+        }
+      }
+    },
+    "연보라" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lilac"
+          }
+        }
+      }
+    },
+    "연한 파랑" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Blue"
+          }
+        }
+      }
+    },
+    "옅게" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "오늘 %@, %@" : {
+      "comment" : "격자 칸 VoiceOver. 날짜, 자리별 색",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today, %1$@, %2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "오늘 %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "오늘 %@, 색 %lld개 기록됨" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today, %1$@, %#@colors@ logged"
+          },
+          "substitutions" : {
+            "colors" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg color"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg colors"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "오늘 %1$@, 색 %2$lld개 기록됨"
+          }
+        }
+      }
+    },
+    "오늘 %lld개 기록됨" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld color logged today"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld colors logged today"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "오늘 색 %lld개 기록됨" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld color logged today"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld colors logged today"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "오늘 세 가지 색을 모두 기록함" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All three colors logged today"
+          }
+        }
+      }
+    },
+    "오늘 아직 기록 없음" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing logged today yet"
+          }
+        }
+      }
+    },
+    "오늘로 돌아가기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to today"
+          }
+        }
+      }
+    },
+    "오늘을 덮을 색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A color to close the day"
+          }
+        }
+      }
+    },
+    "오늘의 분위기를 색 하나로 남깁니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save today's mood as a single color."
+          }
+        }
+      }
+    },
+    "오늘의 색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Color"
+          }
+        }
+      }
+    },
+    "오렌지" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange"
+          }
+        }
+      }
+    },
+    "오류 코드 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error code %@"
+          }
+        }
+      }
+    },
+    "옥빛" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jade"
+          }
+        }
+      }
+    },
+    "요리 모자 쓰고 하트 안은 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear in a chef's hat hugging a heart"
+          }
+        }
+      }
+    },
+    "요리하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear cooking"
+          }
+        }
+      }
+    },
+    "우는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crying bear"
+          }
+        }
+      }
+    },
+    "우산 쓴 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear with an umbrella"
+          }
+        }
+      }
+    },
+    "운동하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear working out"
+          }
+        }
+      }
+    },
+    "원래 색으로" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Original Colors"
+          }
+        }
+      }
+    },
+    "원래 색으로 되돌리기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore original colors"
+          }
+        }
+      }
+    },
+    "유사색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analogous"
+          }
+        }
+      }
+    },
+    "음악 듣는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear listening to music"
+          }
+        }
+      }
+    },
+    "이 색 빼기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove This Color"
+          }
+        }
+      }
+    },
+    "이 팔레트 지우기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this palette"
+          }
+        }
+      }
+    },
+    "이 화면이 계속 보여도 **앱을 지우지 마세요.** 앱을 지우면 기록도 함께 지워져요. 다음 업데이트를 기다리거나 앱 스토어 페이지로 문의해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you keep seeing this screen, **don't delete the app.** Deleting the app also deletes your entries. Wait for the next update, or contact us through the App Store page."
+          }
+        }
+      }
+    },
+    "이미 칠한 날의 색은 그대로 남아요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days you've already painted keep their colors."
+          }
+        }
+      }
+    },
+    "자는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleeping bear"
+          }
+        }
+      }
+    },
+    "자리" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time of day"
+          }
+        }
+      }
+    },
+    "자주" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plum"
+          }
+        }
+      }
+    },
+    "장미" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rose"
+          }
+        }
+      }
+    },
+    "장밋빛 베이지" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rose Beige"
+          }
+        }
+      }
+    },
+    "잿빛" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ash Gray"
+          }
+        }
+      }
+    },
+    "저녁" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening"
+          }
+        }
+      }
+    },
+    "저장 중 문제가 생겼어요. 잠시 뒤 다시 골라 주세요. 기기 저장 공간이 부족하면 생길 수 있어요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong while saving. Please pick again in a moment. This can happen when your device is low on storage."
+          }
+        }
+      }
+    },
+    "저장 중 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong while saving. Please try again in a moment."
+          }
+        }
+      }
+    },
+    "점심" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afternoon"
+          }
+        }
+      }
+    },
+    "중간" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium"
+          }
+        }
+      }
+    },
+    "지금, 어떤 색인가요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What color is right now?"
+          }
+        }
+      }
+    },
+    "지우기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "진하기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depth"
+          }
+        }
+      }
+    },
+    "진한 주황" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep Orange"
+          }
+        }
+      }
+    },
+    "짙게" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep"
+          }
+        }
+      }
+    },
+    "짙은 남색" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep Navy"
+          }
+        }
+      }
+    },
+    "책 읽는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear reading a book"
+          }
+        }
+      }
+    },
+    "청록" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teal"
+          }
+        }
+      }
+    },
+    "체리" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherry"
+          }
+        }
+      }
+    },
+    "초록" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        }
+      }
+    },
+    "칼라베어" : {
+      "comment" : "알림 제목. 앱 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ColorBear"
+          }
+        }
+      }
+    },
+    "캠핑하는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear camping"
+          }
+        }
+      }
+    },
+    "커피 마시는 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear drinking coffee"
+          }
+        }
+      }
+    },
+    "코발트" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cobalt"
+          }
+        }
+      }
+    },
+    "클래식" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classic"
+          }
+        }
+      }
+    },
+    "파랑" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        }
+      }
+    },
+    "팔레트와 알림 시간을 바꿔요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change your palette and reminder times"
+          }
+        }
+      }
+    },
+    "피치" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peach"
+          }
+        }
+      }
+    },
+    "하늘" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sky"
+          }
+        }
+      }
+    },
+    "하루 세 번,\n지금 마음의 색을 골라요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Three times a day,\npick a color for how you feel"
+          }
+        }
+      }
+    },
+    "하트를 안은 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bear hugging a heart"
+          }
+        }
+      }
+    },
+    "홈 화면 아이콘을 팔레트에 맞추기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Match Home Screen icon to palette"
+          }
+        }
+      }
+    },
+    "홈 화면에 위젯을 두면 앱을 열지 않고도 색을 고를 수 있어요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add the widget to your Home Screen to pick a color without opening the app."
+          }
+        }
+      }
+    },
+    "화난 곰" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angry bear"
+          }
+        }
+      }
+    },
+    "확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "황동" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brass"
+          }
+        }
+      }
+    },
+    "흰빛" : {
+      "comment" : "색 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off-White"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

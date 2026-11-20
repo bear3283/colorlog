@@ -99,7 +99,7 @@ struct SettingsView: View {
             }
         }
         .confirmationDialog(
-            deleting.map { "\($0.name)을 지울까요?" } ?? "",
+            deleting.map { String(localized: "\($0.name)을 지울까요?", comment: "팔레트 지우기 확인. 팔레트 이름") } ?? "",
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
             titleVisibility: .visible,
             presenting: deleting
@@ -225,7 +225,7 @@ struct SettingsView: View {
         }
     }
 
-    private func bellButton(symbol: String, label: String, action: @escaping () -> Void) -> some View {
+    private func bellButton(symbol: String, label: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 22, weight: .regular))
@@ -364,7 +364,7 @@ private struct PaletteCard: View {
                     .accessibilityHidden(true)
             }
         }
-        .accessibilityLabel(palette.isModifiedPreset ? "\(palette.name), 고친 색" : palette.name)
+        .accessibilityLabel(palette.isModifiedPreset ? String(localized: "\(palette.name), 고친 색", comment: "VoiceOver. 색을 고친 기본 팔레트") : palette.name)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         // 붓 버튼은 카드 버튼 밖에 겹쳐 둔다. 버튼 안의 버튼은 누르는 곳이 엉킨다.
         .overlay(alignment: .trailing) {

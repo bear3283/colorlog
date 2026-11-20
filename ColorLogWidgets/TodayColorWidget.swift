@@ -128,7 +128,7 @@ struct TodayColorWidget: Widget {
             .containerBackground(for: .widget) { entry.palette.theme.background }
         }
         .configurationDisplayName("오늘의 색")
-        .description("물어보는 시각마다 색 다섯이 나타나고, 고른 색으로 하루가 칠해집니다.")
+        .description("물어보는 시각마다 팔레트의 색이 나타나고, 고른 색으로 하루가 칠해집니다.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         // 칠해진 얼굴은 가장자리까지 꽉 차야 '칸 하나'로 읽힌다.
         .contentMarginsDisabled()

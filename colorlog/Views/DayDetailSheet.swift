@@ -147,9 +147,9 @@ struct DayDetailSheet: View {
             .contentShape(.rect)
             .onTapGesture(perform: togglePoseChoice)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(poseLog.map { ($0.pose ?? .random(for: date)).spokenName } ?? "곰")
+            .accessibilityLabel(poseLog.map { ($0.pose ?? .random(for: date)).spokenName } ?? String(localized: "곰"))
             .accessibilityAddTraits(poseLog != nil ? .isButton : [])
-            .accessibilityHint(poseLog != nil ? (isChoosingPose ? "색 고르기로 돌아가기" : "곰 바꾸기") : "")
+            .accessibilityHint(poseLog != nil ? (isChoosingPose ? String(localized: "색 고르기로 돌아가기") : String(localized: "곰 바꾸기")) : "")
     }
 
     private func togglePoseChoice() {
@@ -197,7 +197,7 @@ struct DayDetailSheet: View {
         .contentShape(.circle)
         .onTapGesture { selected = slot }
         .accessibilityElement()
-        .accessibilityLabel("\(slot.displayName), \(hex.flatMap { palette.swatch(for: $0)?.name } ?? (hex == nil ? "비어 있음" : "기록된 색"))")
+        .accessibilityLabel("\(slot.displayName), \(hex.flatMap { palette.swatch(for: $0)?.name } ?? (hex == nil ? String(localized: "비어 있음", comment: "VoiceOver. 색이 없는 자리") : String(localized: "기록된 색", comment: "VoiceOver. 이름을 모르는 색")))")
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 
@@ -253,8 +253,8 @@ struct DayDetailSheet: View {
         .buttonStyle(OrbPressStyle())
         .animation(.smooth(duration: 0.25), value: isCurrent)
         .accessibilityLabel(isCurrent
-            ? "\(selected.displayName)의 \(swatch.name) 지우기"
-            : "\(selected.displayName)에 \(swatch.name) 기록")
+            ? String(localized: "\(selected.displayName)의 \(swatch.name) 지우기", comment: "VoiceOver. 자리, 색 이름")
+            : String(localized: "\(selected.displayName)에 \(swatch.name) 기록", comment: "VoiceOver. 자리, 색 이름"))
         .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }
 

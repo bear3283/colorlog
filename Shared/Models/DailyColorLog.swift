@@ -170,9 +170,9 @@ extension DailyColorLog {
         /// VoiceOver와 알림에서만 쓰인다. 화면에는 심볼이 대신 선다.
         var displayName: String {
             switch self {
-            case .morning:   "아침"
-            case .afternoon: "점심"
-            case .evening:   "저녁"
+            case .morning:   String(localized: "아침")
+            case .afternoon: String(localized: "점심")
+            case .evening:   String(localized: "저녁")
             }
         }
 
@@ -188,9 +188,9 @@ extension DailyColorLog {
         /// 알림 본문에서만 쓰인다. 앱 화면에는 어떤 문장도 올리지 않는다.
         var prompt: String {
             switch self {
-            case .morning:   "지금, 어떤 색인가요"
-            case .afternoon: "지금, 어떤 색인가요"
-            case .evening:   "오늘을 덮을 색"
+            case .morning:   String(localized: "지금, 어떤 색인가요")
+            case .afternoon: String(localized: "지금, 어떤 색인가요")
+            case .evening:   String(localized: "오늘을 덮을 색")
             }
         }
 

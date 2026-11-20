@@ -53,7 +53,7 @@ nonisolated struct Palette: Identifiable, Equatable, Sendable {
         if let override, override != preset.swatches.map(\.hex) {
             let originals = Dictionary(preset.swatches.map { ($0.hex, $0.name) }, uniquingKeysWith: { first, _ in first })
             swatches = override.enumerated().map { index, hex in
-                ColorSwatch(name: originals[hex] ?? "\(preset.displayName) 색 \(index + 1)", hex: hex)
+                ColorSwatch(name: originals[hex] ?? String(localized: "\(preset.displayName) 색 \(index + 1)", comment: "고친 팔레트의 이름 없는 색. 팔레트 이름, 순서"), hex: hex)
             }
             alternateIconName = nil
         } else {
@@ -69,7 +69,7 @@ nonisolated struct Palette: Identifiable, Equatable, Sendable {
         name = user.name
         // 사용자가 고른 색에는 이름이 없다. VoiceOver는 순서로 부른다.
         swatches = user.hexes.enumerated().map { index, hex in
-            ColorSwatch(name: "\(user.name) 색 \(index + 1)", hex: hex)
+            ColorSwatch(name: String(localized: "\(user.name) 색 \(index + 1)", comment: "사용자 팔레트의 색. 팔레트 이름, 순서"), hex: hex)
         }
         theme = PaletteTheme(
             background:   Color(hex: "#FCFAF6", fallback: .white),

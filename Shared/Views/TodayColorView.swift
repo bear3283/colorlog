@@ -114,7 +114,7 @@ struct TodayColorView: View {
                 .padding(8)
         }
         .accessibilityElement()
-        .accessibilityLabel(hasColors ? "오늘 색 \(filledCount)개 기록됨" : "오늘 아직 기록 없음")
+        .accessibilityLabel(hasColors ? String(localized: "오늘 색 \(filledCount)개 기록됨") : String(localized: "오늘 아직 기록 없음"))
     }
 
     // MARK: 고르는 얼굴
