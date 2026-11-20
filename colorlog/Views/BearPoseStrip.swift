@@ -11,9 +11,12 @@
 //  글자는 없다. 지금 동작인 곰 뒤에만 빛이 고인다.
 //
 
+import OSLog
 import SwiftData
 import SwiftUI
 import WidgetKit
+
+private let logger = Logger(subsystem: "com.colorlog", category: "store")
 
 struct BearPoseStrip: View {
 
@@ -25,6 +28,8 @@ struct BearPoseStrip: View {
 
     @Environment(\.paletteTheme) private var theme
     @Environment(\.modelContext) private var modelContext
+    /// 저장하지 못했을 때 알린다. 조용히 넘어가면 다음에 열었을 때 곰이 돌아가 있다.
+    @State private var isShowingSaveError = false
 
     private var currentPose: BearPose { log.pose ?? .random(for: log.date) }
 
@@ -47,6 +52,11 @@ struct BearPoseStrip: View {
             .scrollIndicators(.hidden)
             .scrollTargetBehavior(.viewAligned)
             .onAppear { proxy.scrollTo(currentPose, anchor: .center) }
+        }
+        .alert("곰을 바꾸지 못했어요", isPresented: $isShowingSaveError) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text("저장 중 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요.")
         }
         .sensoryFeedback(.selection, trigger: log.poseRawValue)
     }
@@ -73,14 +83,21 @@ struct BearPoseStrip: View {
     }
 
     private func choose(_ pose: BearPose) {
-        defer { onChoose(pose) }
-        guard pose != currentPose else { return }
+        guard pose != currentPose else {
+            onChoose(pose)
+            return
+        }
         log.pose = pose
         do {
             try modelContext.save()
         } catch {
-            assertionFailure("곰 동작 저장 실패: \(error)")
+            // 저장 못 한 변경을 남겨 두지 않는다 — 화면이 저장된 것처럼 보이지 않게.
+            modelContext.rollback()
+            logger.error("곰 동작 저장 실패: \(error.localizedDescription, privacy: .public)")
+            isShowingSaveError = true
+            return
         }
+        defer { onChoose(pose) }
         // 오늘의 곰은 위젯에도 앉아 있다.
         if log.day() == DayKey(.now) {
             WidgetCenter.shared.reloadAllTimelines()

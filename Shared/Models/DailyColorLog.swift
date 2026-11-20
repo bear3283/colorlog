@@ -127,6 +127,13 @@ extension DailyColorLog {
         return true
     }
 
+    /// 저장소에서 갓 읽은 자리 값으로 맞춘다. 다른 프로세스(위젯)가 쓴 자리를 덮지 않으려고
+    /// 쓰기 직전에만 쓴다(`ModelContext.setColor`).
+    func adoptSlots(_ slots: [String]) {
+        let sanitized = Self.sanitize(slots)
+        if sanitized != slotColors { colors = sanitized }
+    }
+
     /// 날짜 이동이 필요한 경우(예: 자정 직후 기록을 전날로 귀속)에만 사용.
     /// 정규화를 우회할 수 없도록 유일한 통로로 열어 둔다.
     func move(to newDate: Date) {

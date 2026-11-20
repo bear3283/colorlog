@@ -12,6 +12,7 @@ import SwiftData
 import Synchronization
 
 nonisolated private let logger = Logger(subsystem: "com.colorlog", category: "store")
+nonisolated let storeLogger = logger
 
 /// 공유 저장소를 열지 못한 이유. 안내 화면과 로그가 쓴다.
 nonisolated struct StoreOpenFailure: Error, Sendable {
@@ -271,10 +272,28 @@ nonisolated extension ModelContext {
     ) throws -> Bool {
         // 잘못된 HEX로 빈 레코드만 넣어 두고 돌아가지 않도록, 고치기 전에 먼저 거른다.
         if let hex, HexColor.normalized(hex) == nil { return false }
-        let log = try dailyColorLog(for: day, palette: palette, calendar: calendar)
-        guard log.setColor(hex, for: slot) else { return false }
-        if log.isEmpty { delete(log) }
-        try save()
-        return true
+
+        // 앱과 위젯이 같은 날을 동시에 고치면 나중 저장이 `colors` 배열을 통째로 덮는다.
+        // 프로세스 사이 잠금 안에서 (1) 그날 기록을 찾고 (2) 저장소의 최신 자리 값을 받은 뒤
+        // (3) 한 자리만 바꿔 저장한다. (StoreWriteLock.swift 참고)
+        return try StoreWriteLock.withLock(for: container.configurations.first?.url) {
+            let log = try dailyColorLog(for: day, palette: palette, calendar: calendar)
+            // 이 컨텍스트가 오래 들고 있던 객체는 다른 프로세스의 쓰기를 모른다. 새 컨텍스트로 다시 읽는다.
+            if let latest = try ModelContext(container).existingDailyColorLog(for: day, calendar: calendar),
+               latest.persistentModelID == log.persistentModelID {
+                log.adoptSlots(latest.slotColors)
+            }
+            guard log.setColor(hex, for: slot) else { return false }
+            if log.isEmpty { delete(log) }
+            do {
+                try save()
+            } catch {
+                // 실패한 변경을 컨텍스트에 남겨 두면 다음 자동 저장에 섞여 들어간다.
+                rollback()
+                storeLogger.error("색 기록 저장 실패: \(error.localizedDescription, privacy: .public)")
+                throw error
+            }
+            return true
+        }
     }
 }

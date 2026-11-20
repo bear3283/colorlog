@@ -20,9 +20,12 @@
 //  다시 만들게 되기 때문이다. 대신 행마다 자기 7일치만 @Query 한다.
 //
 
+import OSLog
 import SwiftUI
 import SwiftData
 import WidgetKit
+
+private let logger = Logger(subsystem: "com.colorlog", category: "store")
 
 struct TimelineGridView: View {
 
@@ -50,6 +53,8 @@ struct TimelineGridView: View {
     @State private var celebration: [String]?
     /// 곰의 동작을 고르고 있는 날의 기록.
     @State private var poseEditing: DailyColorLog?
+    /// 색을 저장하지 못했다. 조용히 넘어가면 사용자는 남겼다고 믿은 색을 나중에 잃는다.
+    @State private var isShowingSaveError = false
 
     private var mapper: TimelineMapper { TimelineMapper(today: today) }
 
@@ -121,6 +126,11 @@ struct TimelineGridView: View {
                 .environment(\.colorPalette, palette)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: poseEditing != nil) { _, isOpen in isOpen }
+        .alert("색을 남기지 못했어요", isPresented: $isShowingSaveError) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text("저장 중 문제가 생겼어요. 잠시 뒤 다시 골라 주세요. 기기 저장 공간이 부족하면 생길 수 있어요.")
+        }
         // 위젯에서 세 번째 색을 고른 날은 앱으로 돌아오는 순간 축하한다.
         .onAppear(perform: celebrateIfComplete)
         .onChange(of: scenePhase) { _, phase in
@@ -282,12 +292,23 @@ struct TimelineGridView: View {
 
     /// 한 자리에 색을 넣거나 비운다. 다른 자리는 그대로 있다.
     private func setColor(_ hex: String?, for slot: DailyColorLog.Slot, on date: Date) {
+        var saved = false
         withAnimation(.smooth(duration: 0.3)) {
             do {
                 try modelContext.setColor(hex, for: slot, on: date, palette: palette)
+                saved = true
             } catch {
-                assertionFailure("색 기록 실패: \(error)")
+                logger.error("색 기록 실패: \(error.localizedDescription, privacy: .public)")
             }
+        }
+        guard saved else {
+            // 하루 한 장 시트 위에서는 경고가 가려지므로 시트를 먼저 내린다.
+            openedDay = nil
+            Task {
+                try? await Task.sleep(for: .milliseconds(350))
+                isShowingSaveError = true
+            }
+            return
         }
         WidgetCenter.shared.reloadAllTimelines()
 
