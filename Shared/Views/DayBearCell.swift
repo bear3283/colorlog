@@ -28,6 +28,7 @@ struct DayBearCell: View {
     var usesSnapshot: Bool = true
 
     @Environment(\.paletteTheme) private var theme
+    @Environment(\.colorPalette) private var palette
     @Environment(\.displayScale) private var displayScale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -140,12 +141,29 @@ struct DayBearCell: View {
 
     private var accessibilityDescription: String {
         let formatted = date.formatted(.dateTime.month(.wide).day().locale(.colorLog))
-        return switch (relation, filled.count) {
-        case (.future, _): "\(formatted), 아직 오지 않은 날"
-        case (_, 0): "\(formatted), 기록 없음"
-        case (.today, let count): "오늘 \(formatted), 색 \(count)개 기록됨"
-        case (_, let count): "\(formatted), 색 \(count)개 기록됨"
+        switch (relation, filled.count) {
+        case (.future, _):
+            return String(localized: "\(formatted), 아직 오지 않은 날", comment: "격자 칸 VoiceOver. 날짜")
+        case (_, 0):
+            return String(localized: "\(formatted), 기록 없음", comment: "격자 칸 VoiceOver. 날짜")
+        case (.today, _):
+            return String(localized: "오늘 \(formatted), \(slotDescriptions)", comment: "격자 칸 VoiceOver. 날짜, 자리별 색")
+        default:
+            return String(localized: "\(formatted), \(slotDescriptions)", comment: "격자 칸 VoiceOver. 날짜, 자리별 색")
         }
+    }
+
+    /// "아침 분홍, 점심 비어 있음, 저녁 하늘". 색을 볼 수 없어도 그날을 읽을 수 있게.
+    /// 지금 팔레트에 없는 색(다른 팔레트로 칠한 날)은 이름을 모르니 '기록된 색'.
+    private var slotDescriptions: String {
+        DailyColorLog.Slot.allCases.map { slot in
+            let hex = colors.indices.contains(slot.index) ? colors[slot.index] : ""
+            let name = hex.isEmpty
+                ? String(localized: "비어 있음", comment: "VoiceOver. 색이 없는 자리")
+                : (palette.swatch(for: hex)?.name ?? String(localized: "기록된 색", comment: "VoiceOver. 이름을 모르는 색"))
+            return "\(slot.displayName) \(name)"
+        }
+        .joined(separator: ", ")
     }
 }
 

@@ -175,6 +175,7 @@ struct DayDetailSheet: View {
         return ZStack {
             if let hex {
                 Circle().fill(Color(hex: hex, fallback: .gray))
+                    .swatchOutline(hex: hex)
             } else {
                 Circle().fill(theme.surface.opacity(theme.colorScheme == .dark ? 0.55 : 0.92))
                 Circle().strokeBorder(theme.inkSecondary.opacity(0.45), lineWidth: 1)
@@ -217,8 +218,8 @@ struct DayDetailSheet: View {
             let spacing: CGFloat = count > 5 ? 10 : 14
             let size = min(50, (proxy.size.width - spacing * (count - 1)) / count)
             HStack(spacing: spacing) {
-                ForEach(palette.swatches) { swatch in
-                    orb(swatch, size: size)
+                ForEach(Array(palette.swatches.enumerated()), id: \.element.id) { index, swatch in
+                    orb(swatch, index: index, size: size)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -226,13 +227,21 @@ struct DayDetailSheet: View {
         .frame(height: 50)
     }
 
-    private func orb(_ swatch: ColorSwatch, size: CGFloat) -> some View {
+    private func orb(_ swatch: ColorSwatch, index: Int, size: CGFloat) -> some View {
         // 골라 둔 자리에 이미 든 색. 한 번 더 누르면 그 자리가 빈다.
         let isCurrent = HexColor.normalized(swatch.hex) == color(of: selected)
 
         return Button { pick(swatch, isCurrent: isCurrent) } label: {
             ZStack {
                 Circle().fill(swatch.color)
+                    .swatchOutline(hex: swatch.hex)
+                // 색으로만 구분하지 않도록: 팔레트 안 순서를 모양으로.
+                if differentiateWithoutColor {
+                    Image(systemName: SwatchMark.symbol(for: index))
+                        .font(.system(size: size * 0.3, weight: .bold))
+                        .foregroundStyle(symbolColor(on: swatch.hex))
+                        .accessibilityHidden(true)
+                }
                 if isCurrent {
                     Circle()
                         .strokeBorder(theme.background, lineWidth: 3.5)

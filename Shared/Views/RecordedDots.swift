@@ -12,6 +12,8 @@ struct RecordedDots: View {
     let recordedHexes: [String]
     var dotSize: CGFloat = 7
     var emptyStroke: Color = .secondary
+    /// 점이 놓인 바탕. 대비가 모자란 색에 먹선을 두를지 정한다. nil이면 앱 바탕.
+    var backgroundHex: String? = nil
 
     var body: some View {
         HStack(spacing: dotSize * 0.6) {
@@ -20,6 +22,7 @@ struct RecordedDots: View {
                 Circle()
                     .fill(hex.isEmpty ? .clear : Color(hex: hex, fallback: emptyStroke))
                     .frame(width: dotSize, height: dotSize)
+                    .swatchOutline(hex: hex, on: backgroundHex)
                     .overlay {
                         if hex.isEmpty {
                             Circle().strokeBorder(emptyStroke.opacity(0.55), lineWidth: 1)

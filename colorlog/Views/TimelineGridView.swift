@@ -55,6 +55,9 @@ struct TimelineGridView: View {
     @State private var poseEditing: DailyColorLog?
     /// 색을 저장하지 못했다. 조용히 넘어가면 사용자는 남겼다고 믿은 색을 나중에 잃는다.
     @State private var isShowingSaveError = false
+    /// 설정 진입점의 팔레트 점. 글자 크기를 조금 따라가되 상단 바를 밀어내지 않게 상한을 둔다.
+    @ScaledMetric(relativeTo: .caption2) private var scaledDotSize: CGFloat = 8
+    private var paletteDotSize: CGFloat { min(scaledDotSize, 12) }
 
     private var mapper: TimelineMapper { TimelineMapper(today: today) }
 
@@ -228,18 +231,33 @@ struct TimelineGridView: View {
     }
 
     /// 설정 진입점. 아이콘도 글자도 아닌, 지금 팔레트의 색 자체.
+    ///
+    /// 점은 작게 두되 누르는 자리는 44pt 이상이다. 늘린 만큼은 바깥 여백(음수 패딩)으로
+    /// 되돌려 상단 바 높이는 그대로 둔다. 노랑처럼 흰 바탕과 대비가 모자란 점에는 먹선을 두른다.
     private var paletteButton: some View {
         Button(action: onOpenSettings) {
-            HStack(spacing: 4) {
+            HStack(spacing: paletteDotSize * 0.6) {
                 ForEach(palette.swatches) { swatch in
                     Circle()
                         .fill(swatch.color)
-                        .frame(width: 6, height: 6)
+                        .frame(width: paletteDotSize, height: paletteDotSize)
+                        .swatchOutline(hex: swatch.hex)
                 }
             }
+            .frame(minWidth: 44, minHeight: 44)
+            .padding(.horizontal, 6)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("팔레트 바꾸기")
+        .padding(.vertical, -(44 - 11) / 2)
+        .padding(.trailing, -6)
+        .accessibilityLabel("설정")
+        .accessibilityValue(palette.name)
+        .accessibilityHint("팔레트와 알림 시간을 바꿔요")
+        // 점은 글자 크기를 따라 커지지 않는다. 큰 글자 사용자는 길게 눌러 이름을 크게 본다.
+        .accessibilityShowsLargeContentViewer {
+            Label("설정", systemImage: "paintpalette")
+        }
     }
 
     /// 오늘에서 멀어지면 돌아올 길을 남긴다. 글자 대신 틴트 색 점 하나.
