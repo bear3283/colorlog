@@ -17,10 +17,20 @@
 //  저장 형태(`[String]`)는 그대로라 스키마 마이그레이션이 없다. 예전 기록은
 //  들어온 순서대로 아침 → 점심 → 저녁 자리에 놓인 것으로 읽힌다.
 //
+//  스키마 버전: 이 클래스는 `SchemaV2`(1.1.0) 안에 있다. 저장 속성(이름 · 타입 · 선택 여부 ·
+//  #Unique · #Index)을 바꾸려면 **이 클래스를 고치지 말고** `SchemaV3`를 새로 만들고
+//  `ColorLogMigrationPlan`에 단계를 더한다. 출시된 저장소는 이 모양의 해시로만 열린다.
+//  (ColorLogSchema.swift 참고)
+//
 
 import Foundation
 import SwiftData
 import SwiftUI
+
+/// 앱 전체가 쓰는 이름. 언제나 가장 새 스키마 버전을 가리킨다.
+typealias DailyColorLog = SchemaV2.DailyColorLog
+
+extension SchemaV2 {
 
 @Model
 final class DailyColorLog {
@@ -69,6 +79,8 @@ final class DailyColorLog {
             raw.indices.contains(index) ? (HexColor.normalized(raw[index]) ?? "") : ""
         }
     }
+}
+
 }
 
 // MARK: - 파생 값

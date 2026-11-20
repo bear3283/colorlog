@@ -13,9 +13,30 @@ import WidgetKit
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StoreGate()
         }
-        .modelContainer(ColorLogStore.shared)
+    }
+}
+
+/// 공유 저장소가 열렸을 때만 캔버스를 보여 준다.
+///
+/// 열지 못했으면 빈 캔버스를 띄우지 않는다 — 사용자에게는 그게 '기록이 다 사라진 화면'이다.
+/// 대신 기록이 그대로 있다는 것과 할 수 있는 일을 알려 준다.
+private struct StoreGate: View {
+
+    @State private var store = ColorLogStore.sharedContainer()
+
+    var body: some View {
+        switch store {
+        case .success(let container):
+            ContentView()
+                .modelContainer(container)
+        case .failure(let failure):
+            StoreUnavailableView(failure: failure) {
+                store = ColorLogStore.sharedContainer()
+            }
+            .environment(\.locale, .colorLog)
+        }
     }
 }
 

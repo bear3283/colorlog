@@ -37,7 +37,11 @@ struct RecordColorIntent: AppIntent {
 
         guard let target = DailyColorLog.Slot(rawValue: slot) else { return .result() }
 
-        let context = ModelContext(ColorLogStore.shared)
+        // 저장소를 열지 못했으면 새로 만들어 쓰지 않는다. 기록이 엉뚱한 곳에 쌓이기 때문.
+        guard let container = ColorLogStore.shared else {
+            throw RecordColorError.storeUnavailable
+        }
+        let context = ModelContext(container)
         // 다른 자리는 건드리지 않는다. HEX가 잘못됐으면 아무 일도 없다.
         _ = try context.setColor(hex, for: target, palette: palette)
 
@@ -45,5 +49,16 @@ struct RecordColorIntent: AppIntent {
         WidgetCenter.shared.reloadAllTimelines()
 
         return .result()
+    }
+}
+
+/// 위젯에서 색을 고를 때 기록하지 못한 이유. 시스템이 사용자에게 이 문장을 보여 준다.
+enum RecordColorError: Error, CustomLocalizedStringResourceConvertible {
+    case storeUnavailable
+
+    var localizedStringResource: LocalizedStringResource {
+        switch self {
+        case .storeUnavailable: "기록을 열지 못해 색을 남기지 못했어요. 앱을 열어 확인해 주세요."
+        }
     }
 }

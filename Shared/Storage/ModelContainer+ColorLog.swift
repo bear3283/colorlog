@@ -9,8 +9,33 @@
 import Foundation
 import OSLog
 import SwiftData
+import Synchronization
 
 nonisolated private let logger = Logger(subsystem: "com.colorlog", category: "store")
+
+/// 공유 저장소를 열지 못한 이유. 안내 화면과 로그가 쓴다.
+nonisolated struct StoreOpenFailure: Error, Sendable {
+
+    enum Kind: Sendable {
+        /// App Group 엔타이틀먼트가 없어 공유 저장소에 닿을 수 없다.
+        case appGroupUnavailable
+        /// 저장소 파일을 열지 못했다. 파일은 그대로 남아 있다.
+        case openFailed
+    }
+
+    let kind: Kind
+    /// 열려던 파일. App Group이 없으면 nil.
+    let storeURL: URL?
+    let underlying: NSError?
+
+    /// 문의를 받을 때 쓸 짧은 코드. 예: "NSCocoaErrorDomain 134504"
+    var diagnosticCode: String {
+        switch kind {
+        case .appGroupUnavailable: "APPGROUP"
+        case .openFailed: underlying.map { "\($0.domain) \($0.code)" } ?? "UNKNOWN"
+        }
+    }
+}
 
 /// 위젯 익스텐션과 App Intent(백그라운드 프로세스)에서도 쓰이므로
 /// 프로젝트 기본값인 MainActor 격리를 벗겨 둔다.
@@ -62,27 +87,105 @@ nonisolated enum ColorLogStore {
         return true
     }
 
-    /// 앱과 위젯이 공유하는 영구 컨테이너.
-    static let shared: ModelContainer = {
-        let schema = Schema([DailyColorLog.self])
-        do {
-            return try ModelContainer(
-                for: schema,
-                configurations: [
-                    ModelConfiguration(schema: schema, groupContainer: .identifier(appGroupID))
-                ]
-            )
-        } catch {
-            // App Group이 아직 없는 환경(엔타이틀먼트 미설정 등)에서도 앱 자체는 떠야 한다.
-            // 다만 이 경로로 떨어지면 위젯과 데이터가 갈라지므로 반드시 로그를 남긴다.
-            logger.error("App Group 컨테이너 실패, 로컬 저장소로 대체: \(error.localizedDescription, privacy: .public)")
-            do {
-                return try ModelContainer(for: schema)
-            } catch {
-                fatalError("DailyColorLog 컨테이너 생성 실패: \(error)")
-            }
+    // MARK: 영구 저장소
+
+    /// 앱과 위젯이 공유하는 영구 컨테이너. 열지 못했으면 nil.
+    ///
+    /// nil일 때 쓰기 쪽(위젯 인텐트)은 아무것도 쓰지 않고 실패를 알린다.
+    /// 빈 저장소를 새로 만들어 대신 쓰지 않는다 — 그러면 사용자에게는 기록이 사라진 것처럼 보이고,
+    /// 새 기록은 원래 저장소와 갈라진다.
+    static var shared: ModelContainer? { try? sharedContainer().get() }
+
+    /// 공유 컨테이너를 연다. 한 번 열리면 프로세스가 끝날 때까지 같은 것을 돌려준다.
+    /// 실패는 캐시하지 않는다 — 앱의 '다시 시도'나 다음 위젯 갱신에서 다시 열어 본다
+    /// (예: 첫 잠금 해제 전이라 파일 보호로 막혔던 경우).
+    static func sharedContainer() -> Result<ModelContainer, StoreOpenFailure> {
+        sharedCache.withLock { cached in
+            if let cached { return .success(cached) }
+            let result = openSharedStore()
+            if case .success(let container) = result { cached = container }
+            return result
         }
-    }()
+    }
+
+    private static let sharedCache = Mutex<ModelContainer?>(nil)
+
+    /// App Group 안의 저장소 파일. 1.0부터 같은 자리다
+    /// (`ModelConfiguration(groupContainer:)`의 기본 위치 — 이름 "default").
+    static func storeURL(inGroupContainer groupURL: URL) -> URL {
+        groupURL.appending(path: "Library/Application Support/default.store", directoryHint: .notDirectory)
+    }
+
+    private static func openSharedStore() -> Result<ModelContainer, StoreOpenFailure> {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            // 원인 1: App Group 엔타이틀먼트가 없다(서명 없이 돌리는 개발 빌드 등).
+            // 이 경우 열어야 할 공유 저장소 자체가 없으니 잃을 데이터도 없다.
+            // 개발 빌드에서만 앱 샌드박스 저장소로 띄운다. 출시 빌드에서는 안내 화면으로 간다.
+            #if DEBUG
+            logger.error("App Group 없음(엔타이틀먼트 미설정) — 개발 빌드라 앱 샌드박스 저장소로 띄운다. 위젯과는 데이터가 갈라진다.")
+            let localURL = URL.applicationSupportDirectory.appending(path: "default.store", directoryHint: .notDirectory)
+            return openStore(at: localURL)
+            #else
+            logger.fault("App Group 없음(엔타이틀먼트 미설정) — 저장소를 열지 않는다.")
+            return .failure(StoreOpenFailure(kind: .appGroupUnavailable, storeURL: nil, underlying: nil))
+            #endif
+        }
+        // 원인 2: 저장소는 있는데 열지 못했다(모르는 스키마 버전 · 마이그레이션 실패 · 파일 손상 ·
+        // 저장 공간 부족 · 파일 보호). 어느 쪽이든 파일은 건드리지 않고 실패로 돌려준다.
+        return openStore(at: storeURL(inGroupContainer: groupURL))
+    }
+
+    /// 버전이 붙은 스키마와 마이그레이션 계획으로 저장소를 연다.
+    ///
+    /// 실패해도 파일을 지우거나 새로 만들지 않는다. 호출하는 쪽이 안내 화면을 띄운다.
+    static func openStore(at url: URL) -> Result<ModelContainer, StoreOpenFailure> {
+        do {
+            // 첫 실행에서 폴더가 없으면 Core Data가 실패 → 복구를 한 번 거친다. 미리 만들어 둔다.
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(), withIntermediateDirectories: true
+            )
+            let schema = Schema(versionedSchema: SchemaV2.self)
+            let container = try ModelContainer(
+                for: schema,
+                migrationPlan: ColorLogMigrationPlan.self,
+                configurations: [ModelConfiguration(schema: schema, url: url)]
+            )
+            return .success(container)
+        } catch {
+            let failure = StoreOpenFailure(kind: .openFailed, storeURL: url, underlying: error as NSError)
+            logger.fault("저장소 열기 실패 — 파일은 그대로 둔다: \(failure.diagnosticCode, privacy: .public) \(error.localizedDescription, privacy: .public)")
+            return .failure(failure)
+        }
+    }
+
+    /// 열지 못한 저장소 파일(본 파일 · -wal · -shm)을 옆 폴더에 복사해 둔다. 원본은 건드리지 않는다.
+    ///
+    /// 다음 버전이 고쳐서 열 수 있도록 원본을 지키는 게 먼저고, 복사본은 그 원본마저
+    /// 잘못 다뤄질 때를 대비한 한 겹 더다. 같은 원본(크기 · 수정 시각)은 한 번만 복사한다.
+    /// - Returns: 복사본 폴더. 원본이 없거나 이미 복사해 뒀으면 그 폴더, 실패하면 nil.
+    @discardableResult
+    static func preserveCopy(of storeURL: URL, fileManager: FileManager = .default) -> URL? {
+        guard let attributes = try? fileManager.attributesOfItem(atPath: storeURL.path) else { return nil }
+        let size = (attributes[.size] as? NSNumber)?.int64Value ?? 0
+        let modified = (attributes[.modificationDate] as? Date)?.timeIntervalSince1970 ?? 0
+        let folder = storeURL.deletingLastPathComponent()
+            .appending(path: "Recovery", directoryHint: .isDirectory)
+            .appending(path: "\(storeURL.lastPathComponent)-\(Int(modified))-\(size)", directoryHint: .isDirectory)
+        if fileManager.fileExists(atPath: folder.path) { return folder }
+        do {
+            try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
+            for suffix in ["", "-wal", "-shm"] {
+                let source = URL(filePath: storeURL.path + suffix)
+                guard fileManager.fileExists(atPath: source.path) else { continue }
+                try fileManager.copyItem(at: source, to: folder.appending(path: source.lastPathComponent))
+            }
+            logger.notice("열지 못한 저장소를 복사해 뒀다: \(folder.lastPathComponent, privacy: .public)")
+            return folder
+        } catch {
+            logger.error("저장소 복사본 만들기 실패: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
 
     /// 프리뷰/테스트용. 디스크에 남지 않는다.
     @MainActor

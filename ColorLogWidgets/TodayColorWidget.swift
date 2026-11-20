@@ -103,7 +103,9 @@ struct TodayColorProvider: TimelineProvider {
 
     /// 오늘 하루치만 읽는다. 위젯 프로세스는 SwiftData 객체를 오래 들고 있지 않는다.
     private func todaysLog() -> (colors: [String], pose: BearPose?) {
-        let context = ModelContext(ColorLogStore.shared)
+        // 저장소를 열지 못했으면(예: 첫 잠금 해제 전) 빈 하루로 그린다. 다음 갱신에서 다시 열어 본다.
+        guard let container = ColorLogStore.shared else { return (Self.emptySlots, nil) }
+        let context = ModelContext(container)
         var descriptor = FetchDescriptor<DailyColorLog>(
             predicate: DailyColorLog.predicate(for: .now)
         )
