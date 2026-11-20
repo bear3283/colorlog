@@ -39,6 +39,9 @@ struct WatercolorBearView: View {
     /// 색이 바뀔 때 다시 번질지. 손잡이를 끌며 색을 고르는 동안에는 매번 번지면 깜빡이기만 한다.
     let bloomsOnChange: Bool
 
+    /// 앱 아이콘 곰의 번짐. 아이콘과 위젯의 첫 곰이 같은 그림이어야 하므로 날짜가 아닌 상수.
+    static let logoSeed: UInt64 = 0xC0_10B3_A2
+
     /// 0이면 물감이 아직 종이에 닿기 전, 1이면 다 번진 상태.
     @State private var bloom: CGFloat
     @State private var hasAppeared = false

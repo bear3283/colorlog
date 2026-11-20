@@ -18,9 +18,6 @@ struct AppIconView: View {
 
     let palette: Palette
 
-    /// 아이콘의 번짐은 고정된 그림이어야 한다. 날짜가 아니라 상수 시드를 쓴다.
-    private static let seed: UInt64 = 0xC0_10B3_A2
-
     var body: some View {
         GeometryReader { proxy in
             let side = min(proxy.size.width, proxy.size.height)
@@ -36,7 +33,7 @@ struct AppIconView: View {
                         WatercolorBearView(
                             moodColors: palette.swatches.map(\.color),
                             pose: .standing,
-                            seed: Self.seed,
+                            seed: WatercolorBearView.logoSeed,
                             bloomsOnAppear: false)
                             // 원화 아이콘과 같은 크기로 곰이 앉도록.
                             .padding(side * 0.06)
