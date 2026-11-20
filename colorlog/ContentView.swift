@@ -53,6 +53,9 @@ struct ContentView: View {
     private var syncsAppIcon = false
 
     @State private var isShowingSettings = false
+    /// 첫 실행 안내. 처음 온 사람에게만(`OnboardingPolicy`).
+    @State private var isShowingOnboarding = false
+    @Environment(\.modelContext) private var modelContext
     // 사용자 팔레트 · 고친 프리셋. 바뀌면 틴트 · 위쪽 팔레트 점들이 따라 다시 그려진다.
     @AppStorage(PaletteStore.userPalettesKey, store: ColorLogStore.defaults) private var userPalettesData = Data()
     @AppStorage(PaletteStore.presetOverridesKey, store: ColorLogStore.defaults) private var overridesData = Data()
@@ -82,6 +85,18 @@ struct ContentView: View {
             SettingsView(selection: $paletteID, syncsAppIcon: $syncsAppIcon)
                 .paletteTheme(palette)
                 .environment(\.locale, .colorLog)
+        }
+        .fullScreenCover(isPresented: $isShowingOnboarding) {
+            OnboardingView(paletteID: $paletteID) { isShowingOnboarding = false }
+                .paletteTheme(palette)
+                .environment(\.locale, .colorLog)
+        }
+        // 격자가 한 번 비친 뒤 안내가 올라오면 깜빡여 보인다. 첫 화면부터 안내로 시작한다.
+        .onAppear {
+            guard OnboardingPolicy.evaluate(context: modelContext) == .show else { return }
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { isShowingOnboarding = true }
         }
         .task {
             ColorLogStore.registerFirstUseIfNeeded()
