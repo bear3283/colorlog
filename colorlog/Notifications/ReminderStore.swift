@@ -97,7 +97,8 @@ final class ReminderStore {
             components.minute = reminder.minute
 
             let content = UNMutableNotificationContent()
-            content.title = "컬러로그"
+            // 앱 이름. 1.1.0에서 컬러로그 → 칼라베어로 바뀌었다(영어: ColorBear).
+            content.title = String(localized: "칼라베어", comment: "알림 제목. 앱 이름")
             content.body = reminder.slot.prompt
             content.sound = .default
             content.userInfo = ["slot": reminder.slot.rawValue]

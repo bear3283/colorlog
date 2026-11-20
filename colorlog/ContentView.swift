@@ -124,7 +124,7 @@ struct ContentView: View {
     }
 }
 
-#Preview("컬러로그") {
+#Preview("칼라베어") {
     ContentView()
         .modelContainer(ColorLogStore.inMemory(seedDays: 0))
 }
