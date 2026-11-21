@@ -197,7 +197,7 @@
 				};
 			};
 			buildConfigurationList = 000000000000000010000000 /* Build configuration list for PBXProject "colorlog" */;
-			developmentRegion = ko;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				ko,

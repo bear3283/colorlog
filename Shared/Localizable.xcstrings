@@ -1,5 +1,5 @@
 {
-  "sourceLanguage" : "ko",
+  "sourceLanguage" : "en",
   "strings" : {
     "\"지금, 어떤 색인가요?\" 알림을 누르면 바로 그 자리가 열려요." : {
       "localizations" : {
@@ -7,6 +7,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\"What color is right now?\" Tap the reminder and that spot opens right away."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"지금, 어떤 색인가요?\" 알림을 누르면 바로 그 자리가 열려요."
           }
         }
       }
@@ -18,6 +24,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear painted with the %@ palette"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 물감으로 칠한 곰"
           }
         }
       }
@@ -33,7 +45,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@ 색 %2$lld"
           }
         }
@@ -45,6 +57,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recolor %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 색 고치기"
           }
         }
       }
@@ -60,7 +78,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@, %2$@"
           }
         }
@@ -74,6 +92,12 @@
             "state" : "translated",
             "value" : "%@, recolored"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, 고친 색"
+          }
         }
       }
     },
@@ -84,6 +108,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@, nothing logged"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, 기록 없음"
           }
         }
       }
@@ -120,7 +150,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@, 색 %2$lld개 기록됨"
           }
         }
@@ -133,6 +163,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@, not here yet"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, 아직 오지 않은 날"
           }
         }
       }
@@ -148,7 +184,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@에 %2$@ 기록"
           }
         }
@@ -161,6 +197,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete %@?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@을 지울까요?"
           }
         }
       }
@@ -176,7 +218,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@의 %2$@ 지우기"
           }
         }
@@ -185,6 +227,12 @@
     "%lld" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
@@ -203,7 +251,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$lld/%2$lld쪽"
           }
         }
@@ -216,6 +264,12 @@
             "state" : "translated",
             "value" : "Color %lld"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld번째 색"
+          }
         }
       }
     },
@@ -226,6 +280,12 @@
             "state" : "translated",
             "value" : "Choose color %lld exactly"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld번째 색 직접 고르기"
+          }
         }
       }
     },
@@ -235,6 +295,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Turn on notifications in iOS Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 설정에서 알림 켜기"
           }
         }
       }
@@ -247,6 +313,12 @@
             "state" : "translated",
             "value" : "Lightest"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 옅게"
+          }
         }
       }
     },
@@ -257,6 +329,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deepest"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 짙게"
           }
         }
       }
@@ -269,6 +347,12 @@
             "state" : "translated",
             "value" : "Brown"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "갈색"
+          }
         }
       }
     },
@@ -278,6 +362,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear in a bubble bath"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "거품 목욕하는 곰"
           }
         }
       }
@@ -289,6 +379,12 @@
             "state" : "translated",
             "value" : "Skip"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "건너뛰기"
+          }
         }
       }
     },
@@ -298,6 +394,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear playing games"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "게임하는 곰"
           }
         }
       }
@@ -309,6 +411,12 @@
             "state" : "translated",
             "value" : "Bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "곰"
+          }
         }
       }
     },
@@ -318,6 +426,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Change bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "곰 바꾸기"
           }
         }
       }
@@ -329,6 +443,12 @@
             "state" : "translated",
             "value" : "Couldn't change the bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "곰을 바꾸지 못했어요"
+          }
         }
       }
     },
@@ -338,6 +458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear studying"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공부하는 곰"
           }
         }
       }
@@ -349,6 +475,12 @@
             "state" : "translated",
             "value" : "Cloud"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구름"
+          }
         }
       }
     },
@@ -359,6 +491,12 @@
             "state" : "translated",
             "value" : "Your colors haven't been deleted. They're still on this device."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그동안 남긴 색은 지우지 않고 이 기기에 그대로 두었어요."
+          }
         }
       }
     },
@@ -368,6 +506,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear painting"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그림 그리는 곰"
           }
         }
       }
@@ -380,6 +524,12 @@
             "state" : "translated",
             "value" : "Logged color"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록된 색"
+          }
         }
       }
     },
@@ -389,6 +539,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't open your entries, so the color wasn't saved. Please open the app to check."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록을 열지 못해 색을 남기지 못했어요. 앱을 열어 확인해 주세요."
           }
         }
       }
@@ -400,6 +556,12 @@
             "state" : "translated",
             "value" : "Couldn't open your entries"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록을 열지 못했어요"
+          }
         }
       }
     },
@@ -409,6 +571,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear playing guitar"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기타 치는 곰"
           }
         }
       }
@@ -421,6 +589,12 @@
             "state" : "translated",
             "value" : "My Palette %lld"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나만의 팔레트 %lld"
+          }
         }
       }
     },
@@ -431,6 +605,12 @@
             "state" : "translated",
             "value" : "You can change it or make your own later in Settings."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에 설정에서 바꾸거나 직접 만들 수 있어요."
+          }
         }
       }
     },
@@ -440,6 +620,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not Now"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에 할게요"
           }
         }
       }
@@ -452,6 +638,12 @@
             "state" : "translated",
             "value" : "Navy"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "남색"
+          }
         }
       }
     },
@@ -462,6 +654,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Indigo"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "남청"
           }
         }
       }
@@ -474,6 +672,12 @@
             "state" : "translated",
             "value" : "Yellow"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "노랑"
+          }
         }
       }
     },
@@ -483,6 +687,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Singing bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "노래하는 곰"
           }
         }
       }
@@ -494,6 +704,12 @@
             "state" : "translated",
             "value" : "Bear working on a laptop"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "노트북으로 일하는 곰"
+          }
         }
       }
     },
@@ -503,6 +719,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try Again"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시도"
           }
         }
       }
@@ -514,6 +736,12 @@
             "state" : "translated",
             "value" : "Next"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
+          }
         }
       }
     },
@@ -523,6 +751,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monochrome"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단색"
           }
         }
       }
@@ -534,6 +768,12 @@
             "state" : "translated",
             "value" : "Close"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
+          }
         }
       }
     },
@@ -543,6 +783,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Running bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "달리는 곰"
           }
         }
       }
@@ -554,6 +800,12 @@
             "state" : "translated",
             "value" : "Bear eating a donut"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도넛 먹는 곰"
+          }
         }
       }
     },
@@ -564,6 +816,12 @@
             "state" : "translated",
             "value" : "The bear will check in with you"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "때가 되면 곰이 물어볼게요"
+          }
         }
       }
     },
@@ -573,6 +831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jumping bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뛰어오르는 곰"
           }
         }
       }
@@ -585,6 +849,12 @@
             "state" : "translated",
             "value" : "Lavender"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "라벤더"
+          }
         }
       }
     },
@@ -595,6 +865,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lime"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "라임"
           }
         }
       }
@@ -607,6 +883,12 @@
             "state" : "translated",
             "value" : "Lemon"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레몬"
+          }
         }
       }
     },
@@ -616,6 +898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pick the paints you like"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마음에 드는 물감을 골라요"
           }
         }
       }
@@ -628,6 +916,12 @@
             "state" : "translated",
             "value" : "Magenta"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마젠타"
+          }
         }
       }
     },
@@ -637,6 +931,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cheering bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만세하는 곰"
           }
         }
       }
@@ -648,6 +948,12 @@
             "state" : "translated",
             "value" : "Dried Flower"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말린 꽃"
+          }
         }
       }
     },
@@ -657,6 +963,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear in a hat"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모자 쓴 곰"
           }
         }
       }
@@ -669,6 +981,12 @@
             "state" : "translated",
             "value" : "Mocha"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모카"
+          }
         }
       }
     },
@@ -680,6 +998,12 @@
             "state" : "translated",
             "value" : "Water Blue"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "물빛 파랑"
+          }
         }
       }
     },
@@ -689,6 +1013,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "At each check-in, your palette's colors appear, and the one you pick paints your day."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "물어보는 시각마다 팔레트의 색이 나타나고, 고른 색으로 하루가 칠해집니다."
           }
         }
       }
@@ -701,6 +1031,12 @@
             "state" : "translated",
             "value" : "Mint"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민트"
+          }
         }
       }
     },
@@ -712,6 +1048,12 @@
             "state" : "translated",
             "value" : "Bright Orange"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "밝은 주황"
+          }
         }
       }
     },
@@ -721,6 +1063,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Complementary"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보색"
           }
         }
       }
@@ -732,6 +1080,12 @@
             "state" : "translated",
             "value" : "Jewel"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보석"
+          }
         }
       }
     },
@@ -742,6 +1096,12 @@
             "state" : "translated",
             "value" : "Duplicate as New Palette"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복제해서 새로 만들기"
+          }
         }
       }
     },
@@ -751,6 +1111,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spring"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "봄"
           }
         }
       }
@@ -763,6 +1129,12 @@
             "state" : "translated",
             "value" : "Pink"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "분홍"
+          }
         }
       }
     },
@@ -774,6 +1146,12 @@
             "state" : "translated",
             "value" : "Empty"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비어 있음"
+          }
         }
       }
     },
@@ -783,6 +1161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empty day"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빈 날"
           }
         }
       }
@@ -795,6 +1179,12 @@
             "state" : "translated",
             "value" : "Red"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빨강"
+          }
         }
       }
     },
@@ -804,6 +1194,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Peeking bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빼꼼 내다보는 곰"
           }
         }
       }
@@ -815,6 +1211,12 @@
             "state" : "translated",
             "value" : "Proud bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뿌듯한 곰"
+          }
         }
       }
     },
@@ -824,6 +1226,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear taking a photo"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사진 찍는 곰"
           }
         }
       }
@@ -836,6 +1244,12 @@
             "state" : "translated",
             "value" : "Apricot"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "살구"
+          }
         }
       }
     },
@@ -845,6 +1259,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Triad"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삼색"
           }
         }
       }
@@ -856,6 +1276,12 @@
             "state" : "translated",
             "value" : "Bear sitting by a box"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "상자 옆에 앉은 곰"
+          }
         }
       }
     },
@@ -866,6 +1292,12 @@
             "state" : "translated",
             "value" : "New palette"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 팔레트 만들기"
+          }
         }
       }
     },
@@ -875,6 +1307,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Color"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색"
           }
         }
       }
@@ -898,6 +1336,12 @@
               }
             }
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색 %lld개로 칠한 곰"
+          }
         }
       }
     },
@@ -907,6 +1351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Back to colors"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색 고르기로 돌아가기"
           }
         }
       }
@@ -918,6 +1368,12 @@
             "state" : "translated",
             "value" : "Edit Colors"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색 고치기"
+          }
         }
       }
     },
@@ -927,6 +1383,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Log a Color"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색 기록하기"
           }
         }
       }
@@ -938,6 +1400,12 @@
             "state" : "translated",
             "value" : "Add color"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색 더하기"
+          }
         }
       }
     },
@@ -947,6 +1415,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hue"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색상"
           }
         }
       }
@@ -958,6 +1432,12 @@
             "state" : "translated",
             "value" : "Couldn't save the color"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색을 남기지 못했어요"
+          }
         }
       }
     },
@@ -967,6 +1447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standing bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서 있는 곰"
           }
         }
       }
@@ -978,6 +1464,12 @@
             "state" : "translated",
             "value" : "Bear in sunglasses"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선글라스 쓴 곰"
+          }
         }
       }
     },
@@ -988,6 +1480,12 @@
             "state" : "translated",
             "value" : "Bear giving a gift"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선물을 건네는 곰"
+          }
         }
       }
     },
@@ -997,6 +1495,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
           }
         }
       }
@@ -1009,6 +1513,12 @@
             "state" : "translated",
             "value" : "Sage"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세이지"
+          }
         }
       }
     },
@@ -1018,6 +1528,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waving bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "손 흔드는 곰"
           }
         }
       }
@@ -1029,6 +1545,12 @@
             "state" : "translated",
             "value" : "Pointing bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "손가락으로 가리키는 곰"
+          }
         }
       }
     },
@@ -1039,6 +1561,12 @@
             "state" : "translated",
             "value" : "Watercolor Bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수채 곰"
+          }
         }
       }
     },
@@ -1048,6 +1576,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Get Started"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기"
           }
         }
       }
@@ -1060,6 +1594,12 @@
             "state" : "translated",
             "value" : "Moss"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쑥색"
+          }
         }
       }
     },
@@ -1069,6 +1609,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear with an idea"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아이디어가 떠오른 곰"
           }
         }
       }
@@ -1080,6 +1626,12 @@
             "state" : "translated",
             "value" : "Bear not painted yet"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 칠하지 않은 곰"
+          }
         }
       }
     },
@@ -1089,6 +1641,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Morning"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아침"
           }
         }
       }
@@ -1100,6 +1658,12 @@
             "state" : "translated",
             "value" : "Morning, afternoon, and evening, the color you pick soaks into the bear. What each color means is up to you."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아침 · 점심 · 저녁, 고른 색이 곰에게 스며들어요. 색의 뜻은 내가 정해요."
+          }
         }
       }
     },
@@ -1109,6 +1673,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A bear filling with morning, afternoon, and evening colors"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아침, 점심, 저녁 색으로 물드는 곰"
           }
         }
       }
@@ -1120,6 +1690,12 @@
             "state" : "translated",
             "value" : "Close the intro and start now"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "안내를 닫고 바로 시작해요"
+          }
         }
       }
     },
@@ -1129,6 +1705,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sitting bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앉아 있는 곰"
           }
         }
       }
@@ -1140,6 +1722,12 @@
             "state" : "translated",
             "value" : "Turn On Reminders"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림 받기"
+          }
         }
       }
     },
@@ -1149,6 +1737,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Turn on notifications"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림 켜기"
           }
         }
       }
@@ -1160,6 +1754,12 @@
             "state" : "translated",
             "value" : "You can turn on reminders anytime in Settings"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림은 설정에서 언제든 켤 수 있어요"
+          }
         }
       }
     },
@@ -1169,6 +1769,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close the app completely and open it again. If your device is low on storage, free up some space and try again."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱을 완전히 닫았다가 다시 열어 보세요. 기기 저장 공간이 부족하다면 공간을 비운 뒤 다시 시도해 주세요."
           }
         }
       }
@@ -1181,6 +1787,12 @@
             "state" : "translated",
             "value" : "Light Green"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연두"
+          }
         }
       }
     },
@@ -1191,6 +1803,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lilac"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연보라"
           }
         }
       }
@@ -1203,6 +1821,12 @@
             "state" : "translated",
             "value" : "Light Blue"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연한 파랑"
+          }
         }
       }
     },
@@ -1213,6 +1837,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Light"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "옅게"
           }
         }
       }
@@ -1228,7 +1858,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "오늘 %1$@, %2$@"
           }
         }
@@ -1266,7 +1896,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "오늘 %1$@, 색 %2$lld개 기록됨"
           }
         }
@@ -1291,6 +1921,12 @@
               }
             }
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 %lld개 기록됨"
+          }
         }
       }
     },
@@ -1313,6 +1949,12 @@
               }
             }
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 색 %lld개 기록됨"
+          }
         }
       }
     },
@@ -1322,6 +1964,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All three colors logged today"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 세 가지 색을 모두 기록함"
           }
         }
       }
@@ -1333,6 +1981,12 @@
             "state" : "translated",
             "value" : "Nothing logged today yet"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 아직 기록 없음"
+          }
         }
       }
     },
@@ -1342,6 +1996,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Back to today"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘로 돌아가기"
           }
         }
       }
@@ -1353,6 +2013,12 @@
             "state" : "translated",
             "value" : "A color to close the day"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘을 덮을 색"
+          }
         }
       }
     },
@@ -1363,6 +2029,12 @@
             "state" : "translated",
             "value" : "Save today's mood as a single color."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘의 분위기를 색 하나로 남깁니다."
+          }
         }
       }
     },
@@ -1372,6 +2044,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Today's Color"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘의 색"
           }
         }
       }
@@ -1384,6 +2062,12 @@
             "state" : "translated",
             "value" : "Orange"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오렌지"
+          }
         }
       }
     },
@@ -1393,6 +2077,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error code %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 코드 %@"
           }
         }
       }
@@ -1405,6 +2095,12 @@
             "state" : "translated",
             "value" : "Jade"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "옥빛"
+          }
         }
       }
     },
@@ -1414,6 +2110,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear in a chef's hat hugging a heart"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요리 모자 쓰고 하트 안은 곰"
           }
         }
       }
@@ -1425,6 +2127,12 @@
             "state" : "translated",
             "value" : "Bear cooking"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요리하는 곰"
+          }
         }
       }
     },
@@ -1434,6 +2142,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crying bear"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "우는 곰"
           }
         }
       }
@@ -1445,6 +2159,12 @@
             "state" : "translated",
             "value" : "Bear with an umbrella"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "우산 쓴 곰"
+          }
         }
       }
     },
@@ -1454,6 +2174,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear working out"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동하는 곰"
           }
         }
       }
@@ -1465,6 +2191,12 @@
             "state" : "translated",
             "value" : "Restore Original Colors"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원래 색으로"
+          }
         }
       }
     },
@@ -1474,6 +2206,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restore original colors"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원래 색으로 되돌리기"
           }
         }
       }
@@ -1485,6 +2223,12 @@
             "state" : "translated",
             "value" : "Analogous"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유사색"
+          }
         }
       }
     },
@@ -1494,6 +2238,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear listening to music"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음악 듣는 곰"
           }
         }
       }
@@ -1505,6 +2255,12 @@
             "state" : "translated",
             "value" : "Remove This Color"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 색 빼기"
+          }
         }
       }
     },
@@ -1514,6 +2270,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete this palette"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 팔레트 지우기"
           }
         }
       }
@@ -1525,6 +2287,12 @@
             "state" : "translated",
             "value" : "If you keep seeing this screen, **don't delete the app.** Deleting the app also deletes your entries. Wait for the next update, or contact us through the App Store page."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 화면이 계속 보여도 **앱을 지우지 마세요.** 앱을 지우면 기록도 함께 지워져요. 다음 업데이트를 기다리거나 앱 스토어 페이지로 문의해 주세요."
+          }
         }
       }
     },
@@ -1534,6 +2302,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Days you've already painted keep their colors."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 칠한 날의 색은 그대로 남아요."
           }
         }
       }
@@ -1545,6 +2319,12 @@
             "state" : "translated",
             "value" : "Sleeping bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자는 곰"
+          }
         }
       }
     },
@@ -1554,6 +2334,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Time of day"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자리"
           }
         }
       }
@@ -1566,6 +2352,12 @@
             "state" : "translated",
             "value" : "Plum"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자주"
+          }
         }
       }
     },
@@ -1576,6 +2368,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rose"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "장미"
           }
         }
       }
@@ -1588,6 +2386,12 @@
             "state" : "translated",
             "value" : "Rose Beige"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "장밋빛 베이지"
+          }
         }
       }
     },
@@ -1599,6 +2403,12 @@
             "state" : "translated",
             "value" : "Ash Gray"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잿빛"
+          }
         }
       }
     },
@@ -1608,6 +2418,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Evening"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저녁"
           }
         }
       }
@@ -1619,6 +2435,12 @@
             "state" : "translated",
             "value" : "Something went wrong while saving. Please pick again in a moment. This can happen when your device is low on storage."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 중 문제가 생겼어요. 잠시 뒤 다시 골라 주세요. 기기 저장 공간이 부족하면 생길 수 있어요."
+          }
         }
       }
     },
@@ -1629,6 +2451,12 @@
             "state" : "translated",
             "value" : "Something went wrong while saving. Please try again in a moment."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 중 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요."
+          }
         }
       }
     },
@@ -1638,6 +2466,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afternoon"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "점심"
           }
         }
       }
@@ -1650,6 +2484,12 @@
             "state" : "translated",
             "value" : "Medium"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중간"
+          }
         }
       }
     },
@@ -1659,6 +2499,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What color is right now?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금, 어떤 색인가요"
           }
         }
       }
@@ -1670,6 +2516,12 @@
             "state" : "translated",
             "value" : "Delete"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지우기"
+          }
         }
       }
     },
@@ -1679,6 +2531,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Depth"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진하기"
           }
         }
       }
@@ -1691,6 +2549,12 @@
             "state" : "translated",
             "value" : "Deep Orange"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진한 주황"
+          }
         }
       }
     },
@@ -1701,6 +2565,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deep"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짙게"
           }
         }
       }
@@ -1713,6 +2583,12 @@
             "state" : "translated",
             "value" : "Deep Navy"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짙은 남색"
+          }
         }
       }
     },
@@ -1722,6 +2598,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear reading a book"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "책 읽는 곰"
           }
         }
       }
@@ -1734,6 +2616,12 @@
             "state" : "translated",
             "value" : "Teal"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "청록"
+          }
         }
       }
     },
@@ -1744,6 +2632,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cherry"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "체리"
           }
         }
       }
@@ -1756,6 +2650,12 @@
             "state" : "translated",
             "value" : "Green"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "초록"
+          }
         }
       }
     },
@@ -1767,6 +2667,12 @@
             "state" : "translated",
             "value" : "ColorBear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "칼라베어"
+          }
         }
       }
     },
@@ -1777,6 +2683,12 @@
             "state" : "translated",
             "value" : "Bear camping"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캠핑하는 곰"
+          }
         }
       }
     },
@@ -1786,6 +2698,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bear drinking coffee"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "커피 마시는 곰"
           }
         }
       }
@@ -1798,6 +2716,12 @@
             "state" : "translated",
             "value" : "Cobalt"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코발트"
+          }
         }
       }
     },
@@ -1807,6 +2731,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Classic"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클래식"
           }
         }
       }
@@ -1819,6 +2749,12 @@
             "state" : "translated",
             "value" : "Blue"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파랑"
+          }
         }
       }
     },
@@ -1828,6 +2764,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Change your palette and reminder times"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "팔레트와 알림 시간을 바꿔요"
           }
         }
       }
@@ -1840,6 +2782,12 @@
             "state" : "translated",
             "value" : "Peach"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "피치"
+          }
         }
       }
     },
@@ -1851,6 +2799,12 @@
             "state" : "translated",
             "value" : "Sky"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하늘"
+          }
         }
       }
     },
@@ -1860,6 +2814,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Three times a day,\npick a color for how you feel"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루 세 번,\n지금 마음의 색을 골라요"
           }
         }
       }
@@ -1871,6 +2831,12 @@
             "state" : "translated",
             "value" : "Bear hugging a heart"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하트를 안은 곰"
+          }
         }
       }
     },
@@ -1880,6 +2846,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Match Home Screen icon to palette"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈 화면 아이콘을 팔레트에 맞추기"
           }
         }
       }
@@ -1891,6 +2863,12 @@
             "state" : "translated",
             "value" : "Add the widget to your Home Screen to pick a color without opening the app."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈 화면에 위젯을 두면 앱을 열지 않고도 색을 고를 수 있어요."
+          }
         }
       }
     },
@@ -1901,6 +2879,12 @@
             "state" : "translated",
             "value" : "Angry bear"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "화난 곰"
+          }
         }
       }
     },
@@ -1910,6 +2894,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
           }
         }
       }
@@ -1922,6 +2912,12 @@
             "state" : "translated",
             "value" : "Brass"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "황동"
+          }
         }
       }
     },
@@ -1932,6 +2928,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Off-White"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "흰빛"
           }
         }
       }
