@@ -51,6 +51,23 @@
         }
       }
     },
+    "%@ 색 고를 차례" : {
+      "comment" : "잠금 화면 · 틴트 위젯. 지금 물어보는 자리(아침 · 점심 · 저녁)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ check-in"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 색 고를 차례"
+          }
+        }
+      }
+    },
     "%@ 색 고치기" : {
       "localizations" : {
         "en" : {
@@ -1651,6 +1668,23 @@
         }
       }
     },
+    "아침 · 점심 · 저녁 중 어디까지 칠했는지 잠금 화면에서 봅니다." : {
+      "comment" : "잠금 화면 위젯 설명",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See on your Lock Screen how many of today's morning, afternoon, and evening colors you've picked."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아침 · 점심 · 저녁 중 어디까지 칠했는지 잠금 화면에서 봅니다."
+          }
+        }
+      }
+    },
     "아침 · 점심 · 저녁, 고른 색이 곰에게 스며들어요. 색의 뜻은 내가 정해요." : {
       "localizations" : {
         "en" : {
@@ -1970,6 +2004,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "오늘 세 가지 색을 모두 기록함"
+          }
+        }
+      }
+    },
+    "오늘 세 색 다 칠했어요" : {
+      "comment" : "잠금 화면 · 틴트 위젯. 세 자리가 다 찼을 때",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All three colors in today"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 세 색 다 칠했어요"
+          }
+        }
+      }
+    },
+    "오늘 세 자리" : {
+      "comment" : "잠금 화면 위젯 이름",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Three Colors"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 세 자리"
           }
         }
       }

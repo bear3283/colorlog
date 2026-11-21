@@ -134,3 +134,30 @@ struct TodayColorWidget: Widget {
         .contentMarginsDisabled()
     }
 }
+
+// MARK: - 잠금 화면
+
+/// 잠금 화면의 오늘 세 자리. 홈 화면 위젯과 같은 타임라인(물어보는 시각마다 한 장)을 쓴다.
+/// 잠금 화면에서는 색을 고를 수 없으니 누르면 앱이 열린다.
+struct TodayStatusWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "ColorLogTodayStatus", provider: TodayColorProvider()) { entry in
+            TodayStatusEntryView(entry: entry)
+                .containerBackground(for: .widget) { Color.clear }
+        }
+        .configurationDisplayName("오늘 세 자리")
+        .description("아침 · 점심 · 저녁 중 어디까지 칠했는지 잠금 화면에서 봅니다.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+private struct TodayStatusEntryView: View {
+    let entry: TodayColorEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        TodayStatusView(
+            family: family,
+            slots: TodaySlots(colors: entry.colors, target: entry.target, palette: entry.palette))
+    }
+}

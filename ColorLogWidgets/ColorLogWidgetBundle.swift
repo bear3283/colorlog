@@ -14,5 +14,6 @@ import WidgetKit
 struct ColorLogWidgetBundle: WidgetBundle {
     var body: some Widget {
         TodayColorWidget()
+        TodayStatusWidget()
     }
 }
