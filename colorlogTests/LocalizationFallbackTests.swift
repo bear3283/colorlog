@@ -69,6 +69,63 @@ struct LocalizationFallbackTests {
         }
     }
 
+    @Test("한국어 표에도 영어 표의 모든 키가 있다(한국어 기기에 영어가 새지 않음)")
+    func koreanCoversEveryKey() throws {
+        for (name, bundle) in Self.bundles {
+            let ko = try Self.keys(in: bundle, localization: "ko")
+            let en = try Self.keys(in: bundle, localization: "en")
+            #expect(!en.isEmpty, "\(name)")
+            #expect(en.subtracting(ko).isEmpty, "\(name): \(en.subtracting(ko).sorted())")
+        }
+    }
+
+    /// 원문 언어가 en이 된 뒤 코드에 한국어 문구를 새로 넣으면, Xcode는 그 키를 번역 없이
+    /// (값 = 키 = 한국어) 카탈로그에 넣는다. 그런 키는 컴파일된 lproj 어디에도 없어서
+    /// 위 두 테스트로는 안 잡히고, 영어 · 미지원 언어 기기에 한국어가 그대로 보인다.
+    /// 그래서 원본 카탈로그를 직접 읽어 모든 키에 en · ko 값이 다 채워졌는지 본다.
+    @Test(
+        "String Catalog의 모든 키에 en · ko 값이 있고, en 값에는 한글이 없다",
+        arguments: [
+            "Shared/Localizable.xcstrings",
+            "colorlog/InfoPlist.xcstrings",
+            "ColorLogWidgets/InfoPlist.xcstrings",
+        ]
+    )
+    func catalogHasBothLanguages(path: String) throws {
+        let url = Self.repositoryRoot.appendingPathComponent(path)
+        let catalog = try #require(
+            JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any], "\(path)")
+        #expect(catalog["sourceLanguage"] as? String == "en", "\(path)")
+        let strings = try #require(catalog["strings"] as? [String: [String: Any]], "\(path)")
+        #expect(!strings.isEmpty, "\(path)")
+
+        var problems: [String] = []
+        for (key, entry) in strings {
+            if entry["shouldTranslate"] as? Bool == false { continue }
+            if entry["extractionState"] as? String == "stale" { continue }
+            let localizations = entry["localizations"] as? [String: Any] ?? [:]
+            for language in ["en", "ko"] {
+                guard let localization = localizations[language] else {
+                    problems.append("\(language) 없음: \(key)")
+                    continue
+                }
+                let units = Self.stringUnits(in: localization)
+                if units.isEmpty { problems.append("\(language) 값 없음: \(key)") }
+                for unit in units {
+                    let value = unit["value"] as? String ?? ""
+                    if value.isEmpty { problems.append("\(language) 빈 값: \(key)") }
+                    if unit["state"] as? String != "translated" {
+                        problems.append("\(language) 상태 \(unit["state"] ?? "-"): \(key)")
+                    }
+                    if language == "en", value.unicodeScalars.contains(where: Self.isHangul) {
+                        problems.append("en 값에 한글: \(key) → \(value)")
+                    }
+                }
+            }
+        }
+        #expect(problems.isEmpty, "\(path): \(problems.sorted())")
+    }
+
     @Test("같은 키가 언어마다 제 값으로 풀린다", arguments: [
         ("칼라베어", "칼라베어", "ColorBear"),
         ("아침", "아침", "Morning"),
@@ -93,6 +150,27 @@ struct LocalizationFallbackTests {
     }
 
     // MARK: - 도우미
+
+    /// 이 파일(colorlogTests/…)의 한 단계 위 = 저장소 루트. 시뮬레이터 테스트도 맥의 원본 파일을 읽을 수 있다.
+    private static var repositoryRoot: URL {
+        URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+    }
+
+    /// 한 언어 항목 안의 모든 stringUnit(복수형 · 치환 변형 포함).
+    private static func stringUnits(in node: Any) -> [[String: Any]] {
+        guard let dict = node as? [String: Any] else { return [] }
+        var units: [[String: Any]] = []
+        if let unit = dict["stringUnit"] as? [String: Any] { units.append(unit) }
+        for (key, child) in dict where key != "stringUnit" {
+            units.append(contentsOf: stringUnits(in: child))
+        }
+        return units
+    }
+
+    private static func isHangul(_ scalar: Unicode.Scalar) -> Bool {
+        (0xAC00...0xD7A3).contains(scalar.value) || (0x1100...0x11FF).contains(scalar.value)
+            || (0x3130...0x318F).contains(scalar.value)
+    }
 
     /// iOS가 번들 언어를 고르는 규칙: 선호 언어 순서대로 번들에 든 첫 언어, 없으면 개발 언어.
     private static func chosenLocalization(in bundle: Bundle, preferences: [String]) -> String {
