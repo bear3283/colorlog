@@ -34,6 +34,8 @@ struct SettingsView: View {
     @State private var editing: EditingPalette?
     /// 길게 누른 메뉴에서 지우려는 사용자 팔레트. 확인을 한 번 거친다.
     @State private var deleting: Palette?
+    /// 월간 곰 포스터 시트.
+    @State private var isShowingPoster = false
 
     private let reminders = ReminderStore.shared
 
@@ -45,6 +47,8 @@ struct SettingsView: View {
                 palettes
                 divider
                 appIconRow
+                divider
+                posterButton
                 divider
                 reminderGroup
             }
@@ -190,6 +194,18 @@ struct SettingsView: View {
         .padding(18)
         .frame(maxWidth: .infinity)
         .settingsCard(theme)
+    }
+
+    // MARK: 월간 곰 포스터
+
+    /// 액자 그림이 "이달의 곰을 한 장으로"를 대신한다. 시트 안에서는 달 이름과 공유 버튼이 보인다.
+    private var posterButton: some View {
+        bellButton(symbol: "photo.artframe", label: "월간 곰 포스터") { isShowingPoster = true }
+            .sheet(isPresented: $isShowingPoster) {
+                MonthPosterSheet()
+                    .paletteTheme(selected)
+                    .environment(\.locale, .colorLog)
+            }
     }
 
     // MARK: 알림

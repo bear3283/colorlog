@@ -17,6 +17,23 @@
         }
       }
     },
+    "%@ 곰 포스터" : {
+      "comment" : "월간 곰 포스터 공유 제목. 연 · 월",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Bear Poster"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 곰 포스터"
+          }
+        }
+      }
+    },
     "%@ 물감으로 칠한 곰" : {
       "comment" : "온보딩 곰 VoiceOver. 팔레트 이름",
       "localizations" : {
@@ -758,6 +775,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "다음"
+          }
+        }
+      }
+    },
+    "다음 달" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Month"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 달"
           }
         }
       }
@@ -2284,6 +2317,23 @@
         }
       }
     },
+    "월간 곰 포스터" : {
+      "comment" : "설정의 포스터 버튼 VoiceOver",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monthly Bear Poster"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "월간 곰 포스터"
+          }
+        }
+      }
+    },
     "유사색" : {
       "localizations" : {
         "en" : {
@@ -2376,6 +2426,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "이미 칠한 날의 색은 그대로 남아요."
+          }
+        }
+      }
+    },
+    "이전 달" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Month"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이전 달"
           }
         }
       }
@@ -2727,6 +2793,23 @@
         }
       }
     },
+    "칠한 날 %lld일" : {
+      "comment" : "월간 곰 포스터. 색을 하나라도 고른 날 수",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days painted: %lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "칠한 날 %lld일"
+          }
+        }
+      }
+    },
     "칼라베어" : {
       "comment" : "알림 제목. 앱 이름",
       "localizations" : {
@@ -2838,6 +2921,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "팔레트와 알림 시간을 바꿔요"
+          }
+        }
+      }
+    },
+    "포스터 공유" : {
+      "comment" : "월간 곰 포스터 공유 버튼",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share Poster"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포스터 공유"
           }
         }
       }
