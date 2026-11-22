@@ -45,6 +45,11 @@ struct WatercolorBearView: View {
     /// 0이면 물감이 아직 종이에 닿기 전, 1이면 다 번진 상태.
     @State private var bloom: CGFloat
     @State private var hasAppeared = false
+    /// 번지는 동안 물러나는 색. 이 색들의 얼룩은 새 얼룩이 번지는 만큼 옅어진다.
+    /// 같은 자리 · 같은 색 얼룩은 번지지 않고 그대로 있는다.
+    @State private var fadingPaints: [Color] = []
+    /// 마지막으로 다 칠해진 상태. 다음 변화가 '무엇이 새로 왔는지'를 이것과 비교한다.
+    @State private var settled: BloomKey?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
 
@@ -111,13 +116,19 @@ struct WatercolorBearView: View {
     private var watercolor: some View {
         // 배치는 여기서 한 번만 계산한다. 물감 층은 애니메이션 프레임마다 다시 그려진다.
         let washes = WatercolorWash.layout(count: paints.count, seed: seed, occupancy: pose.occupancy)
+        let fadingWashes = fadingPaints.isEmpty
+            ? []
+            : WatercolorWash.layout(count: fadingPaints.count, seed: seed, occupancy: pose.occupancy)
 
         return ZStack {
             // 종이와 물감은 하나로 묶어 마스크한다.
             // compositingGroup이 없으면 multiply가 곰돌이 밖의 화면 배경과도 섞인다.
             ZStack {
                 WatercolorPaper(seed: seed)
-                WatercolorPaint(colors: paints, washes: washes, bloom: bloom)
+                WatercolorPaint(
+                    colors: paints, washes: washes,
+                    fadingColors: fadingPaints, fadingWashes: fadingWashes,
+                    bloom: bloom)
                     .blendMode(.multiply)
             }
             .compositingGroup()
@@ -126,14 +137,23 @@ struct WatercolorBearView: View {
             pose.art(.keep)
             pose.art(.ink)
         }
-        // 색 · 자세 · 시드 중 하나라도 바뀌면 다시 번진다.
+        // 색 · 자세 · 시드 중 하나라도 바뀌면 번진다.
+        // 색만 바뀌었으면 **새로 오거나 바뀐 색의 얼룩만** 번지고, 이미 칠해진 얼룩은 그대로 있는다.
+        // 배치가 색 개수와 상관없이 같은 자리를 쓰므로(`WatercolorWash.layout`) 가능한 일이다.
+        // 자세나 시드가 바뀌면 얼룩 자리 자체가 달라지니 처음부터 다시 번진다.
         .task(id: BloomKey(colors: paints, pose: pose, seed: seed)) {
+            let key = BloomKey(colors: paints, pose: pose, seed: seed)
             let isFirst = !hasAppeared
             hasAppeared = true
+            let previous = settled
+            settled = key
             guard !reduceMotion, isFirst ? bloomsOnAppear : bloomsOnChange else {
+                fadingPaints = []
                 bloom = 1
                 return
             }
+            let sameCanvas = previous.map { $0.pose == pose && $0.seed == seed } ?? false
+            fadingPaints = sameCanvas ? (previous?.colors ?? []) : []
             bloom = 0
             // 0으로 되돌린 것이 한 프레임 그려진 뒤에 번지기 시작해야 애니메이션이 보인다.
             try? await Task.sleep(for: .milliseconds(40))
@@ -142,7 +162,7 @@ struct WatercolorBearView: View {
     }
 }
 
-/// 다시 번질지 정하는 키.
+/// 다시 번질지 정하는 키. 다 번진 뒤에는 '지금 칠해진 상태'로 남아 다음 변화와 비교된다.
 private struct BloomKey: Equatable {
     let colors: [Color]
     let pose: BearPose
@@ -272,7 +292,7 @@ nonisolated enum BearPose: String, CaseIterable, Identifiable, Sendable {
 
     /// 실루엣이 차지하는 20×20 칸. `#`이 몸. `scripts/extract_bear_art.py`의 출력.
     /// 물감 얼룩은 이 칸 안에만 놓는다.
-    fileprivate var occupancy: [String] {
+    var occupancy: [String] {
         switch self {
         case .standing: [
             "....................",
@@ -1055,6 +1075,9 @@ nonisolated enum BearPose: String, CaseIterable, Identifiable, Sendable {
 private struct WatercolorPaint: View, Animatable {
     let colors: [Color]
     let washes: [WatercolorWash]
+    /// 번지기 전 색과 그 배치. 비어 있으면 모든 얼룩이 처음부터 번진다.
+    var fadingColors: [Color] = []
+    var fadingWashes: [WatercolorWash] = []
     var bloom: CGFloat
 
     var animatableData: CGFloat {
@@ -1065,47 +1088,70 @@ private struct WatercolorPaint: View, Animatable {
     var body: some View {
         Canvas { context, size in
             context.blendMode = .multiply
-            let w = size.width
 
-            for wash in washes {
-                let t = wash.progress(at: bloom)
-                guard t > 0 else { continue }
+            for index in 0..<max(washes.count, fadingWashes.count) {
+                let wash = washes.indices.contains(index) ? washes[index] : nil
+                let old = fadingWashes.indices.contains(index) ? fadingWashes[index] : nil
+                let pigment = wash.map { colors[$0.colorIndex] }
+                let oldPigment = old.map { fadingColors[$0.colorIndex] }
+                // 새 번짐의 진행. 물러나는 얼룩은 그만큼 옅어진다.
+                let t = wash?.progress(at: bloom) ?? bloom
 
-                let radius = wash.radius * w * (0.45 + 0.55 * t)
-                let center = CGPoint(x: wash.center.x * w, y: wash.center.y * size.height)
-                let pigment = colors[wash.colorIndex]
-                let outline = wash.path(center: center, radius: radius)
-
-                let inner = wash.path(
-                    center: CGPoint(x: center.x + wash.innerOffset.x * radius,
-                                    y: center.y + wash.innerOffset.y * radius),
-                    radius: radius * 0.6)
-
-                // 가장자리만 누그러뜨린다. 반지름의 6% — 경계는 보이되 칼로 자른 듯하지는 않게.
-                // 격자 칸처럼 작을 땐 이 블러가 반 픽셀도 안 돼 눈에 보이지 않는다.
-                // 그 크기에서는 레이어(오프스크린 버퍼)를 열지 않고 바로 칠한다 — 칸 하나를
-                // 그리는 비용 대부분이 얼룩마다 여는 레이어였다.
-                guard radius * 0.06 >= 0.75 else {
-                    // 테두리도 뺀다. 블러 없이 작게 그리면 테두리끼리 이어져 잎맥 같은 금으로 보인다.
-                    context.fill(outline, with: .color(pigment.opacity(0.19 * t)))
-                    context.fill(inner, with: .color(pigment.opacity(0.1 * t)))
+                // 같은 자리에 같은 색이 이미 칠해져 있으면 번지지 않고 다 칠한 채로 둔다.
+                if let wash, let old, let pigment, wash.center == old.center, oldPigment == pigment {
+                    Self.draw(wash, pigment: pigment, progress: 1, in: &context, size: size)
                     continue
                 }
-
-                context.drawLayer { layer in
-                    layer.blendMode = .multiply
-                    layer.opacity = t
-                    layer.addFilter(.blur(radius: radius * 0.06))
-
-                    // 묽은 바탕칠.
-                    layer.fill(outline, with: .color(pigment.opacity(0.19)))
-                    // 물감이 더 고인 속칠. 가운데에서 비켜 앉아 얼룩 안에 농담이 생긴다.
-                    layer.fill(inner, with: .color(pigment.opacity(0.1)))
-                    // 마르면서 가장자리로 밀려 고인 안료. 수채화가 수채화로 읽히는 건 이 테두리 덕이다.
-                    layer.stroke(outline, with: .color(pigment.opacity(0.18)),
-                                 lineWidth: max(radius * 0.045, 1))
+                if let old, let oldPigment {
+                    Self.draw(old, pigment: oldPigment, progress: 1 - t, in: &context, size: size)
+                }
+                if let wash, let pigment {
+                    Self.draw(wash, pigment: pigment, progress: t, in: &context, size: size)
                 }
             }
+        }
+    }
+
+    /// 얼룩 하나. `progress`가 0이면 그리지 않고, 1이면 다 번진 크기 · 진하기.
+    private static func draw(
+        _ wash: WatercolorWash, pigment: Color, progress t: CGFloat,
+        in context: inout GraphicsContext, size: CGSize
+    ) {
+        guard t > 0 else { return }
+        let w = size.width
+
+        let radius = wash.radius * w * (0.45 + 0.55 * t)
+        let center = CGPoint(x: wash.center.x * w, y: wash.center.y * size.height)
+        let outline = wash.path(center: center, radius: radius)
+
+        let inner = wash.path(
+            center: CGPoint(x: center.x + wash.innerOffset.x * radius,
+                            y: center.y + wash.innerOffset.y * radius),
+            radius: radius * 0.6)
+
+        // 가장자리만 누그러뜨린다. 반지름의 6% — 경계는 보이되 칼로 자른 듯하지는 않게.
+        // 격자 칸처럼 작을 땐 이 블러가 반 픽셀도 안 돼 눈에 보이지 않는다.
+        // 그 크기에서는 레이어(오프스크린 버퍼)를 열지 않고 바로 칠한다 — 칸 하나를
+        // 그리는 비용 대부분이 얼룩마다 여는 레이어였다.
+        guard radius * 0.06 >= 0.75 else {
+            // 테두리도 뺀다. 블러 없이 작게 그리면 테두리끼리 이어져 잎맥 같은 금으로 보인다.
+            context.fill(outline, with: .color(pigment.opacity(0.19 * t)))
+            context.fill(inner, with: .color(pigment.opacity(0.1 * t)))
+            return
+        }
+
+        context.drawLayer { layer in
+            layer.blendMode = .multiply
+            layer.opacity = t
+            layer.addFilter(.blur(radius: radius * 0.06))
+
+            // 묽은 바탕칠.
+            layer.fill(outline, with: .color(pigment.opacity(0.19)))
+            // 물감이 더 고인 속칠. 가운데에서 비켜 앉아 얼룩 안에 농담이 생긴다.
+            layer.fill(inner, with: .color(pigment.opacity(0.1)))
+            // 마르면서 가장자리로 밀려 고인 안료. 수채화가 수채화로 읽히는 건 이 테두리 덕이다.
+            layer.stroke(outline, with: .color(pigment.opacity(0.18)),
+                         lineWidth: max(radius * 0.045, 1))
         }
     }
 }
@@ -1113,7 +1159,9 @@ private struct WatercolorPaint: View, Animatable {
 // MARK: - 얼룩 배치
 
 /// 물감 얼룩 하나. 좌표와 반지름은 단위 정사각형 기준.
-private struct WatercolorWash {
+struct WatercolorWash {
+    /// 이 개수까지는 색이 늘어도 얼룩 자리가 그대로인 배치를 쓴다. 하루 세 자리.
+    static let stableCount = DailyColorLog.maxColorsPerDay
     let colorIndex: Int
     let center: CGPoint
     let radius: CGFloat
@@ -1146,6 +1194,14 @@ private struct WatercolorWash {
     ///
     /// 원화는 색이 구역별로 모여 있으면서도 군데군데 다른 색 얼룩이 섞여 있다.
     /// 그래서 대부분은 가까운 구역의 색을, 다섯에 하나 꼴로 다른 색을 칠한다.
+    ///
+    /// **하루 기록(1~3색)은 색 개수와 상관없이 같은 자리 · 같은 모양의 얼룩을 쓴다.**
+    /// 구역 중심 셋을 먼저 정해 두고, 색이 n개면 앞의 n개 구역 중 가장 가까운 구역의 색을 칠한다.
+    /// 그러면 색이 하나 더 올 때 바뀌는 얼룩은 '새 구역이 더 가까운 얼룩'뿐이고 나머지는
+    /// 자리 · 모양 · 색이 그대로다 — 새 색만 번질 수 있다. 다른 색이 섞이는 얼룩도 미리
+    /// 정해 둔 색 순서(0~2)를 쓰고, 그 색이 아직 없으면 가까운 구역의 색을 칠한다.
+    /// 세 색이 다 찬 날은 예전 배치와 같은 난수 순서를 그대로 따라 그림이 바뀌지 않는다.
+    /// 넷 이상(팔레트 전체로 칠하는 아이콘 곰)은 예전 배치 그대로다.
     static func layout(count: Int, seed: UInt64, occupancy: [String]) -> [WatercolorWash] {
         guard count > 0 else { return [] }
         var rng = SeededGenerator(seed: seed ^ 0xB3A2_5EED)
@@ -1173,22 +1229,30 @@ private struct WatercolorWash {
         func zone(_ dx: CGFloat, _ dy: CGFloat) -> CGPoint {
             CGPoint(x: mid.x + dx * box.width, y: mid.y + dy * box.height)
         }
-        var zones: [CGPoint] = switch count {
-        case 1: [mid]
-        case 2: [zone(-0.22, -0.2), zone(0.22, 0.2)]
-        case 3: [zone(-0.24, -0.22), zone(0.24, -0.2), zone(0, 0.28)]
-        default: (0..<count).map { index in
-            let angle = -3 * Double.pi / 4 + Double(index) * 2 * .pi / Double(count)
-            return zone(cos(angle) * 0.3, sin(angle) * 0.3)
-        }
-        }
+        let stable = count <= Self.stableCount
+        var zones: [CGPoint] = stable
+            ? [zone(-0.24, -0.22), zone(0.24, -0.2), zone(0, 0.28)]
+            : (0..<count).map { index in
+                let angle = -3 * Double.pi / 4 + Double(index) * 2 * .pi / Double(count)
+                return zone(cos(angle) * 0.3, sin(angle) * 0.3)
+            }
         zones.shuffle(using: &rng)
+        if stable { zones = Array(zones.prefix(count)) }
 
         return spots.map { spot in
             let nearest = zones.indices.min { zones[$0].distance(to: spot) < zones[$1].distance(to: spot) }!
-            let colorIndex = count > 1 && Double.random(in: 0...1, using: &rng) < 0.2
-                ? Int.random(in: 0..<count, using: &rng)
-                : nearest
+            let colorIndex: Int
+            if stable {
+                // 난수는 색 개수와 상관없이 같은 만큼 뽑는다. 그래야 다음 얼룩들의 모양이 그대로다.
+                let mixed = Double.random(in: 0...1, using: &rng) < 0.2
+                    ? Int.random(in: 0..<Self.stableCount, using: &rng)
+                    : nil
+                colorIndex = mixed.flatMap { $0 < count ? $0 : nil } ?? nearest
+            } else {
+                colorIndex = Double.random(in: 0...1, using: &rng) < 0.2
+                    ? Int.random(in: 0..<count, using: &rng)
+                    : nearest
+            }
 
             // 낮은 주파수 둘에 높은 주파수 하나를 섞어야 동그라미도 별 모양도 아닌 얼룩이 된다.
             let phases = (0..<3).map { _ in Double.random(in: 0..<(2 * .pi), using: &rng) }
@@ -1207,7 +1271,8 @@ private struct WatercolorWash {
                 innerOffset: CGPoint(x: .random(in: -0.3...0.3, using: &rng),
                                      y: .random(in: -0.3...0.3, using: &rng)),
                 // 하루에 고른 순서대로 한 색씩 늦게 번진다.
-                delay: CGFloat(colorIndex) / CGFloat(count) * 0.45 + .random(in: 0...0.12, using: &rng),
+                delay: CGFloat(colorIndex) / CGFloat(max(count, Self.stableCount)) * 0.45
+                    + .random(in: 0...0.12, using: &rng),
                 contour: contour)
         }
     }
