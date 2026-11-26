@@ -8,10 +8,10 @@
 //
 //   · 칠해진 얼굴 — 물어볼 차례가 아닐 때. 오늘 고른 색으로 칠한 곰이 앉아 있다.
 //     앱 격자의 오늘 칸과 같은 동작 · 같은 번짐이다.
-//     아직 아무것도 고르지 않았으면 앱 아이콘의 곰(`logoBear`)이 서 있다.
+//     아직 아무것도 고르지 않았으면 물감 없는 기본 곰(`standingBear`)이 가만히 서 있다.
 //
 //   · 고르는 얼굴 — 물어보는 시각이 되면 하늘이 깔리고, 위젯 가득 선 곰 위로
-//     색 다섯이 겹쳐 둘러선다. 첫 색을 기다릴 땐 앱 아이콘의 곰이다.
+//     색 다섯이 겹쳐 둘러선다. 첫 색을 기다릴 땐 물감 없는 기본 곰이다.
 //     앱의 원형 팔레트와 같은 모양이라 '칸을 누르면 색이 둘러선다'는 한 가지
 //     동작으로 두 표면이 이어진다.
 //
@@ -99,29 +99,31 @@ struct TodayColorView: View {
 
     private var filledCount: Int { pigments.count { $0 != nil } }
 
-    /// 아직 아무 색도 고르지 않은 날의 곰. 앱 아이콘과 같은 곰(서 있는 곰, 같은 번짐)을
-    /// 팔레트의 색으로 칠한다. 색이 없다고 자거나 시무룩한 곰을 두면 위젯이 처져 보인다.
-    private var logoBear: some View {
+    /// 아직 아무 색도 고르지 않은 날의 곰. 가만히 서 있는 기본 곰을 물감 없이
+    /// 연필 선과 종이만으로 그린다. 첫 색을 고르면 그 색으로 칠한 오늘의 곰으로 바뀐다.
+    /// 색이 없다고 자거나 시무룩한 곰을 두면 위젯이 처져 보인다.
+    private var standingBear: some View {
         WatercolorBearView(
-            moodColors: palette.swatches.map(\.color),
+            moodColors: [],
             pose: .standing,
+            style: .bare,
             seed: WatercolorBearView.logoSeed,
             bloomsOnAppear: false)
     }
 
-    /// 오늘 칠한 색이 있으면 그 색의 곰, 없으면 앱 아이콘의 곰.
+    /// 오늘 칠한 색이 있으면 그 색의 곰, 없으면 서 있는 기본 곰.
     @ViewBuilder
     private var currentBear: some View {
         if hasColors {
             todayBear(DayBear(date: day, filledCount: filledCount, relation: .today, storedPose: pose))
         } else {
-            logoBear
+            standingBear
         }
     }
 
     /// 칠해진 얼굴. 물어볼 차례가 아닐 때의 위젯.
     ///
-    /// 아직 아무것도 고르지 않았으면 앱 아이콘의 곰. 고른 색이 있으면 그 색으로 칠한 오늘의 곰.
+    /// 아직 아무것도 고르지 않았으면 서 있는 기본 곰. 고른 색이 있으면 그 색으로 칠한 오늘의 곰.
     private var paintedFace: some View {
         ZStack {
             theme.background
@@ -136,7 +138,7 @@ struct TodayColorView: View {
 
     private var slots: TodaySlots { TodaySlots(colors: colors, target: target, palette: palette) }
 
-    /// 오늘의 곰 자세(칠해진 날은 그날 자세, 아직이면 앱 아이콘처럼 선 곰).
+    /// 오늘의 곰 자세(칠해진 날은 그날 자세, 아직이면 서 있는 기본 곰).
     private var currentPose: BearPose {
         hasColors
             ? DayBear(date: day, filledCount: filledCount, relation: .today, storedPose: pose).pose
@@ -249,7 +251,7 @@ struct TodayColorView: View {
 
         return ZStack {
             // 시각의 하늘 위에 오늘의 곰이 위젯 가득 서 있고, 색 다섯이 그 위로 겹쳐 둘러선다.
-            // 첫 색을 기다릴 땐 앱 아이콘의 곰, 이미 고른 색이 있으면 그 색으로 칠한 곰.
+            // 첫 색을 기다릴 땐 서 있는 기본 곰, 이미 고른 색이 있으면 그 색으로 칠한 곰.
             // 앱의 원형 팔레트와 같은 모양이라 '곰을 누르면 색이 둘러선다'는 한 동작으로 이어진다.
             SkyView(theme: theme, date: date)
 
