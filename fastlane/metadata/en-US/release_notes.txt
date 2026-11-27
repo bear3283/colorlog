@@ -1,10 +1,10 @@
-ColorLog is now ColorBear.
-· Your day's colors now paint a cute watercolor bear. There are thirty-five bears.
-· Tap a bear to open the day's page and watch your color spread across a big bear. Tap the big bear to choose a different one for your day.
-· Five bears per row, so each one is bigger and easier to see.
-· Fill all three check-ins and your bear cheers for you.
-· The widget has a bear too, and it naps between check-ins.
-· A clean white background that follows Dark Mode.
-· A new Watercolor Bear palette.
-· Make, recolor, and delete your own palettes, with three to seven colors each.
-· A new watercolor bear app icon.
+· Monthly bear poster: gather a month of painted bears into one calendar image and share it. Open it from the frame button in Settings.
+· New Lock Screen widgets show which of morning, afternoon, and evening you've filled in.
+· Widgets stay clear in tinted and clear Home Screen modes.
+· When you change a color, only the new color spreads; colors that stay the same keep their place.
+· Before you pick a color for the day, the widget shows the plain bear standing still.
+· A short three-page welcome, led by the bear, shows how the app works.
+· Tapping a reminder opens the exact day and time of day it asked about.
+· English is now supported.
+· Better support for larger text, VoiceOver, and Differentiate Without Color.
+· Your entries stay on the right day when you travel across time zones, and logging from the app and widget at the same time is safe.

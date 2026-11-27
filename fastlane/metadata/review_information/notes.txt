@@ -1,8 +1,5 @@
 NO LOGIN OR ACCOUNT. The app has no account registration, login, user-generated content, in-app purchases, or subscriptions. No demo account is needed.
 
-APP NAME CHANGE
-This version renames the app from "ColorLog" (컬러로그) to "ColorBear" (칼라베어). The bundle ID and all features are the same app; the new version adds a watercolor bear character.
-
 PURPOSE AND AUDIENCE
 ColorBear is a mood diary that records feelings as colors instead of words. Three times a day (morning, afternoon, evening) a local reminder asks how the user feels, and the user answers by picking one color from the current palette (three to seven colors). Each day appears as a watercolor bear painted in that day's colors, on a grid centered on today, so mood patterns over days and weeks become visible at a glance. It is for people who want to reflect on their feelings but find writing a daily journal burdensome.
 
@@ -15,10 +12,12 @@ HOW TO USE THE MAIN FEATURES
 6. Tap the small colored dots at the top right to open Settings. There you can switch among color palettes, set the three reminder times, and allow notifications with the bell button.
    - Tap the dashed + card at the end of the palette list to create a new palette; an editor opens with a live bear preview, a hue slider, a depth slider, and the system color picker. Tap + in the color row to add a color (up to seven); long-press a color to remove it (at least three).
    - Long-press any palette card for a menu: recolor, duplicate, restore original colors (edited built-in palettes), or delete (user-made palettes, with a confirmation). Deleting a palette does not change days that were already recorded.
-7. Home Screen widget: long-press the Home Screen, tap Edit > Add Widget, and add "오늘의 색" (ColorBear). At each reminder time the widget shows the palette's colors around the bear; tapping one records it without opening the app.
+7. Settings also has a frame button that opens the monthly bear poster: a calendar image of that month's bears, which can be shared with the system share sheet. Use the arrows to move between months.
+8. Home Screen widget: long-press the Home Screen, tap Edit > Add Widget, and add "Today's Color" (ColorBear). At each reminder time the widget shows the palette's colors around the bear; tapping one records it without opening the app. Lock Screen widgets ("Today's Three Colors") show which of the three slots are filled.
+9. On first launch, a three-page welcome explains the app and asks for notification permission on the last page.
 
 EXTERNAL SERVICES
 None. The app makes no network connections and uses no third-party SDKs, analytics, advertising, authentication, payment, or AI services. All data is stored only on the device (SwiftData in an App Group container shared with the widget). Reminders are local notifications scheduled on the device. The bundled Gaegu font is licensed under the SIL Open Font License.
 
 REGIONAL DIFFERENCES
-None. The app works the same in all regions. The interface is almost entirely colors, bears, and symbols; the few text elements (the date, notification text, widget name) are in Korean in every region.
+None. The app works the same in all regions. The interface is almost entirely colors, bears, and symbols; the few text elements (the date, notification text, widget names, the welcome pages) are shown in Korean on Korean devices and in English everywhere else.
